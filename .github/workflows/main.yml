@@ -1,0 +1,28 @@
+name: sns-backend
+on: [push] 
+
+jobs: 
+  build:
+    name: sns-backend build
+    runs-on: ubuntu-18.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@master
+
+      - name: module caching
+        uses: actions/cache@v1
+        with: 
+          path: node_modules
+          key: ${{ runner.OS}}-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: | 
+            ${{ runner.OS }}-build-
+            ${{ runner.OS }}-
+      
+      - name: dependencies
+        run: npm install 
+
+      - name: tests
+        run: npm test
+      
+      - name: build
+        run: npm run build

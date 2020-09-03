@@ -1,5 +1,5 @@
 const path = require('path');
-const { NODE_ENV = "dev" } = process.env;
+const { NODE_ENV = "development" } = process.env;
 
 module.exports = {
     entry: './src/index.ts',
