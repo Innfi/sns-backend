@@ -27,6 +27,9 @@ jobs:
       - name: build
         run: npm run build
 
+      - name: packaging
+        run: zip -r deploy.zip * -x "**node_modules**"
+
       - name: deploy to EB
         uses: einaregilsson/beanstalk-deploy@v11
         with:
