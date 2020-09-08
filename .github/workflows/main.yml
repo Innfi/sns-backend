@@ -30,13 +30,13 @@ jobs:
       - name: packaging
         run: zip -r deploy.zip ./* -x "**node_modules**"
 
-#      - name: deploy to EB
-#        uses: einaregilsson/beanstalk-deploy@v11
-#        with:
-#          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
-#          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-#          application_name: sns-v1
-#          environment_name: dev
-#          version_label: 1
-#          region: ap-northeast-2
-#          deployment_package: deploy.zip
+      - name: deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v11
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+          application_name: sns-v1
+          environment_name: dev
+          version_label: 11
+          region: ap-northeast-2
+          deployment_package: deploy.zip
