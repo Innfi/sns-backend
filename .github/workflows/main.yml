@@ -36,7 +36,7 @@ jobs:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
           application_name: sns-v1
-          environment_name: development
-          version_label: 13
+          environment_name: SnsV1-env
+          version_label: 14
           region: ap-northeast-2
           deployment_package: deploy.zip
