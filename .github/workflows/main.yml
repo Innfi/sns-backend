@@ -30,13 +30,12 @@ jobs:
       - name: packaging
         run: zip -r deploy.zip ./* -x "**node_modules**"
 
-      - name: deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v11
+      - name: credentials
+        uses: aws-actions/confiture-aws-credentials@v1
         with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-          application_name: sns-v1
-          environment_name: SnsV1-env
-          version_label: 14
-          region: ap-northeast-2
-          deployment_package: deploy.zip
+          aws-access-key_id: $
+          aws-secret-access-key: $
+          aws-region: ap-northeast-2
+
+      - name: upload to s3 
+        run: aws s3 cp --region ap-northeast-2 deploy.zip s3://sns-v1/deploy.zip
