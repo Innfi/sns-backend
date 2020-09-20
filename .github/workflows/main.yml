@@ -31,7 +31,7 @@ jobs:
         run: zip -r deploy.zip ./* -x "**node_modules**"
 
       - name: credentials
-        uses: aws-actions/confiture-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key_id: $
           aws-secret-access-key: $
