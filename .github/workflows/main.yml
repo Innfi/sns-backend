@@ -33,7 +33,7 @@ jobs:
       - name: credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key_id: $
+          aws-access-key-id: $
           aws-secret-access-key: $
           aws-region: ap-northeast-2
 
