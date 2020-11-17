@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register test/**/*.ts",
     "start": "nodemon --watch src --delay 1 --exec ts-node src/index.ts",
+    "test": "mocha -r ts-node/register --fgrep current test/**/*.ts",
     "build": "webpack --config webpack.config.js"
   },
   "repository": {
@@ -19,13 +19,17 @@
   },
   "homepage": "https://github.com/Innfi/sns-backend#readme",
   "dependencies": {
+    "@types/mongoose": "^5.10.0",
+    "@types/supertest": "^2.0.10",
     "chai": "^4.2.0",
     "express": "^4.17.1",
     "mocha": "^8.1.1",
+    "mongoose": "^5.10.15",
     "node": "^14.8.0",
     "nodemon": "^2.0.4",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
+    "supertest": "^6.0.1",
     "ts-loader": "^8.0.3",
     "ts-node": "^8.10.2",
     "typescript": "^4.0.2",
