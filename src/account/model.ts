@@ -1,21 +1,20 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 
-interface UserAccount extends Document {
-    _id: string;
+export interface IUserAccount extends Document {
     userId: string;
     nickname: string;
     email: string;
+    password: string;
     created: Date;
-    loggedIn: Date;
+    loggedIn?: Date;
 };
 
 
 export const UserAccountSchema = new Schema({
-    _id: { type: String },
     userId: { type: String },
     nickname: { type: String },
     email: { type: String },
+    password: { type: String },
     created: { type: Date },
-    loggedIn: { type: Date }
 });
