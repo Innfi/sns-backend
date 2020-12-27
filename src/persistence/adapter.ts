@@ -23,7 +23,7 @@ export class AccountAdapter {
         logger.info('AccountAdapter: ' + this.address);
     }
 
-    async connectToCollection() {
+    async connectToCollection(): Promise<void> {
         this.conn = await mongoose.createConnection(
             this.address, this.connectOptions);
 
@@ -32,7 +32,7 @@ export class AccountAdapter {
     }
 
     connected(): boolean {
-        return this.conn.readyState === mongoose.STATES.connected;
+        return this.conn?.readyState === mongoose.STATES.connected;
     }
 
     async loadUserAccount(input: UserAccountInput, projection: string = this.projection):

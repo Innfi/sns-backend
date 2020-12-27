@@ -1,6 +1,5 @@
 import { AccountAdapter } from './adapter';
 import { IUserAccount, UserAccountInput } from './model';
-import logger from '../common/logger';
 
 
 interface AccountDict {
@@ -9,33 +8,37 @@ interface AccountDict {
 
 export class MockAccountAdapter extends AccountAdapter {
     protected accountDict: AccountDict = {};
+    protected mockConnected:boolean = false;
 
     constructor() {
         super('');
     }
 
-    connected(): boolean { return true; }
+    async connectToCollection(): Promise<void> {
+        this.mockConnected = true;
+    }
+
+    connected(): boolean { return this.mockConnected; }
 
     async loadUserAccount(input: UserAccountInput): Promise<IUserAccount | null> {
-        logger.info('MockAccountAdapter.loadUserAccount');
+        const result = this.accountDict[input.email];
+        if(result === undefined) return null;
 
-        return this.accountDict[input.email];
+        return result;
     }
 
     async createUserAccount(input: UserAccountInput): Promise<IUserAccount> {
-        logger.info('MockAccountAdapter.createUserAccount');
-
         const acc = await this.loadUserAccount(input);
-        if(acc !== null)  return acc;
+        if(acc !== null) return acc;
 
-        return {
+        this.accountDict[input.email] = {
             userId: input.userId as string,
             nickname: input.nickname as string,
             email: input.email,
             password: input.password,
             created: new Date()
         };
-    }
 
-    
+        return await this.loadUserAccount(input) as IUserAccount;
+    }
 };
