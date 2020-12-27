@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 
 import logger from '../common/logger';
-import { IUserAccount, UserAccountSchema } from './model';
+import { IUserAccount, IUserAccountDoc,
+     UserAccountSchema, UserAccountInput } from './model';
 
 
 export class AccountAdapter {
@@ -13,7 +14,7 @@ export class AccountAdapter {
     protected address: string = '';
 
     protected collectionName: string = 'account';
-    protected accountModel: mongoose.Model<IUserAccount>;
+    protected accountModel: mongoose.Model<IUserAccountDoc>;
     protected projection: string = '_id useId nickname password email created loggedIn';
 
 
@@ -26,7 +27,7 @@ export class AccountAdapter {
         this.conn = await mongoose.createConnection(
             this.address, this.connectOptions);
 
-        this.accountModel = this.conn.model<IUserAccount, mongoose.Model<IUserAccount>>(
+        this.accountModel = this.conn.model<IUserAccountDoc, mongoose.Model<IUserAccountDoc>>(
             this.collectionName, UserAccountSchema);
     }
 
@@ -34,26 +35,20 @@ export class AccountAdapter {
         return this.conn.readyState === mongoose.STATES.connected;
     }
 
-    async createUserAccount(input: any): Promise<IUserAccount> { //FIXME: input
+    async loadUserAccount(input: UserAccountInput, projection: string = this.projection):
+        Promise<IUserAccount | null> {
+        return await this.accountModel.findOne({
+            email: input.email, password: input.password
+        }, projection).lean();
+    }
+
+    async createUserAccount(input: UserAccountInput): Promise<IUserAccount> {
         return await this.accountModel.create({
-            userId: input.userId,
-            nickname: input.nickname,
+            userId: input.userId as string,
+            nickname: input.nickname as string,
             email: input.email,
             password: input.password,
             created: new Date()
-        });
-    }
-
-    async loadUserAccount(input: any, projection: string = this.projection) {
-        return this.accountModel.findOne({
-            email: input.email, password: input.password
-        }, projection, (err: any, res: IUserAccount) => {
-            if(err) {
-                logger.error('loadUserAccount: ' + err);
-                return undefined;
-            }
-
-            return res;
         });
     }
 };

@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 
-export interface IUserAccount extends Document {
+export interface IUserAccount {
     userId: string;
     nickname: string;
     email: string;
@@ -10,6 +10,7 @@ export interface IUserAccount extends Document {
     loggedIn?: Date;
 };
 
+export interface IUserAccountDoc extends IUserAccount, Document {}
 
 export const UserAccountSchema = new Schema({
     userId: { type: String },
@@ -18,3 +19,10 @@ export const UserAccountSchema = new Schema({
     password: { type: String },
     created: { type: Date },
 });
+
+export interface UserAccountInput {
+    userId?: string;
+    nickname?: string;
+    email: string;
+    password: string;
+};

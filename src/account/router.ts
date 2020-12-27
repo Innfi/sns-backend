@@ -1,6 +1,6 @@
 import express from 'express';
 import logger from '../common/logger';
-import LoginManager from './loginManager';
+import LoginManager from './manager';
 
 
 const loginRouter = express.Router();
