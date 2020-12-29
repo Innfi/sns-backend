@@ -72,7 +72,7 @@ describe('AccountAdapter', () => {
         assert.strictEqual(emptyResult === null, true);
     });
 
-    it('create user', async () => {
+    it('create / delete user', async () => {
         const input: IUserAccount = {
             userId: 'innfi#1234',
             nickname: 'innfi',
@@ -88,6 +88,10 @@ describe('AccountAdapter', () => {
         assert.strictEqual(createResult?.userId, input.userId);
         assert.strictEqual(createResult?.nickname, input.nickname);
 
+        const deleteResult: number = await adapter.deleteUserAccount(input);
+        assert.strictEqual(deleteResult, 1);
 
+        const emptyResult: IUserAccount | null = await adapter.loadUserAccount(input);
+        assert.strictEqual(emptyResult === null, true);
     });
 });
