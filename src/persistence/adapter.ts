@@ -1,8 +1,7 @@
 import mongoose from 'mongoose';
 
 import logger from '../common/logger';
-import { IUserAccount, IUserAccountDoc,
-     UserAccountSchema, UserAccountInput } from './model';
+import { IUserAccount, IUserAccountDoc, UserAccountSchema, UserAccountInput } from './model';
 
 
 export class AccountAdapter {
@@ -50,5 +49,10 @@ export class AccountAdapter {
             password: input.password,
             created: new Date()
         });
+    }
+
+    async deleteUserAccount(input: UserAccountInput): Promise<number> {
+        const response = await this.accountModel.deleteOne({email: input.email});
+        return response.deletedCount ? response.deletedCount : 0;
     }
 };

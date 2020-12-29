@@ -6,6 +6,14 @@ import { MockAccountAdapter } from '../src/persistence/mockAdapter';
 
 describe('MockAccountAdapter', () => {
     const adapter: AccountAdapter = new MockAccountAdapter();
+    const input: UserAccountInput = {
+        userId: 'test',
+        nickname: 'innfi',
+        email: 'innfi@test.com',
+        password: 'plaintextpw',
+    };
+
+
     it('current: connectToCollection', () => {
         assert.strictEqual(adapter.connected(), false);
         adapter.connectToCollection();
@@ -13,13 +21,6 @@ describe('MockAccountAdapter', () => {
     });
 
     it('current: simple create / load', async () => {
-        const input: UserAccountInput = {
-            userId: 'test',
-            nickname: 'innfi',
-            email: 'innfi@test.com',
-            password: 'plaintextpw',
-        };
-
         const createResult: IUserAccount = await adapter.createUserAccount(input);
         assert.strictEqual(createResult.email, input.email);
 
@@ -28,14 +29,37 @@ describe('MockAccountAdapter', () => {
 
         assert.strictEqual(loadResult?.email, input.email);
     });
+
+    it('current: delete element if exist', async () => {
+        const loadResult: IUserAccount = 
+            await adapter.loadUserAccount(input) as IUserAccount;
+        assert.strictEqual(loadResult !== null, true);
+
+        const deleteResult: number = await adapter.deleteUserAccount(input);
+        assert.strictEqual(deleteResult, 1);
+
+        const emptyResult: IUserAccount = 
+            await adapter.loadUserAccount(input) as IUserAccount;
+        assert.strictEqual(emptyResult === null, true);
+    });
 });
 
 describe('AccountAdapter', () => {
     const adapter: AccountAdapter = new AccountAdapter('mongodb://192.168.1.85/users');
 
-    it('connectToCollection', async () => {
-        assert.strictEqual(adapter.connected(), false);
+    before(async () => {
         await adapter.connectToCollection();
+    });
+
+    after(() => {
+
+    });
+
+    const cleanup = (input: IUserAccount) => {
+
+    };
+
+    it('connectToCollection', async () => {
         assert.strictEqual(adapter.connected(), true);
     });
 
@@ -63,5 +87,7 @@ describe('AccountAdapter', () => {
 
         assert.strictEqual(createResult?.userId, input.userId);
         assert.strictEqual(createResult?.nickname, input.nickname);
+
+
     });
 });

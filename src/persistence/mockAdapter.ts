@@ -41,4 +41,12 @@ export class MockAccountAdapter extends AccountAdapter {
 
         return await this.loadUserAccount(input) as IUserAccount;
     }
+
+    async deleteUserAccount(input: UserAccountInput): Promise<number> {
+        const acc = await this.loadUserAccount(input);
+        if(acc === null) return 0;
+
+        delete(this.accountDict[input.email]);
+        return 1;
+    }
 };
