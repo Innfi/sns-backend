@@ -1,8 +1,8 @@
 import assert from 'assert';
 //import { AccountAdapter } from '../src/persistence/adapter';
-import { MockAccountAdapter } from '../src/persistence/mockAdapter';
-import { AccountRepository } from '../src/account/repository';
-import { IUserAccount, UserAccountInput } from '../src/persistence/model';
+import { MockAccountAdapter } from '../src/persistence/account/mockAdapter';
+import { AccountRepository } from '../src/persistence/account/repository';
+import { IUserAccount, UserAccountInput } from '../src/persistence/account/model';
 
 describe('AccountRepository', () => {
     it('current: plain constructor', () => {

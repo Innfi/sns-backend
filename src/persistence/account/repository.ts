@@ -1,7 +1,7 @@
-import logger from '../common/logger';
-import { AccountAdapter } from '../persistence/adapter';
-import { MockAccountAdapter } from '../persistence/mockAdapter';
-import { IUserAccount, UserAccountInput } from '../persistence/model';
+import logger from '../../common/logger';
+import { AccountAdapter } from './adapter';
+import { MockAccountAdapter } from './mockAdapter';
+import { IUserAccount, UserAccountInput } from './model';
 
 
 export class AccountRepository {

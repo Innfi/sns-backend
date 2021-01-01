@@ -1,7 +1,7 @@
 import assert from 'assert';
-import { IUserAccount, UserAccountInput } from '../src/persistence/model';
-import { AccountAdapter } from '../src/persistence/adapter';
-import { MockAccountAdapter } from '../src/persistence/mockAdapter';
+import { IUserAccount, UserAccountInput } from '../src/persistence/account/model';
+import { AccountAdapter } from '../src/persistence/account/adapter';
+import { MockAccountAdapter } from '../src/persistence/account/mockAdapter';
 
 
 describe('MockAccountAdapter', () => {

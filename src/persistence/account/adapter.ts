@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-import logger from '../common/logger';
+import logger from '../../common/logger';
 import { IUserAccount, IUserAccountDoc, UserAccountSchema, UserAccountInput } from './model';
 
 

@@ -1,8 +1,7 @@
 import express from 'express';
-import { ExceptionHandler } from 'winston';
 import logger from '../common/logger';
-import { IUserAccount } from '../persistence/model';
-import { accRepo } from './repository';
+import { IUserAccount } from '../persistence/account/model';
+import { accRepo } from '../persistence/account/repository';
 
 
 const loginRouter = express.Router();
@@ -33,6 +32,8 @@ loginRouter.post('/signin', async (req: express.Request, res: express.Response) 
             res.status(500).send('server error').end();
             return;
         } else {
+            //todo: load user timeline 
+            
             res.status(200).send(signinResp).end();
         }
     } catch (err) {
