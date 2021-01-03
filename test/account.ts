@@ -2,6 +2,7 @@ import assert from 'assert';
 import { IUserAccount, UserAccountInput } from '../src/persistence/account/model';
 import { AccountAdapter } from '../src/persistence/account/adapter';
 import { MockAccountAdapter } from '../src/persistence/account/mockAdapter';
+import { AccountRepository } from '../src/persistence/account/repository';
 
 
 describe('MockAccountAdapter', () => {
@@ -93,5 +94,30 @@ describe('AccountAdapter', () => {
 
         const emptyResult: IUserAccount | null = await adapter.loadUserAccount(input);
         assert.strictEqual(emptyResult === null, true);
+    });
+});
+
+describe('AccountRepository', () => {
+    it('current: plain constructor', () => {
+        const instance: AccountRepository = new AccountRepository();
+    });
+
+    it('current: calls adapter methods', async () => {
+        const instance: AccountRepository = new AccountRepository();
+        instance.accountAdapter = new MockAccountAdapter();
+
+        const input: UserAccountInput = {
+            userId: 'innfi#1234', 
+            nickname: 'innfi',
+            email: 'innfi@test.com', 
+            password: 'testPassword'
+        };
+
+        const empty: IUserAccount | null = await instance.loadUserAccount(input);
+        assert.strictEqual(empty === null, true);
+
+        const createResult: IUserAccount | null = await instance.createUserAccount(input);
+        assert.strictEqual(createResult !== null, true);
+        assert.strictEqual((createResult as IUserAccount).email, input.email);
     });
 });
