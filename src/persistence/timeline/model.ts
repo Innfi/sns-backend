@@ -3,7 +3,7 @@ import { Schema, Document } from 'mongoose';
 
 export interface IUserTimeline {
     authorId: string;
-    authorNickanem: string;
+    authorNickname: string;
     text: string;
     date: Date;
 }
