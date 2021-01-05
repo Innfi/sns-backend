@@ -5,5 +5,6 @@ export interface IUserTimeline {
     authorId: string;
     authorNickname: string;
     text: string;
-    date: Date;
+    date?: Date;
+    textId?: string;
 }

@@ -5,10 +5,20 @@ import { TimelineRepository } from '../src/persistence/timeline/repository';
 
 
 describe('TimelineAdapter', () => {
-    it('write / get timeline', async () => {
+    it('current: write / get timeline', async () => {
         const adapter = new MockTimelineAdapter();
 
         //TODO: simple write / get operation for single user
+
+        const textData: IUserTimeline = {
+            authorId: 'innfi#1234',
+            authorNickname: 'innfi',
+            text: 'newtext'
+        };
+
+        const response = await adapter.writeUserTimeline(textData);
+        assert.strictEqual(response.authorId, textData.authorId);
+        assert.strictEqual(response.textId != null, true);
     });
 });
 
