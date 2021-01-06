@@ -1,18 +1,22 @@
 import { v4 } from 'uuid';
 import logger from '../../common/logger';
 import { TimelineAdapter } from './adapter';
-import { IUserTimeline } from './model';
+import { IUserTimeline, IUserTimelineInput } from './model';
 
 
 export class MockTimelineAdapter extends TimelineAdapter {
     protected userTimeline: IUserTimeline[] = [];
 
-    async writeUserTimeline(input: IUserTimeline): Promise<IUserTimeline> {
+    constructor() {
+        super('');
+    }
+
+    async writeUserTimeline(userId: string, input: IUserTimelineInput): Promise<IUserTimeline> {
         //TODO: send user timeline to their followers
 
         const response: IUserTimeline = {
+            userId: userId,
             authorId: input.authorId,
-            authorNickname: input.authorNickname,
             text: input.text,
             date: new Date(),
             textId: v4()
