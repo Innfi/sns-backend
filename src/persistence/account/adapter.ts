@@ -14,7 +14,7 @@ export class AccountAdapter {
 
     protected collectionName: string = 'account';
     protected accountModel: mongoose.Model<IUserAccountDoc>;
-    protected projection: string = '_id useId nickname password email created loggedIn';
+    protected projection: string = '_id userId nickname password email created loggedIn';
 
 
     constructor(address: string) {

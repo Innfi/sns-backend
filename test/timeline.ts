@@ -5,18 +5,22 @@ import { TimelineAdapter } from '../src/persistence/timeline/adapter';
 import { TimelineRepository } from '../src/persistence/timeline/repository';
 
 
-describe('MockTimelineAdapter', () => {
-    it('current: write / get timeline', async () => {
-        const adapter = new MockTimelineAdapter();
+describe('TimelineAdapter', () => {
+    const userId: string = 'innfi#1234';
+    const textData: IUserTimelineInput = {
+        authorId: userId,
+        text: 'newtext'
+    };
 
-        //TODO: simple write / get operation for single user
+    it('current: mock adapter write / get timeline', async () => {
+        assertFindUserTimeline(new MockTimelineAdapter());
+    });
 
-        const userId: string = 'innfi#1234';
-        const textData: IUserTimelineInput = {
-            authorId: userId,
-            text: 'newtext'
-        };
+    it('current: adapter write / get timeline', async () => {
+        assertFindUserTimeline(new TimelineAdapter('mongodb://192.168.1.85/users'));
+    });
 
+    const assertFindUserTimeline = async (adapter: TimelineAdapter) => {
         const response = await adapter.writeUserTimeline(userId, textData);
         assert.strictEqual(response.authorId, textData.authorId);
         assert.strictEqual(response.textId != null, true);
@@ -25,13 +29,7 @@ describe('MockTimelineAdapter', () => {
         const findResult:IUserTimeline | undefined = timelines.find(x => x.authorId === userId);
 
         if(findResult === undefined) assert.fail();
-    });
-});
-
-describe('TimelineAdapter', () => {
-    it('current: call instance', async () => {
-        const adapter = new TimelineAdapter('mongodb://localhost/timeline');
-    });
+    }
 });
 
 describe('TimelineRepository', () => {
