@@ -1,4 +1,5 @@
 import { Schema, Document } from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
 
 
 export interface IUserTimeline {
@@ -18,6 +19,8 @@ export const UserTimelineSchema = new Schema({
     date: { type: Date },
     textId: { type: String, required: true },
 });
+
+export const UserTimelinePaginateSchema = UserTimelineSchema.plugin(mongoosePaginate);
 
 export interface IUserTimelineInput {
     authorId: string;

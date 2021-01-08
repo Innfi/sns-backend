@@ -1,7 +1,8 @@
-import mongoose from 'mongoose';
+import mongoose, { PaginateModel, PaginateOptions, FilterQuery } from 'mongoose';
 
 import logger from '../../common/logger';
-import { IUserTimeline, IUserTimelineDoc, IUserTimelineInput, UserTimelineSchema } from './model';
+import { IUserTimeline, IUserTimelineDoc, IUserTimelineInput, 
+    UserTimelineSchema, UserTimelinePaginateSchema } from './model';
 
 
 export class TimelineAdapter {
@@ -16,6 +17,12 @@ export class TimelineAdapter {
     protected timelineModel: mongoose.Model<IUserTimelineDoc>;
     protected prjection: string = '_id userId authorId text textId created';
 
+    protected tmPaginate: PaginateModel<IUserTimelineDoc>;
+    protected paginateOptions: PaginateOptions = {
+        page: 1, 
+        limit: 20
+    };
+
     constructor(address: string) { 
         this.address = address;
         logger.info('TimelineAdapter: ', this.address);
@@ -28,6 +35,10 @@ export class TimelineAdapter {
         this.timelineModel = 
             this.conn.model<IUserTimelineDoc, mongoose.Model<IUserTimelineDoc>>(
             this.collectionName, UserTimelineSchema);
+
+        this.tmPaginate = 
+            this.conn.model<IUserTimelineDoc, PaginateModel<IUserTimelineDoc>>(
+                this.collectionName, UserTimelinePaginateSchema);
     }
 
     connected(): boolean {
@@ -45,7 +56,14 @@ export class TimelineAdapter {
     }
 
     async getUserTimeline(userId: string): Promise<IUserTimeline[]> {
-        //FIXME 
-        return [];
+        const paginateQuery: FilterQuery<IUserTimeline> = {
+            //fixme: query params
+        };
+
+        const findResult: mongoose.PaginateResult<IUserTimelineDoc> = 
+            await this.tmPaginate.paginate(paginateQuery, this.paginateOptions);
+        const docs: IUserTimeline[] = findResult.docs;
+
+        return docs;
     }
 };
