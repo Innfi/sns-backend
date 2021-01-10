@@ -1,4 +1,5 @@
 import assert from 'assert';
+import { dbUrl } from '../src/common/config';
 import { IUserTimeline, IUserTimelineInput } from '../src/persistence/timeline/model';
 import { MockTimelineAdapter } from '../src/persistence/timeline/mockAdapter';
 import { TimelineAdapter } from '../src/persistence/timeline/adapter';
@@ -12,15 +13,24 @@ describe('TimelineAdapter', () => {
         text: 'newtext'
     };
 
-    it('current: mock adapter write / get timeline', async () => {
-        assertFindUserTimeline(new MockTimelineAdapter());
+    const databaseName: string = dbUrl + '/users';
+    const adapter = new TimelineAdapter(databaseName);
+
+    before(async () => {
+        await adapter.connectToCollection();
     });
 
-    it('current: adapter write / get timeline', async () => {
-        assertFindUserTimeline(new TimelineAdapter('mongodb://192.168.1.85/users'));
+    after(async () => {
+        await adapter.clear(userId);
+    });
+
+    it('adapter write / get timeline', async () => {
+        await assertFindUserTimeline(new TimelineAdapter(dbUrl + '/users'));
     });
 
     const assertFindUserTimeline = async (adapter: TimelineAdapter) => {
+        assert.strictEqual(adapter.connected(), true);
+
         const response = await adapter.writeUserTimeline(userId, textData);
         assert.strictEqual(response.authorId, textData.authorId);
         assert.strictEqual(response.textId != null, true);

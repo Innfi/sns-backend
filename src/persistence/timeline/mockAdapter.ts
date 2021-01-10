@@ -6,10 +6,17 @@ import { IUserTimeline, IUserTimelineInput } from './model';
 
 export class MockTimelineAdapter extends TimelineAdapter {
     protected userTimeline: IUserTimeline[] = [];
+    protected isConnected: boolean = false;
 
     constructor() {
         super('');
     }
+
+    async connectToCollection(): Promise<void> {
+        this.isConnected = true;
+    }
+
+    connected(): boolean { return this.isConnected; }
 
     async writeUserTimeline(userId: string, input: IUserTimelineInput): Promise<IUserTimeline> {
         //TODO: send user timeline to their followers

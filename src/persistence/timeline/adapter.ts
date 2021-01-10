@@ -15,7 +15,7 @@ export class TimelineAdapter {
 
     protected collectionName: string = 'timeline';
     protected timelineModel: mongoose.Model<IUserTimelineDoc>;
-    protected prjection: string = '_id userId authorId text textId created';
+    protected projection: string = '_id userId authorId text textId created';
 
     protected tmPaginate: PaginateModel<IUserTimelineDoc>;
     protected paginateOptions: PaginateOptions = {
@@ -46,18 +46,23 @@ export class TimelineAdapter {
     }
 
     async writeUserTimeline(userId: string, input: IUserTimelineInput): Promise<IUserTimeline> {
-        return {
+        const newTimeline: IUserTimeline = {
             userId: userId,
             authorId: input.authorId,
             text: input.text,
             date: new Date(),
             textId: 'dummyTextId'
         };
+
+        const result:IUserTimeline = await this.tmPaginate.create(newTimeline);
+        logger.info('result: ' + result);
+
+        return newTimeline;
     }
 
     async getUserTimeline(userId: string): Promise<IUserTimeline[]> {
         const paginateQuery: FilterQuery<IUserTimeline> = {
-            //fixme: query params
+            userId: userId
         };
 
         const findResult: mongoose.PaginateResult<IUserTimelineDoc> = 
@@ -65,5 +70,9 @@ export class TimelineAdapter {
         const docs: IUserTimeline[] = findResult.docs;
 
         return docs;
+    }
+
+    async clear(userId: string): Promise<void> {
+        await this.tmPaginate.deleteMany({ userId: userId });
     }
 };

@@ -98,11 +98,11 @@ describe('AccountAdapter', () => {
 });
 
 describe('AccountRepository', () => {
-    it('current: plain constructor', () => {
+    it('plain constructor', () => {
         const instance: AccountRepository = new AccountRepository();
     });
 
-    it('current: calls adapter methods', async () => {
+    it('calls adapter methods', async () => {
         const instance: AccountRepository = new AccountRepository();
         instance.accountAdapter = new MockAccountAdapter();
 
