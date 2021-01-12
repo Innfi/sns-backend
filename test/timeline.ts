@@ -14,7 +14,8 @@ describe('TimelineAdapter', () => {
     };
 
     const databaseName: string = dbUrl + '/users';
-    const adapter = new TimelineAdapter(databaseName);
+    //const adapter = new TimelineAdapter(databaseName);
+    const adapter = new MockTimelineAdapter();
 
     before(async () => {
         await adapter.connectToCollection();
@@ -24,8 +25,8 @@ describe('TimelineAdapter', () => {
         await adapter.clear(userId);
     });
 
-    it('adapter write / get timeline', async () => {
-        await assertFindUserTimeline(new TimelineAdapter(dbUrl + '/users'));
+    it('current: adapter write / get timeline', async () => {
+        await assertFindUserTimeline(adapter);
     });
 
     const assertFindUserTimeline = async (adapter: TimelineAdapter) => {
@@ -54,5 +55,9 @@ describe('TimelineRepository', () => {
 
         assert.strictEqual(firstTimeline.length, 1);
         assert.strictEqual(firstTimeline[0].authorId, 'admin');
+    });
+
+    it('current: write some timeline and check', async () => {
+
     });
 });

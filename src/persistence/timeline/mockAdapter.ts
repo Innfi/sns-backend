@@ -8,11 +8,14 @@ export class MockTimelineAdapter extends TimelineAdapter {
     protected userTimeline: IUserTimeline[] = [];
     protected isConnected: boolean = false;
 
+    protected userTimelineMap: {[id: string]: IUserTimeline[]} = {};
+
     constructor() {
         super('');
     }
 
     async connectToCollection(): Promise<void> {
+        logger.info('MockTimelineAdapter: connectToCollection');
         this.isConnected = true;
     }
 
@@ -29,13 +32,24 @@ export class MockTimelineAdapter extends TimelineAdapter {
             textId: v4()
         };
 
-        this.userTimeline.push(response);
+        if(this.userTimelineMap[userId] === undefined) {
+            this.userTimelineMap[userId] = [];
+        }
+
+        this.userTimelineMap[userId].push(response);
+
+        //this.userTimeline.push(response);
         logger.info('textId: ' + response.textId);
 
         return response;
     }
 
     async getUserTimeline(userId: string): Promise<IUserTimeline[]> {
-        return this.userTimeline;
+        //return this.userTimeline;
+        return this.userTimelineMap[userId];
+    }
+
+    async clear(userId: string): Promise<void> { 
+        this.userTimelineMap[userId] = [];
     }
 };
