@@ -1,14 +1,15 @@
 import assert from 'assert';
 import { dbUrl } from '../src/common/config';
-import { IUserTimeline, IUserTimelineInput } from '../src/persistence/timeline/model';
+import { IUserTimeline, UserTimelineInput } from '../src/persistence/timeline/model';
 import { MockTimelineAdapter } from '../src/persistence/timeline/mockAdapter';
 import { TimelineAdapter } from '../src/persistence/timeline/adapter';
 import { TimelineRepository } from '../src/persistence/timeline/repository';
+import timelineRouter from '../src/timeline/router';
 
 
 describe('TimelineAdapter', () => {
     const userId: string = 'innfi#1234';
-    const textData: IUserTimelineInput = {
+    const textData: UserTimelineInput = {
         authorId: userId,
         text: 'newtext'
     };
@@ -44,20 +45,33 @@ describe('TimelineAdapter', () => {
 });
 
 describe('TimelineRepository', () => {
-    it('current: call repo instance', () => {
-        const repo = new TimelineRepository();
-    });
-
-    it('current: load default timeline', async () => {
-        const repo = new TimelineRepository();
-
-        const firstTimeline: IUserTimeline[] = await repo.loadUserTimeline('emptyUser');
-
-        assert.strictEqual(firstTimeline.length, 1);
-        assert.strictEqual(firstTimeline[0].authorId, 'admin');
-    });
+    const repo = new TimelineRepository();
+    repo.timelineAdapter = new MockTimelineAdapter();
 
     it('current: write some timeline and check', async () => {
+        const dummyTexts = new Set([
+            'test1',
+            'hello',
+            'world', 
+            'for new timeline',
+            'best regards'
+        ]);
 
+        const userId: string = 'innfi';
+
+        dummyTexts.forEach(async (value: string) => {
+            await repo.writeUserTimeline(userId, {
+                authorId: userId,
+                text: value
+            });
+        });
+
+        const timelineResult: IUserTimeline[] | null = await repo.loadUserTimeline(userId);
+        if(timelineResult === null) assert.fail();
+
+        assert.strictEqual(dummyTexts.size, timelineRouter.length);
+        (timelineResult as IUserTimeline[]).forEach((value: IUserTimeline) => {                
+            assert.strictEqual(dummyTexts.has(value.text), true);
+        });
     });
 });

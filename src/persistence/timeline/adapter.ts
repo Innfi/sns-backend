@@ -1,7 +1,7 @@
 import mongoose, { PaginateModel, PaginateOptions, FilterQuery } from 'mongoose';
 
 import logger from '../../common/logger';
-import { IUserTimeline, IUserTimelineDoc, IUserTimelineInput, 
+import { IUserTimeline, IUserTimelineDoc, UserTimelineInput, 
     UserTimelineSchema, UserTimelinePaginateSchema } from './model';
 
 
@@ -45,7 +45,7 @@ export class TimelineAdapter {
         return this.conn?.readyState === mongoose.STATES.connected;
     }
 
-    async writeUserTimeline(userId: string, input: IUserTimelineInput): Promise<IUserTimeline> {
+    async writeUserTimeline(userId: string, input: UserTimelineInput): Promise<IUserTimeline> {
         const newTimeline: IUserTimeline = {
             userId: userId,
             authorId: input.authorId,

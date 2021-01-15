@@ -22,7 +22,7 @@ export const UserTimelineSchema = new Schema({
 
 export const UserTimelinePaginateSchema = UserTimelineSchema.plugin(mongoosePaginate);
 
-export interface IUserTimelineInput {
+export interface UserTimelineInput {
     authorId: string;
     text: string;
 };
