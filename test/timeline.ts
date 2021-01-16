@@ -4,7 +4,6 @@ import { IUserTimeline, UserTimelineInput } from '../src/persistence/timeline/mo
 import { MockTimelineAdapter } from '../src/persistence/timeline/mockAdapter';
 import { TimelineAdapter } from '../src/persistence/timeline/adapter';
 import { TimelineRepository } from '../src/persistence/timeline/repository';
-import timelineRouter from '../src/timeline/router';
 
 
 describe('TimelineAdapter', () => {
@@ -69,7 +68,7 @@ describe('TimelineRepository', () => {
         const timelineResult: IUserTimeline[] | null = await repo.loadUserTimeline(userId);
         if(timelineResult === null) assert.fail();
 
-        assert.strictEqual(dummyTexts.size, timelineRouter.length);
+        assert.strictEqual(dummyTexts.size, timelineResult.length);
         (timelineResult as IUserTimeline[]).forEach((value: IUserTimeline) => {                
             assert.strictEqual(dummyTexts.has(value.text), true);
         });
