@@ -6,20 +6,20 @@ describe('FollowsAdapter', () => {
 
     it('current: returns empty relations by default', async () => {
         const userId: string = 'innfi';
-        const follows: string[] = await adapter.loadFollows(userId);
-        assert.deepStrictEqual(follows, []);
+        const follows = await adapter.loadFollows(userId);
+        assert.deepStrictEqual(follows === undefined, true);
 
-        const followers: string[] = await adapter.loadFollowers(userId);
-        assert.deepStrictEqual(followers, []);
+        const followers = await adapter.loadFollowers(userId);
+        assert.deepStrictEqual(followers === undefined, true);
     });
 
-    it('follower relations', async () => {
+    it('current: follower relations', async () => {
         const followId: string = 'test1';
         const followerId: string = 'test2';
 
         await adapter.relate(followId, followerId);
 
-        const followers: string[] = await adapter.loadFollowers(followId);
-        //assert.strictEqual(followers.)
+        const followers = await adapter.loadFollowers(followId) as Set<string>;
+        assert.strictEqual(followers.has(followerId), true);
     });
 });
