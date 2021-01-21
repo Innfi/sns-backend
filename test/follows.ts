@@ -14,12 +14,19 @@ describe('FollowsAdapter', () => {
     });
 
     it('current: follower relations', async () => {
-        const followId: string = 'test1';
-        const followerId: string = 'test2';
+        try {
+            const followId: string = 'test1';
+            const followerId: string = 'test2';
 
-        await adapter.relate(followId, followerId);
+            await adapter.relate(followId, followerId);
 
-        const followers = await adapter.loadFollowers(followId) as Set<string>;
-        assert.strictEqual(followers.has(followerId), true);
+            const followers = await adapter.loadFollowers(followerId) as Set<string>;
+            assert.strictEqual(followers.has(followId), true);
+
+            const follows = await adapter.loadFollows(followId) as Set<string>;
+            assert.strictEqual(follows.has(followerId), true);
+        } catch (err: any) {
+            assert.fail();
+        }
     });
 });
