@@ -52,18 +52,49 @@ export class FollowsAdapter {
         const findResult: mongoose.PaginateResult<IFollowsDoc> = 
             await this.followsModel.paginate(paginateQuery, paginateOptions);
 
-        //FIXME
-        //findResult.docs
-        return undefined;
+        const docs = findResult.docs;
+        if(docs.length > 1) throw new Error("invalid follows");
+
+        return new Set(docs[0].follows);
     }
 
     async loadFollowers(userId: string): Promise<Set<string>|undefined> {
-        return undefined; //FIXME
+        const paginateQuery: FilterQuery<IFollowsDoc> = {
+            userId: userId
+        };
+
+        const paginateOptions: PaginateOptions = {
+            page: 1,
+            limit: 1000,
+            select: 'followers'
+        };
+
+        const findResult: mongoose.PaginateResult<IFollowsDoc> = 
+            await this.followsModel.paginate(paginateQuery, paginateOptions);
+        
+        const docs = findResult.docs;
+        if(docs.length > 1) throw new Error("invalid follows");
+
+        return new Set(docs[0].followers);
     }
 
     async relate(followId: string, followerId: string): Promise<RelateResult> {
-        return {
-            err: 'server error'
-        };
+        try {
+            await this.followsModel.update({ userId: followId}, {
+                $push: { followers: followerId }
+            });
+
+            await this.followsModel.update({ userId: followerId }, {
+                $push: { follows: followId }
+            });
+
+            return {
+                err: 'ok'
+            };
+        } catch (err: any) {
+            return {
+                err: 'server error'
+            };
+        }
     }
 };
