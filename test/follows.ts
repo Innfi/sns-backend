@@ -1,8 +1,11 @@
 import assert from 'assert';
 import { MockFollowsAdapter } from '../src/persistence/follows/mockAdapter';
+import { FollowsAdapter } from '../src/persistence/follows/adapter';
+
 
 describe('FollowsAdapter', () => {
-    const adapter = new MockFollowsAdapter();
+    //const adapter = new MockFollowsAdapter();
+    const adapter: FollowsAdapter = new FollowsAdapter('mongodb://192.168.1.121/users');
 
     it('current: returns empty relations by default', async () => {
         const userId: string = 'innfi';
@@ -29,4 +32,5 @@ describe('FollowsAdapter', () => {
             assert.fail();
         }
     });
+
 });

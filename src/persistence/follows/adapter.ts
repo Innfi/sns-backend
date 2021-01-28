@@ -1,7 +1,7 @@
-import mongoose, { FilterQuery, PaginateModel, PaginateOptions } from 'mongoose';
+import mongoose  from 'mongoose';
 
 import logger from '../../common/logger';
-import { IFollows, IFollowsDoc, FollowsSchema, RelateResult, FollowsInput, FollowsPaginateSchema } 
+import { IFollows, IFollowsDoc, FollowsSchema, RelateResult, FollowsInput } 
     from './model';
 
 
@@ -14,8 +14,7 @@ export class FollowsAdapter {
     protected address: string = '';
 
     protected collectionName: string = 'follows';
-    //protected followsModel: mongoose.Model<IFollowsDoc>;
-    protected followsModel: PaginateModel<IFollowsDoc>;
+    protected followsModel: mongoose.Model<IFollowsDoc>;
     protected projection: string = '_id userId follows followers';
 
 
@@ -28,10 +27,8 @@ export class FollowsAdapter {
         this.conn = await mongoose.createConnection(
             this.address, this.connectOptions);
 
-        //this.followsModel = this.conn.model<IFollowsDoc, mongoose.Model<IFollowsDoc>>(
-        //    this.collectionName, FollowsSchema);
-        this.followsModel = this.conn.model<IFollowsDoc, PaginateModel<IFollowsDoc>>(
-            this.collectionName, FollowsPaginateSchema);
+        this.followsModel = this.conn.model<IFollowsDoc, mongoose.Model<IFollowsDoc>>(
+            this.collectionName, FollowsSchema);
     }
 
     connected(): boolean {
@@ -39,43 +36,17 @@ export class FollowsAdapter {
     }
 
     async loadFollows(userId: string): Promise<Set<string>|undefined> {
-        const paginateQuery: FilterQuery<IFollowsDoc> = {
-            userId: userId
-        };
+        const findResult: IFollowsDoc = await this.followsModel.findOne({userId: userId})
+        .slice('follows', [1, 5]) as IFollowsDoc;
 
-        const paginateOptions: PaginateOptions = {
-            page: 1,
-            limit: 1000,
-            select: 'follows'
-        };
-
-        const findResult: mongoose.PaginateResult<IFollowsDoc> = 
-            await this.followsModel.paginate(paginateQuery, paginateOptions);
-
-        const docs = findResult.docs;
-        if(docs.length > 1) throw new Error("invalid follows");
-
-        return new Set(docs[0].follows);
+        return new Set(findResult.follows);
     }
 
     async loadFollowers(userId: string): Promise<Set<string>|undefined> {
-        const paginateQuery: FilterQuery<IFollowsDoc> = {
-            userId: userId
-        };
+        const findResult: IFollowsDoc = await this.followsModel.findOne({userId: userId})
+        .slice('followers', [1, 5]) as IFollowsDoc;
 
-        const paginateOptions: PaginateOptions = {
-            page: 1,
-            limit: 1000,
-            select: 'followers'
-        };
-
-        const findResult: mongoose.PaginateResult<IFollowsDoc> = 
-            await this.followsModel.paginate(paginateQuery, paginateOptions);
-        
-        const docs = findResult.docs;
-        if(docs.length > 1) throw new Error("invalid follows");
-
-        return new Set(docs[0].followers);
+        return new Set(findResult.followers);
     }
 
     async relate(followId: string, followerId: string): Promise<RelateResult> {
