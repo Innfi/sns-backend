@@ -24,6 +24,8 @@ export class FollowsAdapter {
     }
 
     async connecToCollection(): Promise<void> {
+        if(this.connected()) return;
+
         this.conn = await mongoose.createConnection(
             this.address, this.connectOptions);
 
@@ -36,28 +38,36 @@ export class FollowsAdapter {
     }
 
     async loadFollows(userId: string): Promise<Set<string>|undefined> {
-        const findResult: IFollowsDoc = await this.followsModel.findOne({userId: userId})
-        .slice('follows', [1, 5]) as IFollowsDoc;
+        console.log('userId: ', userId);
 
-        return new Set(findResult.follows);
+        //const findResult: IFollowsDoc | null = 
+        //    await this.followsModel.findOne({userId: userId}).slice('follows', [1, 5]);
+        const findResult: IFollowsDoc | null = 
+            await this.followsModel.findOne({userId: userId}, { userId: 1, follows: 1});
+        if(findResult === null) return undefined;
+
+        console.log('follows: ', (findResult as IFollowsDoc));
+
+        return new Set((findResult as IFollowsDoc).follows);
     }
 
     async loadFollowers(userId: string): Promise<Set<string>|undefined> {
-        const findResult: IFollowsDoc = await this.followsModel.findOne({userId: userId})
-        .slice('followers', [1, 5]) as IFollowsDoc;
+        const findResult: IFollowsDoc | null = 
+            await this.followsModel.findOne({userId: userId}).slice('followers', [1, 5]);
+        if(findResult === null) return undefined;
 
-        return new Set(findResult.followers);
+        return new Set((findResult as IFollowsDoc).followers);
     }
 
     async relate(followId: string, followerId: string): Promise<RelateResult> {
         try {
             await this.followsModel.update({ userId: followId}, {
                 $push: { followers: followerId }
-            });
+            }, { upsert: true});
 
             await this.followsModel.update({ userId: followerId }, {
                 $push: { follows: followId }
-            });
+            }, { upsert: true});
 
             return {
                 err: 'ok'
