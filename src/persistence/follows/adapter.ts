@@ -38,22 +38,16 @@ export class FollowsAdapter {
     }
 
     async loadFollows(userId: string): Promise<Set<string>|undefined> {
-        console.log('userId: ', userId);
-
-        //const findResult: IFollowsDoc | null = 
-        //    await this.followsModel.findOne({userId: userId}).slice('follows', [1, 5]);
         const findResult: IFollowsDoc | null = 
-            await this.followsModel.findOne({userId: userId}, { userId: 1, follows: 1});
+            await this.followsModel.findOne({userId: userId}).slice('follows', [0, 5]);
         if(findResult === null) return undefined;
-
-        console.log('follows: ', (findResult as IFollowsDoc));
 
         return new Set((findResult as IFollowsDoc).follows);
     }
 
     async loadFollowers(userId: string): Promise<Set<string>|undefined> {
         const findResult: IFollowsDoc | null = 
-            await this.followsModel.findOne({userId: userId}).slice('followers', [1, 5]);
+            await this.followsModel.findOne({userId: userId}).slice('followers', [0, 5]);
         if(findResult === null) return undefined;
 
         return new Set((findResult as IFollowsDoc).followers);
@@ -77,5 +71,9 @@ export class FollowsAdapter {
                 err: 'server error'
             };
         }
+    }
+
+    async cleanup(): Promise<void> {
+        await this.followsModel.deleteMany({});
     }
 };

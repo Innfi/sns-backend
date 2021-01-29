@@ -9,16 +9,24 @@ export class MockFollowsAdapter extends FollowsAdapter {
     dict: FollowsDict = {};
     followerDict: FollowsDict = {};
 
+    mockConnected: boolean = false;
+
     constructor() {
         super('');
     }
 
+    async connecToCollection(): Promise<void> {
+        this.mockConnected = true;
+    }
+
+    connected(): boolean { return this.mockConnected; }
+
     async loadFollows(userId: string): Promise<Set<string>|undefined> {
-        return this.dict[userId];
+        return this.followerDict[userId];
     }
 
     async loadFollowers(userId: string): Promise<Set<string>|undefined> {
-        return this.followerDict[userId];
+        return this.dict[userId];
     }
 
     async relate(followId: string, followerId: string): Promise<RelateResult> {
@@ -31,12 +39,13 @@ export class MockFollowsAdapter extends FollowsAdapter {
         this.dict[followId].add(followerId);
         this.followerDict[followerId].add(followId);
 
-        console.log('dict: ', this.dict);
-        console.log('followerDict: ', this.followerDict);
-
         return {
             err: 'success'
         };
+    }
+
+    async cleanup(): Promise<void> {
+        return;
     }
 }
 
