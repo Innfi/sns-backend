@@ -4,6 +4,10 @@ import logger from '../../common/logger';
 import { IFollows, IFollowsDoc, FollowsSchema, RelateResult, FollowsInput } 
     from './model';
 
+export interface LoadFollowOptions {
+    page: number;
+    limit: number;
+};
 
 export class FollowsAdapter {
     protected conn: mongoose.Connection;
@@ -37,17 +41,21 @@ export class FollowsAdapter {
         return this.conn?.readyState === mongoose.STATES.connected;
     }
 
-    async loadFollows(userId: string): Promise<Set<string>|undefined> {
-        const findResult: IFollowsDoc | null = 
-            await this.followsModel.findOne({userId: userId}).slice('follows', [0, 5]);
+    async loadFollows(userId: string, options: LoadFollowOptions): 
+        Promise<Set<string>|undefined> {
+        const findResult: IFollowsDoc | null = await this.followsModel
+            .findOne({userId: userId})
+            .slice('follows', [options.page, options.limit]);
         if(findResult === null) return undefined;
 
         return new Set((findResult as IFollowsDoc).follows);
     }
 
-    async loadFollowers(userId: string): Promise<Set<string>|undefined> {
-        const findResult: IFollowsDoc | null = 
-            await this.followsModel.findOne({userId: userId}).slice('followers', [0, 5]);
+    async loadFollowers(userId: string, options: LoadFollowOptions): 
+        Promise<Set<string>|undefined> {
+        const findResult: IFollowsDoc | null = await this.followsModel
+            .findOne({userId: userId})
+            .slice('followers', [options.page, options.limit]);
         if(findResult === null) return undefined;
 
         return new Set((findResult as IFollowsDoc).followers);

@@ -19,10 +19,10 @@ describe('FollowsAdapter', () => {
         await adapter.connecToCollection();
 
         const userId: string = 'innfi';
-        const follows = await adapter.loadFollows(userId);
+        const follows = await adapter.loadFollows(userId, { page:1, limit:1 });
         assert.deepStrictEqual(follows === undefined, true);
 
-        const followers = await adapter.loadFollowers(userId);
+        const followers = await adapter.loadFollowers(userId, { page:1, limit:1 });
         assert.deepStrictEqual(followers === undefined, true);
     });
 
@@ -33,10 +33,12 @@ describe('FollowsAdapter', () => {
 
             await adapter.relate(user1, user2);
 
-            const followers = await adapter.loadFollowers(user1) as Set<string>;
+            const followers = 
+                await adapter.loadFollowers(user1, { page:1, limit:10 }) as Set<string>;
             assert.strictEqual(followers.has(user2), true);
 
-            const follows = await adapter.loadFollows(user2) as Set<string>;
+            const follows = 
+                await adapter.loadFollows(user2, { page:1, limit:10 }) as Set<string>;
             assert.strictEqual(follows.has(user1), true);
         } catch (err: any) {
             assert.fail();
@@ -46,13 +48,15 @@ describe('FollowsAdapter', () => {
     it('relate many users', async () => {
         try {
             const userId: string = 'innfi';
+            const followerLength: number = 5;
             const followerUserIds: string[] = generateDummyIds(30);
 
             followerUserIds.forEach((value: string) => adapter.relate(userId, value));
 
-            const followers = await adapter.loadFollowers(userId) as Set<string>;
+            const followers = await adapter.loadFollowers(userId, 
+                { page:1, limit: followerLength}) as Set<string>;
 
-            assert.strictEqual(followers.size, 5);
+            assert.strictEqual(followers.size, followerLength);
 
         } catch (err: any) {
             assert.fail();

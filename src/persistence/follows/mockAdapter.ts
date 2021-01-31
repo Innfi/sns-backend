@@ -1,6 +1,6 @@
 import logger from '../../common/logger';
 import { IFollows, RelateResult } from './model';
-import { FollowsAdapter } from './adapter';
+import { LoadFollowOptions, FollowsAdapter } from './adapter';
 
 
 type FollowsDict =  { [id: string]: Set<string> };
@@ -21,11 +21,13 @@ export class MockFollowsAdapter extends FollowsAdapter {
 
     connected(): boolean { return this.mockConnected; }
 
-    async loadFollows(userId: string): Promise<Set<string>|undefined> {
+    async loadFollows(userId: string, options: LoadFollowOptions): 
+        Promise<Set<string>|undefined> {
         return this.followerDict[userId];
     }
 
-    async loadFollowers(userId: string): Promise<Set<string>|undefined> {
+    async loadFollowers(userId: string, options: LoadFollowOptions): 
+        Promise<Set<string>|undefined> {
         return this.dict[userId];
     }
 
