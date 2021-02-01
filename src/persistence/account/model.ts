@@ -26,3 +26,9 @@ export interface UserAccountInput {
     email: string;
     password: string;
 };
+
+export interface UserProfilePayload {
+    userId: string;
+    nickname: string;
+    headerUrl: string;
+};

@@ -1,6 +1,6 @@
 import logger from '../../common/logger';
-import { IFollows, RelateResult } from './model';
-import { LoadFollowOptions, FollowsAdapter } from './adapter';
+import { IFollows, RelateResult, LoadFollowOptions } from './model';
+import { FollowsAdapter } from './adapter';
 
 
 type FollowsDict =  { [id: string]: Set<string> };
@@ -15,7 +15,7 @@ export class MockFollowsAdapter extends FollowsAdapter {
         super('');
     }
 
-    async connecToCollection(): Promise<void> {
+    async connectToCollection(): Promise<void> {
         this.mockConnected = true;
     }
 

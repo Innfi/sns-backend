@@ -21,6 +21,11 @@ export interface FollowsInput {
     followers: string;
 };
 
+export interface LoadFollowOptions {
+    page: number;
+    limit: number;
+};
+
 export interface RelateResult {
     err: string;
     reason?: string;

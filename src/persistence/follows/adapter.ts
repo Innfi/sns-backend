@@ -1,13 +1,8 @@
 import mongoose  from 'mongoose';
 
 import logger from '../../common/logger';
-import { IFollows, IFollowsDoc, FollowsSchema, RelateResult, FollowsInput } 
+import { LoadFollowOptions, IFollowsDoc, FollowsSchema, RelateResult, FollowsInput } 
     from './model';
-
-export interface LoadFollowOptions {
-    page: number;
-    limit: number;
-};
 
 export class FollowsAdapter {
     protected conn: mongoose.Connection;
@@ -27,7 +22,7 @@ export class FollowsAdapter {
         logger.info('FollowsAdapter: ' + this.address);
     }
 
-    async connecToCollection(): Promise<void> {
+    async connectToCollection(): Promise<void> {
         if(this.connected()) return;
 
         this.conn = await mongoose.createConnection(
