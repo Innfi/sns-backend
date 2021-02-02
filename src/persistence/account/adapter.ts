@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 import logger from '../../common/logger';
-import { IUserAccount, IUserAccountDoc, UserAccountSchema, UserAccountInput } from './model';
+import { IUserAccount, IUserAccountDoc, UserAccountSchema, UserAccountInput, UserProfilePayload } from './model';
 
 
 export class AccountAdapter {
@@ -54,5 +54,16 @@ export class AccountAdapter {
     async deleteUserAccount(input: UserAccountInput): Promise<number> {
         const response = await this.accountModel.deleteOne({email: input.email});
         return response.deletedCount ? response.deletedCount : 0;
+    }
+    
+    async loadUserProfile(userId: string): Promise<UserProfilePayload> {
+        const accountData: IUserAccount = await this.accountModel.findOne(
+            {userId: userId}, 'userId nickname headerUrl').lean() as IUserAccount;
+
+        return {
+            userId: accountData.userId,
+            nickname: accountData.nickname,
+            headerUrl: accountData.headerUrl? accountData.headerUrl : ''
+        };
     }
 };

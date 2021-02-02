@@ -2,6 +2,7 @@ import logger from '../../common/logger';
 import { FollowsAdapter } from './adapter';
 import { IFollows, LoadFollowOptions } from './model';
 import { UserProfilePayload } from '../account/model';
+import { accRepo } from '../account/repository';
 
 
 export class FollowsRepository {
@@ -15,8 +16,13 @@ export class FollowsRepository {
             if(followers === undefined) return null;
 
             let response: UserProfilePayload[] = [];
-            (followers as Set<string>).forEach((value: string) => {
-                //TODO: load user profile from persistence
+            (followers as Set<string>).forEach(async (value: string) => {
+                const profileResult: UserProfilePayload | null = 
+                    await accRepo.loadUserProfile(value);
+
+                if(profileResult === null) return;
+
+                response.push(profileResult as UserProfilePayload);
             });
 
             return response;

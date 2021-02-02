@@ -1,5 +1,6 @@
+import { exception } from 'console';
 import { AccountAdapter } from './adapter';
-import { IUserAccount, UserAccountInput } from './model';
+import { IUserAccount, UserAccountInput, UserProfilePayload } from './model';
 
 
 interface AccountDict {
@@ -48,5 +49,21 @@ export class MockAccountAdapter extends AccountAdapter {
 
         delete(this.accountDict[input.email]);
         return 1;
+    }
+
+    async loadUserProfile(userId: string): Promise<UserProfilePayload> {
+        const accounts: IUserAccount[] = Object.values(this.accountDict);
+
+        accounts.forEach((value: IUserAccount) => {
+            if(value.userId === userId) {
+                return {
+                    userId: userId,
+                    nickname: value.nickname,
+                    headerUrl: value.headerUrl? value.headerUrl : ''
+                };
+            }
+        });
+
+        throw new exception();
     }
 };

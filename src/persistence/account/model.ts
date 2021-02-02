@@ -8,6 +8,7 @@ export interface IUserAccount {
     password: string;
     created: Date;
     loggedIn?: Date;
+    headerUrl?: string;
 };
 
 export interface IUserAccountDoc extends IUserAccount, Document {}
@@ -18,6 +19,7 @@ export const UserAccountSchema = new Schema({
     email: { type: String, required: true },
     password: { type: String, required: true },
     created: { type: Date },
+    headerUrl: { type: String }
 });
 
 export interface UserAccountInput {

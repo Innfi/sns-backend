@@ -1,7 +1,7 @@
 import logger from '../../common/logger';
 import { AccountAdapter } from './adapter';
 import { MockAccountAdapter } from './mockAdapter';
-import { IUserAccount, UserAccountInput } from './model';
+import { IUserAccount, UserAccountInput, UserProfilePayload } from './model';
 
 
 export class AccountRepository {
@@ -23,6 +23,17 @@ export class AccountRepository {
             return await this.accountAdapter.createUserAccount(input);
         } catch (err: any) {
             logger.error(input.email + '] createUserAccount: ' +  err);
+            return null;
+        }
+    }
+
+    async loadUserProfile(userId: string): Promise<UserProfilePayload | null> {
+        try {
+            //TODO: caching
+
+            return await this.accountAdapter.loadUserProfile(userId);
+        } catch (err: any) {
+            logger.error(`${userId}] loadUserProfile: + ${err}`);
             return null;
         }
     }
