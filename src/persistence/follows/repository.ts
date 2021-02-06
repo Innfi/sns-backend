@@ -56,7 +56,6 @@ export class FollowsRepository {
         }
     }
 
-    //FIXME: relate result
     public async relate(followId: string, followerId: string): Promise<RelateResult | null> {
         try {
             return await this.followsAdapter.relate(followId, followerId);
