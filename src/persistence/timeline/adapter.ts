@@ -54,6 +54,8 @@ export class TimelineAdapter {
             textId: 'dummyTextId'
         };
 
+        console.log('newTimeline: ', newTimeline);
+        
         const result:IUserTimeline = await this.tmPaginate.create(newTimeline);
         logger.info('result: ' + result);
 
