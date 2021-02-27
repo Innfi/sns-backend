@@ -1,4 +1,5 @@
 import mongoose, { PaginateModel, PaginateOptions, FilterQuery } from 'mongoose';
+import { v4 } from 'uuid';
 
 import logger from '../../common/logger';
 import { IUserTimeline, IUserTimelineDoc, UserTimelineInput, 
@@ -51,11 +52,9 @@ export class TimelineAdapter {
             authorId: input.authorId,
             text: input.text,
             date: new Date(),
-            textId: 'dummyTextId'
+            textId: v4()
         };
 
-        console.log('newTimeline: ', newTimeline);
-        
         const result:IUserTimeline = await this.tmPaginate.create(newTimeline);
         logger.info('result: ' + result);
 

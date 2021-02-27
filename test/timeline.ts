@@ -25,7 +25,7 @@ describe('TimelineAdapter', () => {
         await adapter.clear(userId);
     });
 
-    it('adapter write / get timeline', async () => {
+    it('current: adapter write / get timeline', async () => {
         await assertFindUserTimeline(adapter);
     });
 
@@ -45,7 +45,8 @@ describe('TimelineAdapter', () => {
 
 describe('TimelineRepository', () => {
     const repo = new TimelineRepository();
-    repo.timelineAdapter = new TimelineAdapter('mongodb://192.168.1.93/users');
+    //repo.timelineAdapter = new TimelineAdapter('mongodb://192.168.1.93/users');
+    repo.timelineAdapter = new MockTimelineAdapter();
 
     it('current: write some timeline and check', async () => {
         const dummyTexts = new Set([
