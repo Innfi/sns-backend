@@ -1,4 +1,5 @@
 import logger from '../../common/logger';
+import { dbUrl } from '../../common/config';
 import { TimelineAdapter } from './adapter';
 import { MockTimelineAdapter } from './mockAdapter';
 import { IUserTimeline, UserTimelineInput } from "./model";
@@ -38,4 +39,6 @@ export class TimelineRepository {
 };
 
 export const tmRepo = new TimelineRepository();
-tmRepo.timelineAdapter = new MockTimelineAdapter();
+//tmRepo.timelineAdapter = new MockTimelineAdapter();
+tmRepo.timelineAdapter = new TimelineAdapter(`${dbUrl}/users`);
+

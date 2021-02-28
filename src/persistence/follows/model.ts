@@ -9,7 +9,7 @@ export interface IFollows {
 
 export interface IFollowsDoc extends IFollows, Document {}
 
-export const FollowsSchema = new Schema({
+export const FollowsSchema = new Schema<IFollowsDoc>({
     userId: { type: String, required: true },
     follows: [{ type: String }],
     followers: [{ type: String }]

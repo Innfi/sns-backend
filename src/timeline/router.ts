@@ -6,10 +6,12 @@ import { TimelineRepository } from '../persistence/timeline/repository';
 
 const timelineRouter = express.Router();
 
-timelineRouter.get('/', async (req: express.Request, res: express.Response) => {
+timelineRouter.get('/:userId', async (req: express.Request, res: express.Response) => {
     try {
-        logger.info('/timeline get: ' + JSON.stringify(req.body));
+        logger.info(`/timeline get params: ${JSON.stringify(req.params)}`);
+        logger.info(`/timeline get query: ${JSON.stringify(req.query)}`);
 
+        res.status(200).send({ testResult: 'ok'}).end();
         //TODO: call from repository
     } catch (err: any) {
         logger.error('/timeline get error: ' + err);
@@ -17,7 +19,7 @@ timelineRouter.get('/', async (req: express.Request, res: express.Response) => {
     }
 });
 
-timelineRouter.post('/', async (req: express.Request, res: express.Response) => {
+timelineRouter.post('/:userId', async (req: express.Request, res: express.Response) => {
     try {
         logger.info('/timeline post: ' + JSON.stringify(req.body));
 

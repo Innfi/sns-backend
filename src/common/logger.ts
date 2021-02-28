@@ -11,7 +11,7 @@ const logger = winston.createLogger({
                 winston.format.printf(info => 
                     `${info.timestamp} ${info.level}: ${info.message}`)
             ),
-            level: 'notice'
+            level: 'info'
         }),
         new winston.transports.File({
             filename: logPath,

@@ -12,7 +12,7 @@ export interface IUserTimeline {
 
 export interface IUserTimelineDoc extends IUserTimeline, Document {}
 
-export const UserTimelineSchema = new Schema({
+export const UserTimelineSchema = new Schema<IUserTimelineDoc>({
     userId: { type: String, required: true },
     authorId: { type: String, required: true },
     text: { type: String, required: true },

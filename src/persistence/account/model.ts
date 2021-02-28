@@ -13,7 +13,7 @@ export interface IUserAccount {
 
 export interface IUserAccountDoc extends IUserAccount, Document {}
 
-export const UserAccountSchema = new Schema({
+export const UserAccountSchema = new Schema<IUserAccountDoc>({
     userId: { type: String, required: true },
     nickname: { type: String },
     email: { type: String, required: true },
