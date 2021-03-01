@@ -26,3 +26,8 @@ export interface UserTimelineInput {
     authorId: string;
     text: string;
 };
+
+export interface LoadTimelineOptions {
+    page: number;
+    limit: number;
+}

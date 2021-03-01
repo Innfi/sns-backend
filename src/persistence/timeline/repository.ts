@@ -2,20 +2,20 @@ import logger from '../../common/logger';
 import { dbUrl } from '../../common/config';
 import { TimelineAdapter } from './adapter';
 import { MockTimelineAdapter } from './mockAdapter';
-import { IUserTimeline, UserTimelineInput } from "./model";
+import { IUserTimeline, UserTimelineInput, LoadTimelineOptions } from "./model";
 
 
 export class TimelineRepository {
     public timelineAdapter: TimelineAdapter;
 
-    async loadUserTimeline(userId: string): Promise<IUserTimeline[] | null> {
+    async loadUserTimeline(userId: string, options: LoadTimelineOptions): Promise<IUserTimeline[] | null> {
         logger.info('loadUserTimeline: ' + userId);
         try {
             if(!this.timelineAdapter.connected()) {
                 await this.timelineAdapter.connectToCollection();
             }
 
-            return await this.timelineAdapter.getUserTimeline(userId);
+            return await this.timelineAdapter.getUserTimeline(userId, options);
         } catch (err: any) {
             logger.error('loadUserTimeline error: ' + err);
             return null;

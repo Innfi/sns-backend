@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 
 import logger from '../../common/logger';
 import { IUserTimeline, IUserTimelineDoc, UserTimelineInput, 
-    UserTimelineSchema, UserTimelinePaginateSchema } from './model';
+    UserTimelineSchema, UserTimelinePaginateSchema, LoadTimelineOptions } from './model';
 
 
 export class TimelineAdapter {
@@ -61,10 +61,13 @@ export class TimelineAdapter {
         return newTimeline;
     }
 
-    async getUserTimeline(userId: string): Promise<IUserTimeline[]> {
+    async getUserTimeline(userId: string, options: LoadTimelineOptions): Promise<IUserTimeline[]> {
         const paginateQuery: FilterQuery<IUserTimeline> = {
             userId: userId
         };
+
+        this.paginateOptions.page = options.page;
+        this.paginateOptions.limit = options.limit;
 
         const findResult: mongoose.PaginateResult<IUserTimelineDoc> = 
             await this.tmPaginate.paginate(paginateQuery, this.paginateOptions);

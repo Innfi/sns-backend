@@ -36,7 +36,8 @@ describe('TimelineAdapter', () => {
         assert.strictEqual(response.authorId, textData.authorId);
         assert.strictEqual(response.textId != null, true);
 
-        const timelines: IUserTimeline[] = await adapter.getUserTimeline(userId);
+        const timelines: IUserTimeline[] = 
+            await adapter.getUserTimeline(userId, { page: 1, limit: 5});
         const findResult:IUserTimeline | undefined = timelines.find(x => x.authorId === userId);
 
         if(findResult === undefined) assert.fail();
@@ -66,7 +67,8 @@ describe('TimelineRepository', () => {
             });
         });
 
-        const timelineResult: IUserTimeline[] | null = await repo.loadUserTimeline(userId);
+        const timelineResult: IUserTimeline[] | null = 
+            await repo.loadUserTimeline(userId, { page:1, limit: 10});
         if(timelineResult === null) assert.fail();
 
         assert.strictEqual(dummyTexts.size, timelineResult.length);
