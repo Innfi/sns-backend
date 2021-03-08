@@ -30,8 +30,15 @@ timelineRouter.get('/:userId', async (req: express.Request, res: express.Respons
 timelineRouter.post('/:userId', async (req: express.Request, res: express.Response) => {
     try {
         logger.info('/timeline post: ' + JSON.stringify(req.body));
+        const userId: string = req.params.userId;
+        const text: string = req.query.text as string;
 
-        //TODO: call from repository
+        tmRepo.writeUserTimeline(userId, { authorId: userId, text: text})
+        .then((value: IUserTimeline | null) => {
+            if(value === null) res.status(400).send({ error: 'write error'}).end();
+
+            res.status(200).send({ error: 'ok', newTimeline: value}).end();
+        });
     } catch (err: any) {
         logger.error('/timeline post error: ' + err);
         res.status(500).send('server error').end();

@@ -39,6 +39,6 @@ export class TimelineRepository {
 };
 
 export const tmRepo = new TimelineRepository();
-//tmRepo.timelineAdapter = new MockTimelineAdapter();
-tmRepo.timelineAdapter = new TimelineAdapter(`${dbUrl}/users`);
+tmRepo.timelineAdapter = new MockTimelineAdapter();
+//tmRepo.timelineAdapter = new TimelineAdapter(`${dbUrl}/users`);
 
