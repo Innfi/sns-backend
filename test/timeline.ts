@@ -1,5 +1,4 @@
 import assert from 'assert';
-import { dbUrl } from '../src/common/config';
 import { IUserTimeline, UserTimelineInput } from '../src/persistence/timeline/model';
 import { MockTimelineAdapter } from '../src/persistence/timeline/mockAdapter';
 import { TimelineAdapter } from '../src/persistence/timeline/adapter';
@@ -13,8 +12,7 @@ describe('TimelineAdapter', () => {
         text: 'newtext'
     };
 
-    const databaseName: string = dbUrl + '/users';
-    //const adapter = new TimelineAdapter(databaseName);
+    //const adapter = new TimelineAdapter(`${dbUrl}/users`);
     const adapter = new MockTimelineAdapter();
 
     before(async () => {
@@ -49,7 +47,7 @@ describe('TimelineRepository', () => {
     //repo.timelineAdapter = new TimelineAdapter('mongodb://192.168.1.93/users');
     repo.timelineAdapter = new MockTimelineAdapter();
 
-    it('current: write some timeline and check', async () => {
+    it('write some timeline and check', async () => {
         const dummyTexts = new Set([
             'test1',
             'hello',

@@ -18,6 +18,6 @@ app.get('/', (req: express.Request, res: express.Response) => {
     res.send('root page');
 });
 
-app.listen(1330, () => {
+app.listen(process.env.npm_package_config_port, () => {
     console.log('starting point');
 });

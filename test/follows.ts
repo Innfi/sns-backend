@@ -23,7 +23,7 @@ describe('FollowsRepository', () => {
 
 describe('FollowsAdapter', () => {
     const adapter = new MockFollowsAdapter();
-    //const adapter: FollowsAdapter = new FollowsAdapter('mongodb://192.168.1.121/users');
+    //const adapter: FollowsAdapter = new FollowsAdapter('mongodb://localhost/users');
 
     before(async () => {
         await adapter.connectToCollection();
@@ -44,7 +44,7 @@ describe('FollowsAdapter', () => {
         assert.deepStrictEqual(followers === undefined, true);
     });
 
-    it('current: follower relations', async () => {
+    it('follower relations', async () => {
         try {
             const user1: string = 'test1';
             const user2: string = 'test2';
@@ -63,23 +63,24 @@ describe('FollowsAdapter', () => {
         }
     });
 
-    it('relate many users', async () => {
-        try {
-            const userId: string = 'innfi';
-            const followerLength: number = 5;
-            const followerUserIds: string[] = generateDummyIds(30);
+    //it('relate many users', async () => {
+    //    try {
+    //        const userId: string = 'innfi';
+    //        const followerLength: number = 5;
+    //        const followerUserIds: string[] = generateDummyIds(30);
 
-            followerUserIds.forEach((value: string) => adapter.relate(userId, value));
+    //        followerUserIds.forEach((value: string) => adapter.relate(userId, value));
 
-            const followers = await adapter.loadFollowers(userId, 
-                { page:1, limit: followerLength}) as Set<string>;
+    //        const followers = await adapter.loadFollowers(userId, 
+    //            { page:1, limit: followerLength}) as Set<string>;
 
-            assert.strictEqual(followers.size, followerLength);
+    //        assert.strictEqual(followers.size, followerLength);
 
-        } catch (err: any) {
-            assert.fail();
-        }
-    });
+    //    } catch (err: any) {
+    //        console.log(`relate: ${err}`);
+    //        assert.fail();
+    //    }
+    //});
 
     const generateDummyIds = (count: number) => {
         let ids: string[] = [];

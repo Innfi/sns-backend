@@ -1,7 +1,6 @@
 import winston from 'winston';
-import { logPath } from '../common/config';
 
-
+//process.env.npm_package_config_port
 const logger = winston.createLogger({
     transports: [
         new winston.transports.Console({
@@ -14,7 +13,7 @@ const logger = winston.createLogger({
             level: 'info'
         }),
         new winston.transports.File({
-            filename: logPath,
+            filename: './log/backend.log',
             format: winston.format.combine(
                 winston.format.timestamp(),
                 winston.format.printf(info => 

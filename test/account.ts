@@ -15,13 +15,13 @@ describe('MockAccountAdapter', () => {
     };
 
 
-    it('current: connectToCollection', () => {
+    it('connectToCollection', () => {
         assert.strictEqual(adapter.connected(), false);
         adapter.connectToCollection();
         assert.strictEqual(adapter.connected(), true);
     });
 
-    it('current: simple create / load', async () => {
+    it('simple create / load', async () => {
         const createResult: IUserAccount = await adapter.createUserAccount(input);
         assert.strictEqual(createResult.email, input.email);
 
@@ -31,7 +31,7 @@ describe('MockAccountAdapter', () => {
         assert.strictEqual(loadResult?.email, input.email);
     });
 
-    it('current: delete element if exist', async () => {
+    it('delete element if exist', async () => {
         const loadResult: IUserAccount = 
             await adapter.loadUserAccount(input) as IUserAccount;
         assert.strictEqual(loadResult !== null, true);
@@ -46,7 +46,7 @@ describe('MockAccountAdapter', () => {
 });
 
 describe('AccountAdapter', () => {
-    //const adapter: AccountAdapter = new AccountAdapter('mongodb://192.168.1.85/users');
+    //const adapter: AccountAdapter = new AccountAdapter('mongodb://localhost/users');
     const adapter: AccountAdapter = new MockAccountAdapter();
 
     before(async () => {
@@ -61,11 +61,11 @@ describe('AccountAdapter', () => {
 
     };
 
-    it('current: connectToCollection', async () => {
+    it('connectToCollection', async () => {
         assert.strictEqual(adapter.connected(), true);
     });
 
-    it('current: load not created user', async () => {
+    it('load not created user', async () => {
         const emptyResult: IUserAccount | null = await adapter.loadUserAccount({
             email: 'invalid@test.com',
             password: ''
@@ -74,7 +74,7 @@ describe('AccountAdapter', () => {
         assert.strictEqual(emptyResult === null, true);
     });
 
-    it('current create / delete user', async () => {
+    it('create / delete user', async () => {
         const input: IUserAccount = {
             userId: 'innfi#1234',
             nickname: 'innfi',
@@ -103,7 +103,7 @@ describe('AccountRepository', () => {
         const instance: AccountRepository = new AccountRepository();
     });
 
-    it('current calls adapter methods', async () => {
+    it('calls adapter methods', async () => {
         const instance: AccountRepository = new AccountRepository();
         instance.accountAdapter = new MockAccountAdapter();
 

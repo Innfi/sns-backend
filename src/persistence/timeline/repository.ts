@@ -1,5 +1,4 @@
 import logger from '../../common/logger';
-import { dbUrl } from '../../common/config';
 import { TimelineAdapter } from './adapter';
 import { MockTimelineAdapter } from './mockAdapter';
 import { IUserTimeline, UserTimelineInput, LoadTimelineOptions } from "./model";

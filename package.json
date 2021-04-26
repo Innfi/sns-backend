@@ -5,8 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --watch src --delay 1 --exec ts-node src/index.ts",
-    "test": "mocha -r ts-node/register --fgrep current test/**/*.ts --exit",
-    "build": "tsc --build"
+    "test": "mocha -r ts-node/register test/**/*.ts --exit",
+    "build": "tsc --build",
+    "clean": "rm -rf ./dist"
+  },
+  "config" : {
+    "port": "1330"
   },
   "repository": {
     "type": "git",
