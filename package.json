@@ -9,7 +9,7 @@
     "build": "tsc --build",
     "clean": "rm -rf ./dist"
   },
-  "config" : {
+  "config": {
     "port": "1330"
   },
   "repository": {

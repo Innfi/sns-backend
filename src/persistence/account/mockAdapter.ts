@@ -36,7 +36,7 @@ export class MockAccountAdapter extends AccountAdapter {
             userId: input.userId as string,
             nickname: input.nickname as string,
             email: input.email,
-            password: input.password,
+            password: input.password as string,
             created: new Date()
         };
 
