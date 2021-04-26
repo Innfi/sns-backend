@@ -26,7 +26,7 @@ export interface UserAccountInput {
     userId?: string;
     nickname?: string;
     email: string;
-    password: string;
+    password?: string;
 };
 
 export interface UserProfilePayload {
