@@ -10,7 +10,7 @@ import { accRepo } from '../persistence/account/repository';
 
 interface JwtData {
     email: string,
-    passwd: string,
+    password: string,
     iat: string
 };
 
@@ -42,6 +42,24 @@ const verifyLocal = async (email: string, password: string, done: Function): Pro
     .catch((err: any) => done(err));
 };
 
+const jwtStrategyOptions: passportJwt.StrategyOptions = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: testSecret
+};
+
+const verifyJwt = async (jwtData: JwtData, done: Function): Promise<void> => {
+    accRepo.loadUserAccount({ email: jwtData.email})
+    .then((user: IUserAccount | null) => {
+        if(user === null) return done(null, false, { msg: 'user not found'});
+
+        if((user as IUserAccount).password !== jwtData.password) return done(null, false);
+
+        return done(null, user, jwtData);
+    })
+    .catch((err: any) => done(err));
+};
+
 export const passportInit = () => {
     passport.use(new LocalStrategy(localStrategyOptions, verifyLocal));
+    passport.use(new JwtStrategy(jwtStrategyOptions, verifyJwt));
 };

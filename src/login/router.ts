@@ -1,4 +1,6 @@
 import express from 'express';
+import passport from 'passport';
+
 import logger from '../common/logger';
 import { IUserAccount } from '../persistence/account/model';
 import { accRepo } from '../persistence/account/repository';
@@ -23,19 +25,26 @@ loginRouter.post('/signup', async (req: express.Request, res: express.Response) 
     }
 });
 
-loginRouter.post('/signin', async (req: express.Request, res: express.Response) => {
+loginRouter.post('/signin', 
+    passport.authenticate('local', {
+        failureMessage: 'authentication failed'
+    }),
+    async (req: express.Request, res: express.Response) => {
     try {
         logger.info('/signin: ', JSON.stringify(req.body));
 
-        const signinResp: IUserAccount | null = await accRepo.loadUserAccount(req.body);
-        if(signinResp === null) { //FIXME
-            res.status(500).send('server error').end();
-            return;
-        } else {
-            //todo: load user timeline 
-            
-            res.status(200).send(signinResp).end();
-        }
+        const token: Express.AuthInfo = req.authInfo!;
+        //TODO: login response
+
+        //const signinResp: IUserAccount | null = await accRepo.loadUserAccount(req.body);
+        //if(signinResp === null) { //FIXME
+        //    res.status(500).send('server error').end();
+        //    return;
+        //} else {
+        //    //todo: load user timeline 
+        //    
+        //    res.status(200).send(signinResp).end();
+        //}
     } catch (err) {
         logger.error('/signin error: ', err);
         res.status(500).send('server error').end();

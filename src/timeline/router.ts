@@ -1,4 +1,6 @@
 import express from 'express';
+import passport from 'passport';
+
 import logger from '../common/logger';
 import { IUserTimeline } from '../persistence/timeline/model';
 import { tmRepo } from '../persistence/timeline/repository';
@@ -6,7 +8,12 @@ import { tmRepo } from '../persistence/timeline/repository';
 
 const timelineRouter = express.Router();
 
-timelineRouter.get('/:userId', async (req: express.Request, res: express.Response) => {
+timelineRouter.get('/:userId', 
+    passport.authenticate('jwt', {
+        session: false,
+        failureMessage: 'not authorized'
+    }),
+    async (req: express.Request, res: express.Response) => {
     try {
         const userId: string = req.params.userId;
         const page: string = req.query.page as string;
@@ -27,7 +34,12 @@ timelineRouter.get('/:userId', async (req: express.Request, res: express.Respons
     }
 });
 
-timelineRouter.post('/:userId', async (req: express.Request, res: express.Response) => {
+timelineRouter.post('/:userId', 
+    passport.authenticate('jwt', {
+        session: false,
+        failureMessage: 'not authorized'
+    }),
+    async (req: express.Request, res: express.Response) => {
     try {
         logger.info('/timeline post: ' + JSON.stringify(req.body));
         const userId: string = req.params.userId;

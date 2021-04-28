@@ -1,4 +1,5 @@
 import express from 'express';
+import passport from 'passport';
 import logger from '../common/logger';
 import { UserProfilePayload } from '../persistence/account/model';
 import { RelateResult } from '../persistence/follows/model';
@@ -43,7 +44,12 @@ followsRouter.get('/follower/:userId', async (req: express.Request, res: express
     }
 });
 
-followsRouter.post('/relate', async (req: express.Request, res: express.Response) => {
+followsRouter.post('/relate', 
+    passport.authenticate('jwt', {
+        session: false,
+        failureMessage: 'not authorized'
+    }),
+    async (req: express.Request, res: express.Response) => {
     try {
         logger.info(`relate] post: ${JSON.stringify(req.body)}`);
 
