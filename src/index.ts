@@ -4,7 +4,7 @@ import passport from 'passport';
 
 import { passportInit } from './login/auth';
 import loginRouter from './login/router';
-import timelineRouter from './timeline/router';
+//import timelineRouter from './timeline/router';
 
 
 const app = express();
@@ -15,12 +15,12 @@ app.use(passport.initialize());
 passportInit();
 
 app.use('/login', loginRouter);
-app.use('/timeline', timelineRouter);
+//app.use('/timeline', timelineRouter);
 
 app.get('/', (req: express.Request, res: express.Response) => {
     res.send('root page');
 });
 
 app.listen(process.env.npm_package_config_port, () => {
-    console.log('starting point');
+    console.log(`starting point ${process.env.npm_package_config_port}`);
 });
