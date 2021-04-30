@@ -33,18 +33,19 @@ loginRouter.post('/signin',
     try {
         logger.info('/signin: ', JSON.stringify(req.body));
 
-        const token: Express.AuthInfo = req.authInfo!;
+        const token: Express.AuthInfo | undefined = req.authInfo;
+        if(token === undefined) {
+            res.status(400).send('invalid token').end();
+        }
         //TODO: login response
 
-        //const signinResp: IUserAccount | null = await accRepo.loadUserAccount(req.body);
-        //if(signinResp === null) { //FIXME
-        //    res.status(500).send('server error').end();
-        //    return;
-        //} else {
-        //    //todo: load user timeline 
-        //    
-        //    res.status(200).send(signinResp).end();
-        //}
+        const signinResp: IUserAccount | null = await accRepo.loadUserAccount(req.body);
+        if(signinResp === null) { //FIXME
+            res.status(500).send('server error').end();
+            return;
+        } 
+            
+        res.status(200).send(signinResp).end();
     } catch (err) {
         logger.error('/signin error: ', err);
         res.status(500).send('server error').end();
