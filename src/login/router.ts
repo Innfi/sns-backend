@@ -27,7 +27,8 @@ loginRouter.post('/signup', async (req: express.Request, res: express.Response) 
 
 loginRouter.post('/signin', 
     passport.authenticate('local', {
-        failureMessage: 'authentication failed'
+        failureMessage: 'authentication failed',
+        session: false
     }),
     async (req: express.Request, res: express.Response) => {
     try {
@@ -45,7 +46,11 @@ loginRouter.post('/signin',
             return;
         } 
             
-        res.status(200).send(signinResp).end();
+        //res.status(200).send(signinResp).end();
+        res.status(200).send({
+            email: signinResp.email,
+            token: req.authInfo as Express.AuthInfo
+        }).end();
     } catch (err) {
         logger.error('/signin error: ', err);
         res.status(500).send('server error').end();

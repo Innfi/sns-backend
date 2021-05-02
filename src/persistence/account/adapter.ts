@@ -14,7 +14,8 @@ export class AccountAdapter {
 
     protected collectionName: string = 'account';
     protected accountModel: mongoose.Model<IUserAccountDoc>;
-    protected projection: string = '_id userId nickname password email created loggedIn';
+    //protected projection: string = '_id userId nickname password email created loggedIn';
+    protected projection: string = 'email password';
 
 
     constructor(address: string) {
@@ -37,7 +38,7 @@ export class AccountAdapter {
     async loadUserAccount(input: UserAccountInput, projection: string = this.projection):
         Promise<IUserAccount | null> {
         return await this.accountModel.findOne({
-            email: input.email, password: input.password
+            email: input.email
         }, projection).lean();
     }
 

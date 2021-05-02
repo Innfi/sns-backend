@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import logger from '../../common/logger';
 import { AccountAdapter } from './adapter';
 import { MockAccountAdapter } from './mockAdapter';
@@ -20,7 +21,10 @@ export class AccountRepository {
 
     async createUserAccount(input: UserAccountInput): Promise<IUserAccount | null> {
         try {
-            return await this.accountAdapter.createUserAccount(input);
+            return await this.accountAdapter.createUserAccount({
+                email: input.email,
+                password: await bcrypt.hash(input.password, 10)
+            });
         } catch (err: any) {
             logger.error(input.email + '] createUserAccount: ' +  err);
             return null;
