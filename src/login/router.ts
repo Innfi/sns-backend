@@ -2,8 +2,8 @@ import express from 'express';
 import passport from 'passport';
 
 import logger from '../common/logger';
-import { IUserAccount } from '../persistence/account/model';
-import { accRepo } from '../persistence/account/repository';
+import { IUserAccount } from './model';
+import { accRepo } from './repository';
 
 
 const loginRouter = express.Router();
@@ -32,13 +32,12 @@ loginRouter.post('/signin',
     }),
     async (req: express.Request, res: express.Response) => {
     try {
-        logger.info('/signin: ', JSON.stringify(req.body));
-
         const token: Express.AuthInfo | undefined = req.authInfo;
         if(token === undefined) {
             res.status(400).send('invalid token').end();
         }
-        //TODO: login response
+
+        logger.info(`token: ${token}`);
 
         const signinResp: IUserAccount | null = await accRepo.loadUserAccount(req.body);
         if(signinResp === null) { //FIXME
@@ -46,7 +45,6 @@ loginRouter.post('/signin',
             return;
         } 
             
-        //res.status(200).send(signinResp).end();
         res.status(200).send({
             email: signinResp.email,
             token: req.authInfo as Express.AuthInfo

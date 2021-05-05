@@ -1,8 +1,8 @@
 import assert from 'assert';
-import { IUserAccount, UserAccountInput } from '../src/persistence/account/model';
-import { AccountAdapter } from '../src/persistence/account/adapter';
-import { MockAccountAdapter } from '../src/persistence/account/mockAdapter';
-import { AccountRepository } from '../src/persistence/account/repository';
+import { IUserAccount, UserAccountInput } from '../src/login/model';
+import { AccountAdapter } from '../src/login/adapter';
+import { MockAccountAdapter } from '../src/login/mockAdapter';
+import { AccountRepository } from '../src/login/repository';
 
 
 describe('MockAccountAdapter', () => {

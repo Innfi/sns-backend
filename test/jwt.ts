@@ -7,7 +7,7 @@ describe('jwt', () => {
 
     it('current: valid token ', () => {
         let token = jwt.sign(
-            {email: 'innfi@test.com' },
+            { email: 'innfi@test.com' },
             jwtObject['secret'], 
             { expiresIn: '10m'});
 
@@ -20,7 +20,7 @@ describe('jwt', () => {
 
     it('current: expired token', () => {
         let token = jwt.sign(
-            {email: 'innfi@test.com', iat: Math.floor(Date.now() / 1000) - 5000 },
+            { email: 'innfi@test.com', iat: Math.floor(Date.now() / 1000) - 5000 },
             jwtObject['secret'], 
             { expiresIn: '2s'});
             

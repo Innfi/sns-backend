@@ -1,10 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import passport from 'passport';
-
 import { passportInit } from './login/auth';
 import loginRouter from './login/router';
-//import timelineRouter from './timeline/router';
 
 
 const app = express();
@@ -15,7 +13,6 @@ app.use(passport.initialize());
 passportInit();
 
 app.use('/login', loginRouter);
-//app.use('/timeline', timelineRouter);
 
 app.get('/', (req: express.Request, res: express.Response) => {
     res.send('root page');

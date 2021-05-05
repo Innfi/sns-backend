@@ -1,11 +1,10 @@
-//import { NextFunction } from 'express';
 import passport from 'passport';
 import passportLocal from 'passport-local';
 import passportJwt from 'passport-jwt';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { IUserAccount } from '../persistence/account/model';
-import { accRepo } from '../persistence/account/repository';
+import { IUserAccount } from './model';
+import { accRepo } from './repository';
 
 
 interface JwtData {
@@ -30,7 +29,7 @@ const verifyLocal = async (email: string, password: string, done: Function): Pro
     .then((user: IUserAccount | null) => {
         if(user === null) return done(null, false, { msg: 'user not found' });
 
-        if(!bcrypt.compare(password, user.password)) return done(null, false, { msg: 'invalid password' });
+        if(!bcrypt.compare(password, user.password as string)) return done(null, false, { msg: 'invalid password' });
 
         const token: string = jwt.sign({
             email: user.email,
