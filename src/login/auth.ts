@@ -47,8 +47,6 @@ const jwtStrategyOptions: passportJwt.StrategyOptions = {
 };
 
 const verifyJwt = async (jwtData: JwtData, done: Function): Promise<void> => {
-    console.log('verifyJwt');
-
     if(jwtData === null) return done(null, false, { msg: 'empty auth data'});
     if(jwtData === undefined) return done(null, false, { msg: 'empty auth data'});
 

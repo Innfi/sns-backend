@@ -37,8 +37,6 @@ loginRouter.post('/signin',
             res.status(400).send('invalid token').end();
         }
 
-        logger.info(`token: ${token}`);
-
         const signinResp: IUserAccount | null = await accRepo.loadUserAccount(req.body);
         if(signinResp === null) { //FIXME
             res.status(500).send('server error').end();
