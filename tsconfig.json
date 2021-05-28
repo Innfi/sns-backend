@@ -8,6 +8,8 @@
     "strictNullChecks": true,
     "sourceMap": true,
     "typeRoots": ["node_modules/@types"],
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
 }
