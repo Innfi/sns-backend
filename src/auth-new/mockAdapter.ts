@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Service } from 'typedi';
-import { UserAdapterBase } from './adapterBase';
+import { AccountAdapterBase } from './adapterBase';
 import { IUserAccount, UserAccountInput } from './model';
 
 
@@ -9,7 +9,7 @@ interface AccountDict {
 };
 
 @Service()
-export class MockUserAdapter implements UserAdapterBase {
+export class MockAccountAdapter implements AccountAdapterBase {
     protected accountDict: AccountDict = {};
     protected mockConnected:boolean = false;
 

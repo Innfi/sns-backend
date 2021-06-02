@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { IUserAccount, UserAccountInput } from './model';
 
 
-export interface UserAdapterBase {
+export interface AccountAdapterBase {
     connectToCollection(): Promise<void>;
     connected(): boolean;
     loadUserAccount(input: UserAccountInput, projection: string): 
