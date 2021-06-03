@@ -1,23 +1,24 @@
 import assert from 'assert';
-import { IUserAccount, UserAccountInput } from '../src/login/model';
-import { AccountAdapter } from '../src/login/adapter';
-import { MockAccountAdapter } from '../src/login/mockAdapter';
-import { AccountRepository } from '../src/login/repository';
+import { Container } from 'typedi';
+import { IUserAccount, UserAccountInput } from '../src/auth/model';
+import { MockAccountAdapter } from '../src/auth/mockAdapter';
+import { AccountAdapterBase } from '../src/auth/adapterBase';
+import { AccountAdapter } from '../src/auth/adapter';
+import { AccountRepository } from '../src/auth/repository';
 
 
 describe('MockAccountAdapter', () => {
-    const adapter: AccountAdapter = new MockAccountAdapter();
+    const adapter: AccountAdapterBase = Container.get(MockAccountAdapter);
     const input: UserAccountInput = {
-        userId: 'test',
+        userId: 'test', 
         nickname: 'innfi',
         email: 'innfi@test.com',
-        password: 'plaintextpw',
+        password: 'plaintextpw'
     };
 
-
-    it('connectToCollection', () => {
+    it('connectToCollection', async () => {
         assert.strictEqual(adapter.connected(), false);
-        adapter.connectToCollection();
+        await adapter.connectToCollection();
         assert.strictEqual(adapter.connected(), true);
     });
 
@@ -31,12 +32,13 @@ describe('MockAccountAdapter', () => {
         assert.strictEqual(loadResult?.email, input.email);
     });
 
-    it('delete element if exist', async () => {
+    it('delete element if exist', async() => {
         const loadResult: IUserAccount = 
             await adapter.loadUserAccount(input) as IUserAccount;
         assert.strictEqual(loadResult !== null, true);
 
-        const deleteResult: number = await adapter.deleteUserAccount(input);
+        const deleteResult: number = 
+            await adapter.deleteUserAccount(input);
         assert.strictEqual(deleteResult, 1);
 
         const emptyResult: IUserAccount = 
@@ -46,8 +48,7 @@ describe('MockAccountAdapter', () => {
 });
 
 describe('AccountAdapter', () => {
-    //const adapter: AccountAdapter = new AccountAdapter('mongodb://localhost/users');
-    const adapter: AccountAdapter = new MockAccountAdapter();
+    const adapter: AccountAdapterBase = Container.get(AccountAdapter);
 
     before(async () => {
         await adapter.connectToCollection();
@@ -99,13 +100,12 @@ describe('AccountAdapter', () => {
 });
 
 describe('AccountRepository', () => {
-    it('plain constructor', () => {
-        const instance: AccountRepository = new AccountRepository();
+    it('instantiate via Container', () => {
+        const repo: AccountRepository = Container.get(AccountRepository);
     });
 
     it('calls adapter methods', async () => {
-        const instance: AccountRepository = new AccountRepository();
-        instance.accountAdapter = new MockAccountAdapter();
+        const repo: AccountRepository = Container.get(AccountRepository);
 
         const input: UserAccountInput = {
             userId: 'innfi#1234', 
@@ -114,10 +114,10 @@ describe('AccountRepository', () => {
             password: 'testPassword'
         };
 
-        const empty: IUserAccount | null = await instance.loadUserAccount(input);
+        const empty: IUserAccount | null = await repo.loadUserAccount(input);
         assert.strictEqual(empty === null, true);
 
-        const createResult: IUserAccount | null = await instance.createUserAccount(input);
+        const createResult: IUserAccount | null = await repo.createUserAccount(input);
         assert.strictEqual(createResult !== null, true);
         assert.strictEqual((createResult as IUserAccount).email, input.email);
     });
