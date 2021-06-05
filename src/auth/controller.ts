@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Service } from 'typedi';
 import { JsonController, Req, Res, Body, Post } from 'routing-controllers';
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import logger from '../common/logger';
 import { AccountRepository } from './repository';
 import { IUserAccount, UserAccountInput } from './model';
@@ -52,5 +52,9 @@ export class AuthController {
             logger.error('/signin error: ', err);
             res.status(500).send('server error').end();
         }
+    }
+
+    async verifyLocal(request: Request, respose: Response, next: NextFunction): Promise<void> {
+        
     }
 }

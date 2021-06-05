@@ -47,57 +47,49 @@ describe('MockAccountAdapter', () => {
     });
 });
 
-describe('AccountAdapter', () => {
-    const adapter: AccountAdapterBase = Container.get(AccountAdapter);
-
-    before(async () => {
-        await adapter.connectToCollection();
-    });
-
-    after(() => {
-
-    });
-
-    const cleanup = (input: IUserAccount) => {
-
-    };
-
-    it('connectToCollection', async () => {
-        assert.strictEqual(adapter.connected(), true);
-    });
-
-    it('load not created user', async () => {
-        const emptyResult: IUserAccount | null = await adapter.loadUserAccount({
-            email: 'invalid@test.com',
-            password: ''
-        });
-
-        assert.strictEqual(emptyResult === null, true);
-    });
-
-    it('create / delete user', async () => {
-        const input: IUserAccount = {
-            userId: 'innfi#1234',
-            nickname: 'innfi',
-            email: 'innfi@test.com', 
-            password: 'plaintextpw',
-            created: new Date(),
-        };
-
-        const createResult: IUserAccount | null = await adapter.createUserAccount(input);
-
-        assert.strictEqual(createResult !== null, true);
-
-        assert.strictEqual(createResult?.userId, input.userId);
-        assert.strictEqual(createResult?.nickname, input.nickname);
-
-        const deleteResult: number = await adapter.deleteUserAccount(input);
-        assert.strictEqual(deleteResult, 1);
-
-        const emptyResult: IUserAccount | null = await adapter.loadUserAccount(input);
-        assert.strictEqual(emptyResult === null, true);
-    });
-});
+//describe('AccountAdapter', () => {
+//    const adapter: AccountAdapterBase = Container.get(AccountAdapter);
+//
+//    before(async () => {
+//        await adapter.connectToCollection();
+//    });
+//
+//    it('connectToCollection', async () => {
+//        assert.strictEqual(adapter.connected(), true);
+//    });
+//
+//    it('load not created user', async () => {
+//        const emptyResult: IUserAccount | null = await adapter.loadUserAccount({
+//            email: 'invalid@test.com',
+//            password: ''
+//        });
+//
+//        assert.strictEqual(emptyResult === null, true);
+//    });
+//
+//    it('create / delete user', async () => {
+//        const input: IUserAccount = {
+//            userId: 'innfi#1234',
+//            nickname: 'innfi',
+//            email: 'innfi@test.com', 
+//            password: 'plaintextpw',
+//            created: new Date(),
+//        };
+//
+//        const createResult: IUserAccount | null = await adapter.createUserAccount(input);
+//
+//        assert.strictEqual(createResult !== null, true);
+//
+//        assert.strictEqual(createResult?.userId, input.userId);
+//        assert.strictEqual(createResult?.nickname, input.nickname);
+//
+//        const deleteResult: number = await adapter.deleteUserAccount(input);
+//        assert.strictEqual(deleteResult, 1);
+//
+//        const emptyResult: IUserAccount | null = await adapter.loadUserAccount(input);
+//        assert.strictEqual(emptyResult === null, true);
+//    });
+//});
 
 describe('AccountRepository', () => {
     it('instantiate via Container', () => {
