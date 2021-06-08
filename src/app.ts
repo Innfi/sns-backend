@@ -1,21 +1,19 @@
-import express from 'express';
 import { createExpressServer } from 'routing-controllers';
 import cors from 'cors';
-import passport from 'passport';
 import { AuthController } from './auth/controller';
+import { CommonController } from './commonController';
 
 
 export class SnsApp {
     protected app: any;
-    
 
     constructor() {
         this.app = createExpressServer({
             controllers: [ 
+                CommonController,
                 AuthController,
-                //add controllers
             ],
-            cors: cors(),
+            //cors: cors(),
         });
     }
 
