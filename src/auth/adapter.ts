@@ -1,7 +1,8 @@
 import 'reflect-metadata';
 import { Service } from 'typedi';
 import mongoose from 'mongoose';
-import { Config } from '../common/config';
+import { CommonConfig } from '../common/config';
+import { LoggerBase } from '../common/logger';
 import { AccountAdapterBase } from './adapterBase';
 import { IUserAccount, UserAccountInput, IUserAccountDoc, UserAccountSchema } from './model';
 
@@ -21,9 +22,9 @@ export class AccountAdapter implements AccountAdapterBase {
     //protected projection: string = 'email password';
 
 
-    constructor(protected config: Config) {
+    constructor(protected config: CommonConfig, protected logger: LoggerBase) {
         this.address = config.dbUrl;
-        //logger.info('AccountAdapter: ' + this.address);
+        this.logger.info('AccountAdapter: ' + this.address);
     }
 
     async connectToCollection(): Promise<void> {
