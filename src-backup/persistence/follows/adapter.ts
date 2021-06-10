@@ -1,6 +1,6 @@
 import mongoose  from 'mongoose';
 
-import logger from '../../common/logger';
+//import logger from '../../common/logger';
 import { LoadFollowOptions, IFollowsDoc, FollowsSchema, RelateResult, FollowsInput } 
     from './model';
 
@@ -19,7 +19,7 @@ export class FollowsAdapter {
 
     constructor(address: string) {
         this.address = address;
-        logger.info('FollowsAdapter: ' + this.address);
+        //logger.info('FollowsAdapter: ' + this.address);
     }
 
     async connectToCollection(): Promise<void> {

@@ -1,4 +1,4 @@
-import logger from '../../common/logger';
+//import logger from '../../common/logger';
 import { FollowsAdapter } from './adapter';
 import { MockFollowsAdapter } from './mockAdapter';
 import { IFollows, LoadFollowOptions, RelateResult } from './model';
@@ -28,7 +28,7 @@ export class FollowsRepository {
 
             return response;
         } catch(err: any) {
-            logger.error(`loadFollowersData] ${err}`);
+            //logger.error(`loadFollowersData] ${err}`);
             return null;
         }
     }
@@ -51,7 +51,7 @@ export class FollowsRepository {
 
             return response;
         } catch (err: any) {
-            logger.error(`loadFollowsData] ${err}`);
+            //logger.error(`loadFollowsData] ${err}`);
             return null;
         }
     }
@@ -60,7 +60,7 @@ export class FollowsRepository {
         try {
             return await this.followsAdapter.relate(followId, followerId);
         } catch (err: any) {
-            logger.error(`relate] ${err}`);
+            //logger.error(`relate] ${err}`);
             return null;
         }
     }

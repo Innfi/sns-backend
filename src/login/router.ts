@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 
-import logger from '../common/logger';
+//import logger from '../common/logger';
 import { IUserAccount } from './model';
 import { accRepo } from './repository';
 
@@ -10,7 +10,7 @@ const loginRouter = express.Router();
 
 loginRouter.post('/signup', async (req: express.Request, res: express.Response) => {
     try {
-        logger.info('/signup: ' + JSON.stringify(req.body));
+        //logger.info('/signup: ' + JSON.stringify(req.body));
 
         const signupResp: IUserAccount | null = await accRepo.createUserAccount(req.body);
         if(signupResp === null) { //FIXME
@@ -20,7 +20,7 @@ loginRouter.post('/signup', async (req: express.Request, res: express.Response) 
             res.status(200).send(signupResp).end();
         }
     } catch(err) {
-        logger.error('/signup error: ' + err);
+        //logger.error('/signup error: ' + err);
         res.status(500).send('server error').end();
     }
 });
@@ -48,7 +48,7 @@ loginRouter.post('/signin',
             token: req.authInfo as Express.AuthInfo
         }).end();
     } catch (err) {
-        logger.error('/signin error: ', err);
+        //logger.error('/signin error: ', err);
         res.status(500).send('server error').end();
     }
 });

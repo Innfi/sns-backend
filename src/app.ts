@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { Container } from 'typedi';
 import { createExpressServer } from 'routing-controllers';
 import cors from 'cors';
+
 import { PassportInitializer } from './auth/passport';
 import { AuthController } from './auth/controller';
 import { CommonController } from './commonController';

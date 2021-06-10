@@ -1,7 +1,7 @@
 import mongoose, { PaginateModel, PaginateOptions, FilterQuery } from 'mongoose';
 import { v4 } from 'uuid';
 
-import logger from '../../common/logger';
+//import logger from '../../common/logger';
 import { IUserTimeline, IUserTimelineDoc, UserTimelineInput, 
     UserTimelineSchema, UserTimelinePaginateSchema, LoadTimelineOptions } from './model';
 
@@ -26,7 +26,7 @@ export class TimelineAdapter {
 
     constructor(address: string) { 
         this.address = address;
-        logger.info('TimelineAdapter: ', this.address);
+        //logger.info('TimelineAdapter: ', this.address);
     }
 
     async connectToCollection(): Promise<void> {
@@ -56,7 +56,7 @@ export class TimelineAdapter {
         };
 
         const result:IUserTimeline = await this.tmPaginate.create(newTimeline);
-        logger.info('result: ' + result);
+        //logger.info('result: ' + result);
 
         return newTimeline;
     }

@@ -1,4 +1,4 @@
-import logger from '../../common/logger';
+//import logger from '../../common/logger';
 import { IFollows, RelateResult, LoadFollowOptions } from './model';
 import { FollowsAdapter } from './adapter';
 

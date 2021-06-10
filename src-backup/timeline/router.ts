@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 
-import logger from '../common/logger';
+//import logger from '../common/logger';
 import { IUserTimeline } from '../persistence/timeline/model';
 import { tmRepo } from '../persistence/timeline/repository';
 
@@ -19,7 +19,7 @@ timelineRouter.get('/:userId',
         const page: string = req.query.page as string;
         const limit: string = req.query.limit as string;
 
-        logger.info(`userId: ${userId}, page: ${page}, limit: ${limit}`);
+        //logger.info(`userId: ${userId}, page: ${page}, limit: ${limit}`);
 
         tmRepo.loadUserTimeline(userId, 
             { page: Number.parseInt(page), limit: Number.parseInt(limit)})
@@ -29,7 +29,7 @@ timelineRouter.get('/:userId',
             res.status(200).send({ error: 'ok', timeline: value}).end();
         });
     } catch (err: any) {
-        logger.error('/timeline get error: ' + err);
+        //logger.error('/timeline get error: ' + err);
         res.status(500).send('server error').end();
     }
 });
@@ -41,7 +41,7 @@ timelineRouter.post('/:userId',
     }),
     async (req: express.Request, res: express.Response) => {
     try {
-        logger.info('/timeline post: ' + JSON.stringify(req.body));
+        //logger.info('/timeline post: ' + JSON.stringify(req.body));
         const userId: string = req.params.userId;
         const text: string = req.query.text as string;
 
@@ -52,7 +52,7 @@ timelineRouter.post('/:userId',
             res.status(200).send({ error: 'ok', newTimeline: value}).end();
         });
     } catch (err: any) {
-        logger.error('/timeline post error: ' + err);
+        //logger.error('/timeline post error: ' + err);
         res.status(500).send('server error').end();
     }
 });

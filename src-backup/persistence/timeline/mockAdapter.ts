@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import logger from '../../common/logger';
+//import logger from '../../common/logger';
 import { TimelineAdapter } from './adapter';
 import { IUserTimeline, UserTimelineInput } from './model';
 
@@ -14,7 +14,7 @@ export class MockTimelineAdapter extends TimelineAdapter {
     }
 
     async connectToCollection(): Promise<void> {
-        logger.info('MockTimelineAdapter: connectToCollection');
+        //logger.info('MockTimelineAdapter: connectToCollection');
         this.isConnected = true;
     }
 
@@ -36,7 +36,7 @@ export class MockTimelineAdapter extends TimelineAdapter {
         }
 
         this.userTimelineMap[userId].push(response);
-        logger.info('textId: ' + response.textId);
+        //logger.info('textId: ' + response.textId);
 
         return response;
     }

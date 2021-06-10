@@ -2,13 +2,15 @@ import 'reflect-metadata';
 import { Service } from 'typedi';
 import { Get, JsonController, Req, Res } from 'routing-controllers';
 import { Request, Response } from 'express';
-import logger from './common/logger';
+import { LoggerBase } from './common/logger';
 
 
 //dummy service until whole routing is fixed
 @Service() 
 @JsonController()
 export class CommonController {
+    constructor(protected logger: LoggerBase) {}
+
     @Get('/')
     getRoot(@Req() req: Request, @Res() res: Response): any {
         try {
@@ -20,7 +22,7 @@ export class CommonController {
             });
 
         } catch (err: any) {
-            logger.error(`error: ${err}`);
+            this.logger.error(`error: ${err}`);
             return res
             .status(500);
         }

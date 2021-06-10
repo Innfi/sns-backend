@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-import logger from '../../common/logger';
+//import logger from '../../common/logger';
 import { IUserAccount, IUserAccountDoc, UserAccountSchema, UserAccountInput, UserProfilePayload } from './model';
 
 
@@ -20,7 +20,7 @@ export class AccountAdapter {
 
     constructor(address: string) {
         this.address = address;
-        logger.info('AccountAdapter: ' + this.address);
+        //logger.info('AccountAdapter: ' + this.address);
     }
 
     async connectToCollection(): Promise<void> {

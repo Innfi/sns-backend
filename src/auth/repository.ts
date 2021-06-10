@@ -1,6 +1,8 @@
 import 'reflect-metadata';
 import { Container, Service } from 'typedi';
 import bcrypt from 'bcrypt';
+
+import { LoggerBase } from '../common/logger';
 import { AccountAdapterBase } from './adapterBase';
 import { AccountAdapter } from './adapter';
 import { MockAccountAdapter } from './mockAdapter';
@@ -10,11 +12,15 @@ import { IUserAccount, UserAccountInput, UserProfilePayload } from './model';
 @Service()
 export class AccountRepositoryFactory {
     createRepository(): AccountRepository {
-        return new AccountRepository(Container.get(AccountAdapter));
+        return new AccountRepository(
+            Container.get(AccountAdapter),
+            Container.get(LoggerBase));
     }
 
     createMockRepository(): AccountRepository {
-        return new AccountRepository(Container.get(MockAccountAdapter));
+        return new AccountRepository(
+            Container.get(MockAccountAdapter),
+            Container.get(LoggerBase));
     }
 }
 
@@ -22,13 +28,14 @@ export class AccountRepositoryFactory {
 export class AccountRepository {
     protected projection: string = 'email password';
 
-    constructor(protected accountAdapter: AccountAdapterBase) {}
+    constructor(protected accountAdapter: AccountAdapterBase, 
+        protected logger: LoggerBase) {}
 
     async loadUserAccount(input: UserAccountInput): Promise<IUserAccount | null> {
         try {
             return await this.accountAdapter.loadUserAccount(input, this.projection);
         } catch (err: any) {
-            //logger.error(input.email + '] loadUserAccount: ' +  err);
+            this.logger.error(input.email + '] loadUserAccount: ' +  err);
             return null;
         }
     }
@@ -40,7 +47,7 @@ export class AccountRepository {
                 password: await bcrypt.hash(input.password, 10)
             });
         } catch (err: any) {
-            //logger.error(input.email + '] createUserAccount: ' +  err);
+            this.logger.error(input.email + '] createUserAccount: ' +  err);
             return null;
         }
     }

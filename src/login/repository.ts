@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import logger from '../common/logger';
+//import logger from '../common/logger';
 import { AccountAdapter } from './adapter';
 import { MockAccountAdapter } from './mockAdapter';
 import { IUserAccount, UserAccountInput, UserProfilePayload } from './model';
@@ -14,7 +14,7 @@ export class AccountRepository {
         try {
             return await this.accountAdapter.loadUserAccount(input);
         } catch (err: any) {
-            logger.error(input.email + '] loadUserAccount: ' +  err);
+            //logger.error(input.email + '] loadUserAccount: ' +  err);
             return null;
         }
     }
@@ -26,7 +26,7 @@ export class AccountRepository {
                 password: await bcrypt.hash(input.password, 10)
             });
         } catch (err: any) {
-            logger.error(input.email + '] createUserAccount: ' +  err);
+            //logger.error(input.email + '] createUserAccount: ' +  err);
             return null;
         }
     }
@@ -37,7 +37,7 @@ export class AccountRepository {
 
             return await this.accountAdapter.loadUserProfile(userId);
         } catch (err: any) {
-            logger.error(`${userId}] loadUserProfile: + ${err}`);
+            //logger.error(`${userId}] loadUserProfile: + ${err}`);
             return null;
         }
     }
