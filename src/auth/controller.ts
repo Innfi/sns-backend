@@ -1,13 +1,15 @@
 import 'reflect-metadata';
-import { Service } from 'typedi';
-import { JsonController, Req, Res, Body, Post, UseBefore } from 'routing-controllers';
-import { Request, Response, NextFunction } from 'express';
+import { Container, Service } from 'typedi';
+import { useContainer, JsonController, Req, Res, Body, Post, UseBefore } from 'routing-controllers';
+import { Request, Response } from 'express';
 import passport from 'passport';
 
 import { LoggerBase } from '../common/logger';
 import { AccountRepository } from './repository';
 import { IUserAccount, UserAccountInput } from './model';
 
+
+useContainer(Container);
 
 @Service()
 @JsonController() 
@@ -17,18 +19,17 @@ export class AuthController {
     @Post('/signup') 
     async signUp(@Req() req: Request, @Res() res: Response, @Body() userData: UserAccountInput) {
         try {
-            this.logger.info('/signup: ' + JSON.stringify(userData));
+          this.logger.info('/signup: ' + JSON.stringify(userData));
 
-            const signupResp: IUserAccount | null = await this.accRepo.createUserAccount(userData);
-            if(signupResp === null) { //FIXME
-                res.status(500).send('server error').end();
-                return;
-            } else {
-                res.status(200).send(signupResp).end();
-            }
+          const signupResp: IUserAccount | null = await this.accRepo.createUserAccount(userData);
+          if(signupResp === null) { //FIXME
+              return res.status(500).send('server error');
+          } else {
+              return res.status(200).send(signupResp);
+          }
         } catch(err) {
             this.logger.error(`/signup error: ${err}`);
-            res.status(500).send('server error').end();
+            return res.status(500).send('server error');
         }
     }
 

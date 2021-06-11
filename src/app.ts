@@ -6,10 +6,12 @@ import cors from 'cors';
 import { PassportInitializer } from './auth/passport';
 import { AuthController } from './auth/controller';
 import { CommonController } from './commonController';
+import { LoggerBase } from './common/logger';
 
 
 export class SnsApp {
     protected app: any;
+    protected logger: LoggerBase;
 
     constructor() {
         this.init();
@@ -25,7 +27,8 @@ export class SnsApp {
 
     protected init() {
         const initializer = Container.get(PassportInitializer);
-        initializer.init();
+
+        this.logger = Container.get(LoggerBase);
     }
 
     public start() {

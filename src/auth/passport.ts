@@ -16,8 +16,9 @@ export class PassportInitializer {
         this.init();
     }
 
-    public init(): void {
+    protected init(): void {
         let LocalStrategy = passportLocal.Strategy;
+        console.log('PassportInitializer.init] start');
 
         passport.use(
             new LocalStrategy({
@@ -44,5 +45,7 @@ export class PassportInitializer {
                 .catch((err: any) => done(err));
             })
         );
+
+        console.log('PassportInitializer.init] end');
     }
 }

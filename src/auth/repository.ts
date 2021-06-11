@@ -31,7 +31,7 @@ export class AccountRepository {
     constructor(protected accountAdapter: AccountAdapterBase, 
         protected logger: LoggerBase) {}
 
-    async loadUserAccount(input: UserAccountInput): Promise<IUserAccount | null> {
+    public async loadUserAccount(input: UserAccountInput): Promise<IUserAccount | null> {
         try {
             return await this.accountAdapter.loadUserAccount(input, this.projection);
         } catch (err: any) {
@@ -40,7 +40,7 @@ export class AccountRepository {
         }
     }
 
-    async createUserAccount(input: UserAccountInput): Promise<IUserAccount | null> {
+    public async createUserAccount(input: UserAccountInput): Promise<IUserAccount | null> {
         try {
             return await this.accountAdapter.createUserAccount({
                 email: input.email,

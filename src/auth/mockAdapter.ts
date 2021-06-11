@@ -21,14 +21,14 @@ export class MockAccountAdapter implements AccountAdapterBase {
 
     connected(): boolean { return this.mockConnected; }
 
-    async loadUserAccount(input: UserAccountInput): Promise<IUserAccount | null> {
+    public async loadUserAccount(input: UserAccountInput): Promise<IUserAccount | null> {
         const result = this.accountDict[input.email];
         if(result === undefined) return null;
 
         return result;
     }
 
-    async createUserAccount(input: UserAccountInput): Promise<IUserAccount> {
+    public async createUserAccount(input: UserAccountInput): Promise<IUserAccount> {
         const acc = await this.loadUserAccount(input);
         if(acc !== null) return acc;
 
