@@ -7,6 +7,7 @@ import passport from 'passport';
 import { LoggerBase } from '../common/logger';
 import { AccountRepository } from './repository';
 import { IUserAccount, UserAccountInput } from './model';
+import { AuthLocalMiddleware } from './middleware';
 
 
 useContainer(Container);
@@ -34,7 +35,7 @@ export class AuthController {
     }
 
     @Post('/signin')  //TODO: apply password authentication / jwt sign
-    @UseBefore(passport.authenticate('local'))
+    @UseBefore(AuthLocalMiddleware)
     async signIn(@Req() req: Request, @Res() res: Response, @Body() userData: UserAccountInput) {
         try {
             const token: Express.AuthInfo | undefined = req.authInfo;
