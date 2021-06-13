@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "startdev": "nodemon --watch src --delay 1 --exec ts-node src/index.ts",
+    "startdev": "set DEBUG=express:* & nodemon --watch src --delay 1 --exec ts-node src/index.ts",
     "start": "nodemon --watch dist --delay 1 dist/src/index.js",
     "test": "mocha -r ts-node/register test/**/*.ts --exit",
     "build": "tsc --build",

@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import { Container, Service } from 'typedi';
-import { useContainer, JsonController, Req, Res, Body, Post, UseBefore } from 'routing-controllers';
+import { useContainer, JsonController, Req, Res, Body, Post, UseBefore,
+    ExpressMiddlewareInterface } from 'routing-controllers';
 import { Request, Response } from 'express';
-import passport from 'passport';
 
 import { LoggerBase } from '../common/logger';
 import { AccountRepository } from './repository';
@@ -11,6 +11,15 @@ import { AuthLocalMiddleware } from './middleware';
 
 
 useContainer(Container);
+
+@Service()
+class TestMiddleware implements ExpressMiddlewareInterface {
+    use (req: any, res: any, next: (err?: any) => any): any {
+        console.log(`test] body: ${req.body}`);
+
+        next();
+    }
+}
 
 @Service()
 @JsonController() 
@@ -34,28 +43,33 @@ export class AuthController {
         }
     }
 
-    @Post('/signin')  //TODO: apply password authentication / jwt sign
+    @Post('/signin')  
+    //@UseBefore(TestMiddleware)
     @UseBefore(AuthLocalMiddleware)
     async signIn(@Req() req: Request, @Res() res: Response, @Body() userData: UserAccountInput) {
         try {
-            const token: Express.AuthInfo | undefined = req.authInfo;
-            if(token === undefined) {
-                res.status(400).send('invalid token').end();
-            }
+            console.log(`/signin] body: ${JSON.stringify(req.body)}`);
 
-            const signinResp: IUserAccount | null = await this.accRepo.loadUserAccount(req.body);
-            if(signinResp === null) { //FIXME
-                res.status(500).send('server error').end();
-                return;
-            } 
+            return res.status(200).send({
+                msg: 'dummy success'
+            });
+            //const token: Express.AuthInfo | undefined = req.authInfo;
+            //if(token === undefined) {
+            //    return res.status(400).send('invalid token');
+            //}
+
+            //const signinResp: IUserAccount | null = await this.accRepo.loadUserAccount(req.body);
+            //if(signinResp === null) { //FIXME
+            //    res.status(500).send('server error').end();
+            //    return;
+            //} 
                 
-            res.status(200).send({
-                email: signinResp.email,
-                token: req.authInfo as Express.AuthInfo
-            }).end();
+            //return res.status(200).send({
+            //    token: req.authInfo as Express.AuthInfo
+            //});
         } catch (err) {
             this.logger.error(`/signin error: ${err}`);
-            res.status(500).send('server error').end();
+            return res.status(500).send('server error');
         }
     }
 }
