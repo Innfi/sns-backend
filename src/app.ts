@@ -1,15 +1,11 @@
 import 'reflect-metadata';
 import { Container } from 'typedi';
 import { createExpressServer } from 'routing-controllers';
-import cors from 'cors';
 import express from 'express';
 
-import { PassportInitializer } from './auth/passport';
 import { AuthController } from './auth/controller';
 import { CommonController } from './commonController';
 import { LoggerBase } from './common/logger';
-import passport from 'passport';
-import { AuthLocalMiddleware } from './auth/middleware';
 
 
 export class SnsApp {
@@ -24,19 +20,11 @@ export class SnsApp {
                 CommonController,
                 AuthController,
             ],
-            middlewares: [
-                AuthLocalMiddleware
-            ]
-            //cors: cors(),
         });
         this.app.use(express.json());
-        //this.app.use(passport.initialize());
     }
 
     protected init() {
-        //const initializer = Container.get(PassportInitializer);
-        //Container.get(AuthLocalMiddleware);
-
         this.logger = Container.get(LoggerBase);
     }
 
