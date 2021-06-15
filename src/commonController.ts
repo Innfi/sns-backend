@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Service } from 'typedi';
-import { Get, JsonController, Req, Res } from 'routing-controllers';
-import { Request, Response } from 'express';
+import { Authorized, Get, JsonController, Req, Res } from 'routing-controllers';
+import { Request, response, Response } from 'express';
 import { LoggerBase } from './common/logger';
 
 
@@ -26,5 +26,13 @@ export class CommonController {
             return res
             .status(500);
         }
+    }
+
+    @Get('/hideout')
+    @Authorized()
+    getHideout(@Req() req: Request, @Res() res: Response): any {
+        return res.status(200).send({
+            msg: 'test output for private page'
+        });
     }
 };

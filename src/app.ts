@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Container } from 'typedi';
-import { createExpressServer } from 'routing-controllers';
+import { createExpressServer, Action } from 'routing-controllers';
 import express from 'express';
 
 import { AuthController } from './auth/controller';
@@ -20,6 +20,7 @@ export class SnsApp {
                 CommonController,
                 AuthController,
             ],
+            authorizationChecker: this.authChecker,
         });
         this.app.use(express.json());
     }
@@ -33,5 +34,14 @@ export class SnsApp {
             .listen(process.env.npm_package_config_port, () => {
             console.log(`listening ${process.env.npm_package_config_port}`);
         });
+    }
+
+    public async authChecker(action: Action, roles: any[]): Promise<boolean> {
+        console.log('authChecker] in here');
+
+        const token = action.request.headers['authorization'] as string;
+        console.log(`authChecker] token: ${token}`);
+
+        return true;
     }
 }
