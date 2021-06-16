@@ -1,9 +1,10 @@
 import 'reflect-metadata';
 import { Service } from 'typedi';
-import { Authorized, Get, JsonController, Req, Res } from 'routing-controllers';
+import { Authorized, Get, JsonController, Req, Res, UseBefore } from 'routing-controllers';
 import { Request, response, Response } from 'express';
 import { LoggerBase } from './common/logger';
 
+import passport from 'passport';
 
 //dummy service until whole routing is fixed
 @Service() 
@@ -29,7 +30,8 @@ export class CommonController {
     }
 
     @Get('/hideout')
-    @Authorized()
+    //@Authorized()
+    @UseBefore(passport.authenticate('jwt'))
     getHideout(@Req() req: Request, @Res() res: Response): any {
         return res.status(200).send({
             msg: 'test output for private page'

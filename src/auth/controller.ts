@@ -17,7 +17,10 @@ useContainer(Container);
 export class AuthController {
     protected dummySecret: string = 'changeme';
 
-    constructor(protected accRepo: AccountRepository, protected logger: LoggerBase) {}
+    constructor(
+        protected accRepo: AccountRepository, 
+        protected logger: LoggerBase
+    ) {}
 
     @Post('/signup') 
     async signUp(@Req() req: Request, @Res() res: Response, @Body() userData: UserAccountInput) {
@@ -39,17 +42,15 @@ export class AuthController {
     @Post('/signin')  
     async signIn(@Req() req: Request, @Res() res: Response, @Body() userData: UserAccountInput) {
         try {
-            if(!userData) return res.status(400);
+            if(!userData) return res.status(400).end();
 
-            const email: string = (userData as UserAccountInput).email;
-            const passwordHash: string | undefined = 
-                (userData as UserAccountInput).password;
-            const user = await this.accRepo.loadUserAccount({email});
+            this.logger.info('/signin: ' + JSON.stringify(userData));
+            const user = await this.accRepo.loadUserAccount(userData);
+            if(user === null) return res.status(404).end();
 
-            if(user === null) return res.status(400);
-
-            if(!(await bcrypt.compare(passwordHash, user.password as string))) {
-                return res.status(400);
+            console.log('here');
+            if(!(await bcrypt.compare(userData.password, user.password as string))) {
+                return res.status(404).end();
             }
 
             const token: string = jwt.sign({
@@ -60,7 +61,8 @@ export class AuthController {
             return res.status(200).send({
                 msg: 'success', 
                 jwtToken: token
-            })
+            });
+
         } catch (err) {
             this.logger.error(`/signin error: ${err}`);
             return res.status(500).send('server error');
