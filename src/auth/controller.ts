@@ -2,10 +2,10 @@ import 'reflect-metadata';
 import { Container, Service } from 'typedi';
 import { useContainer, JsonController, Req, Res, Body, Post } from 'routing-controllers';
 import { Request, Response } from 'express';
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import { LoggerBase } from '../common/logger';
+import { PassportInitializer } from './passportInitializer';
 import { AccountRepository } from './repository';
 import { IUserAccount, UserAccountInput } from './model';
 
@@ -15,10 +15,9 @@ useContainer(Container);
 @Service()
 @JsonController() 
 export class AuthController {
-    protected dummySecret: string = 'changeme';
-
     constructor(
         protected accRepo: AccountRepository, 
+        protected passportInitializer: PassportInitializer,
         protected logger: LoggerBase
     ) {}
 
@@ -45,23 +44,20 @@ export class AuthController {
             if(!userData) return res.status(400).end();
 
             this.logger.info('/signin: ' + JSON.stringify(userData));
+
             const user = await this.accRepo.loadUserAccount(userData);
             if(user === null) return res.status(404).end();
-
-            console.log('here');
-            if(!(await bcrypt.compare(userData.password, user.password as string))) {
-                return res.status(404).end();
-            }
+            if(user.password !== userData.password) return res.status(404).end();
 
             const token: string = jwt.sign({
                 email: user.email,
                 password: user.password
-            }, this.dummySecret);
+            }, this.passportInitializer.secret());
 
             return res.status(200).send({
                 msg: 'success', 
                 jwtToken: token
-            });
+            }).end();
 
         } catch (err) {
             this.logger.error(`/signin error: ${err}`);

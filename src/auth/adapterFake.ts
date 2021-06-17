@@ -23,7 +23,6 @@ class DictSingle {
 
 @Service()
 export class MockAccountAdapter implements AccountAdapterBase {
-    //protected accountDict: AccountDict = {};
     protected mockConnected:boolean = false;
 
     constructor() { }

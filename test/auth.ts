@@ -1,9 +1,8 @@
 import assert from 'assert';
 import { Container } from 'typedi';
 import { IUserAccount, UserAccountInput } from '../src/auth/model';
-import { MockAccountAdapter } from '../src/auth/mockAdapter';
+import { MockAccountAdapter } from '../src/auth/adapterFake';
 import { AccountAdapterBase } from '../src/auth/adapterBase';
-import { AccountAdapter } from '../src/auth/adapter';
 import { AccountRepository } from '../src/auth/repository';
 
 

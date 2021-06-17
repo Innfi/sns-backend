@@ -1,10 +1,11 @@
 import 'reflect-metadata';
 import { Service } from 'typedi';
-import { Authorized, Get, JsonController, Req, Res, UseBefore } from 'routing-controllers';
-import { Request, response, Response } from 'express';
+import { Get, JsonController, Req, Res, UseBefore, Body } from 'routing-controllers';
+import { Request, Response } from 'express';
 import { LoggerBase } from './common/logger';
 
 import passport from 'passport';
+import { IUserAccount } from './auth/model';
 
 //dummy service until whole routing is fixed
 @Service() 
@@ -30,11 +31,12 @@ export class CommonController {
     }
 
     @Get('/hideout')
-    //@Authorized()
-    @UseBefore(passport.authenticate('jwt'))
-    getHideout(@Req() req: Request, @Res() res: Response): any {
+    @UseBefore(passport.authenticate('jwt', { session: false }))
+    getHideout(@Req() req: Request, @Res() res: Response, @Body() body: IUserAccount): any {
+        this.logger.info(`user: ${JSON.stringify(req.user)}`);
+
         return res.status(200).send({
             msg: 'test output for private page'
-        });
+        }).end();
     }
 };

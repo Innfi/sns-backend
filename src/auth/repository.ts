@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import { LoggerBase } from '../common/logger';
 import { AccountAdapterBase } from './adapterBase';
 import { AccountAdapter } from './adapter';
-import { MockAccountAdapter } from './mockAdapter';
+import { MockAccountAdapter } from './adapterFake';
 import { IUserAccount, UserAccountInput, UserProfilePayload } from './model';
 
 
