@@ -6,6 +6,7 @@ import { LoggerBase } from './common/logger';
 
 import passport from 'passport';
 import { IUserAccount } from './auth/model';
+import { TestAuthMiddleware } from './auth/middleware';
 
 //dummy service until whole routing is fixed
 @Service() 
@@ -31,7 +32,8 @@ export class CommonController {
     }
 
     @Get('/hideout')
-    @UseBefore(passport.authenticate('jwt', { session: false }))
+    //@UseBefore(passport.authenticate('jwt', { session: false }))
+    @UseBefore(TestAuthMiddleware)
     getHideout(@Req() req: Request, @Res() res: Response, @Body() body: IUserAccount): any {
         this.logger.info(`user: ${JSON.stringify(req.user)}`);
 
