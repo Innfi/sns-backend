@@ -4,7 +4,6 @@ import { Get, JsonController, Req, Res, UseBefore, Body } from 'routing-controll
 import { Request, Response } from 'express';
 import { LoggerBase } from './common/logger';
 
-import passport from 'passport';
 import { IUserAccount } from './auth/model';
 import { TestAuthMiddleware } from './auth/middleware';
 
@@ -32,7 +31,6 @@ export class CommonController {
     }
 
     @Get('/hideout')
-    //@UseBefore(passport.authenticate('jwt', { session: false }))
     @UseBefore(TestAuthMiddleware)
     getHideout(@Req() req: Request, @Res() res: Response, @Body() body: IUserAccount): any {
         this.logger.info(`user: ${JSON.stringify(req.user)}`);

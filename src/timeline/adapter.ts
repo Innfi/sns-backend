@@ -6,10 +6,32 @@ import { IUserTimeline, IUserTimelineDoc, UserTimelineInput,
 import { TimelineAdapterBase } from './adapterBase';
 
 
-//@Service() 
-//export class TimelineAdapter implements TimelineAdapterBase {
-//    constructor(protected )
-//}
+@Service() 
+export class TimelineAdapter implements TimelineAdapterBase {
+    //constructor(protected )
+
+    public async connectToCollection(): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
+
+    public connected(): boolean {
+        throw new Error('Method not implemented.');
+    }
+
+    public async loadUserTimeline(userId: string, options: LoadTimelineOptions): 
+        Promise<IUserTimeline[]> {
+        throw new Error('Method not implemented.');
+    }
+
+    public async writeUserTimeline(userId: string, input: UserTimelineInput): 
+        Promise<IUserTimeline> {
+        throw new Error('Method not implemented.');
+    }
+
+    public async clear(userId: string): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
+}
 
 /*
 import mongoose, { PaginateModel, PaginateOptions, FilterQuery } from 'mongoose';

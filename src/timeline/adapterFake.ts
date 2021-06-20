@@ -6,6 +6,23 @@ import { IUserTimeline, UserTimelineInput, LoadTimelineOptions } from './model';
 import { TimelineAdapterBase } from './adapterBase';
 
 
+interface TimelineDict {
+    [id: string]: IUserTimeline[]
+}
+
+class DictSingle { //FIXME: move helper class to src/common
+    private static instance: DictSingle;
+    private constructor() {}
+
+    public timelineDict: TimelineDict = {};
+
+    public static getInstance(): DictSingle {
+        if(!DictSingle.instance) DictSingle.instance = new DictSingle();
+
+        return DictSingle.instance;
+    }
+}
+
 @Service()
 export class FakeTimelineAdapter implements TimelineAdapterBase {
     protected isConnected: boolean = false;
@@ -13,14 +30,24 @@ export class FakeTimelineAdapter implements TimelineAdapterBase {
     constructor(protected logger: LoggerBase) {}
 
     public async connectToCollection(): Promise<void> {
-
+        this.isConnected = true;
     }
 
     public connected(): boolean { return this.isConnected; }
 
+    public async loadUserTimeline(userId: string, options: LoadTimelineOptions): 
+        Promise<IUserTimeline[]> {
+        
+        if(DictSingle.getInstance().timelineDict[userId] === undefined) {
+            DictSingle.getInstance().timelineDict[userId] = [];
+        }
+
+        return DictSingle.getInstance().timelineDict[userId];
+    }
+
     public async writeUserTimeline(userId: string, input: UserTimelineInput): 
         Promise<IUserTimeline> {
-
+        //TODO: send user timeline to their followers
         
         const response: IUserTimeline = {
             userId: userId,
@@ -30,68 +57,16 @@ export class FakeTimelineAdapter implements TimelineAdapterBase {
             textId: v4()
         };
 
-        return response;
-    }
+        if(DictSingle.getInstance().timelineDict[userId] === undefined) {
+            DictSingle.getInstance().timelineDict[userId] = [];
+        }
 
-    public async getUserTimeline(userId: string, options: LoadTimelineOptions): 
-        Promise<IUserTimeline[]> {
-        
-        return [];
+        DictSingle.getInstance().timelineDict[userId].push(response);
+
+        return response;
     }
 
     public async clear(userId: string): Promise<void> {
-        
+        DictSingle.getInstance().timelineDict[userId] = [];
     }
 }
-
-/*
-import { v4 } from 'uuid';
-import logger from '../../common/logger';
-import { TimelineAdapter } from './adapter';
-
-
-export class MockTimelineAdapter extends TimelineAdapter {
-    protected isConnected: boolean = false;
-
-    protected userTimelineMap: {[id: string]: IUserTimeline[]} = {};
-
-    constructor() {
-        super('');
-    }
-
-    async connectToCollection(): Promise<void> {
-        logger.info('MockTimelineAdapter: connectToCollection');
-        this.isConnected = true;
-    }
-
-    connected(): boolean { return this.isConnected; }
-
-    async writeUserTimeline(userId: string, input: UserTimelineInput): Promise<IUserTimeline> {
-        //TODO: send user timeline to their followers
-
-        const response: IUserTimeline = {
-            userId: userId,
-            authorId: input.authorId,
-            text: input.text,
-            date: new Date(),
-            textId: v4()
-        };
-
-        if(this.userTimelineMap[userId] === undefined) {
-            this.userTimelineMap[userId] = [];
-        }
-
-        this.userTimelineMap[userId].push(response);
-        logger.info('textId: ' + response.textId);
-
-        return response;
-    }
-
-    async getUserTimeline(userId: string): Promise<IUserTimeline[]> {
-        return this.userTimelineMap[userId];
-    }
-
-    async clear(userId: string): Promise<void> { 
-        this.userTimelineMap[userId] = [];
-    }
-};*/
