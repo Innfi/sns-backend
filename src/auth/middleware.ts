@@ -5,7 +5,7 @@ import { Service } from 'typedi';
 
 
 @Service()
-export class TestAuthMiddleware implements ExpressMiddlewareInterface {
+export class AuthMiddleware implements ExpressMiddlewareInterface {
     authenticate = (callback: ((...args: any[]) => any) | undefined) => 
         passport.authenticate('jwt', { session: false }, callback);
 

@@ -21,6 +21,9 @@ phases:
 
 artifacts:
   files:
-    - index.js
-    - package.json
-    - node_modules
+    - 'dist/*'
+    - 'dist/**/*'
+    - 'scripts/*'
+    - 'package.json'
+    - 'package-lock.json'
+    - 'appspec.yml'

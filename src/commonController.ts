@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 import { LoggerBase } from './common/logger';
 
 import { IUserAccount } from './auth/model';
-import { TestAuthMiddleware } from './auth/middleware';
+import { AuthMiddleware } from './auth/middleware';
 
 //dummy service until whole routing is fixed
 @Service() 
@@ -31,7 +31,7 @@ export class CommonController {
     }
 
     @Get('/hideout')
-    @UseBefore(TestAuthMiddleware)
+    @UseBefore(AuthMiddleware)
     getHideout(@Req() req: Request, @Res() res: Response, @Body() body: IUserAccount): any {
         this.logger.info(`user: ${JSON.stringify(req.user)}`);
 
