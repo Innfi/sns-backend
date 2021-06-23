@@ -1,11 +1,13 @@
 import 'reflect-metadata';
 import { Container, Service } from 'typedi';
-import { useContainer, JsonController, Req, Res, Body, QueryParams, Get, Post } from 'routing-controllers';
+import { useContainer, JsonController, Req, Res, Body, QueryParams, Get, Post, 
+    UseBefore } from 'routing-controllers';
 import { Request, Response } from 'express';
 
 import { IUserTimeline, LoadTimelineOptions, UserTimelineInput } from './model';
 import { TimelineRepository } from './repository';
 import { LoggerBase } from '../common/logger';
+import { AuthMiddleware } from '../auth/middleware';
 
 
 useContainer(Container);
@@ -39,6 +41,7 @@ export class TimelineController {
     }
 
     @Post('/:userId')
+    @UseBefore(AuthMiddleware)
     public async writeUserTimeline(@Req() req: Request, @Res() res: Response,
         @Body() body: UserTimelineInput) { //FIXME: UserTimelineInput
         try {
