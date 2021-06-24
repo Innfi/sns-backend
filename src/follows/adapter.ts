@@ -17,10 +17,10 @@ export class FollowsAdapter implements FollowsAdapterBase {
     connected(): boolean {
         throw new Error('Method not implemented.');
     }
-    loadFollows(userId: string, options: LoadFollowOptions): Promise<Set<string> | undefined> {
+    loadFollows(userId: string, options: LoadFollowOptions): Promise<Set<string> | null> {
         throw new Error('Method not implemented.');
     }
-    loadFollowers(userId: string, options: LoadFollowOptions): Promise<Set<string> | undefined> {
+    loadFollowers(userId: string, options: LoadFollowOptions): Promise<Set<string> | null> {
         throw new Error('Method not implemented.');
     }
     relate(followId: string, followerId: string): Promise<RelateResult> {

@@ -23,12 +23,12 @@ export class FollowsAdapterFake implements FollowsAdapterBase {
     public connected(): boolean { return this.isConnected; } 
 
     public async loadFollows(userId: string, options: LoadFollowOptions): 
-        Promise<Set<string> | undefined> {
+        Promise<Set<string> | null> {
         return this.followersDict[userId];
     }
 
     public async loadFollowers(userId: string, options: LoadFollowOptions): 
-        Promise<Set<string> | undefined> {
+        Promise<Set<string> | null> {
             return this.followsDict[userId];
     }
 

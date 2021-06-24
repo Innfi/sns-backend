@@ -30,3 +30,7 @@ export interface RelateResult {
     err: string;
     reason?: string;
 };
+
+export interface FollowsParams {
+    userIdToFollow: string;
+};

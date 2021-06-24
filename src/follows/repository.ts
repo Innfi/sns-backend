@@ -30,6 +30,25 @@ export class FollowsRepository {
     constructor(protected followsAdapter: FollowsAdapterBase,
         protected logger: LoggerBase) {}
 
+    public async loadFollowsData(userId: string, options: LoadFollowOptions): 
+        Promise<UserProfilePayload[] | null> {
+        try {
+            const follows: Set<string> | null = 
+                await this.followsAdapter.loadFollows(userId, options);
+            if(follows === undefined) return null;
+
+            let response: UserProfilePayload[] = [];
+            (follows as Set<string>).forEach(async (value: string) => {
+                //const profileResul
+            });
+
+            return response;
+        } catch(err: any) {
+            this.logger.error(`loadFollowsData] ${err}`);
+            return null;
+        }     
+    }
+
     public async loadFollowersData(userId: string, options: LoadFollowOptions): 
         Promise<UserProfilePayload[] | null> {
         try {
@@ -39,17 +58,6 @@ export class FollowsRepository {
             this.logger.error(`loadFollowersData] ${err}`);
             return null;
         }
-    }
-
-    public async loadFollowsData(userId: string, options: LoadFollowOptions): 
-        Promise<UserProfilePayload | null> {
-        try {
-            //FIXME 
-            return null;
-        } catch(err: any) {
-            this.logger.error(`loadFollowsData] ${err}`);
-            return null;
-        }     
     }
 
     public async relate(followId: string, followerId: string): Promise<RelateResult | null> {
