@@ -1,32 +1,64 @@
 import 'reflect-metadata';
 import { Service } from 'typedi';
-import { LoggerBase } from '../common/logger';
+import mongoose  from 'mongoose';
 
+import { LoggerBase } from '../common/logger';
 import { FollowsAdapterBase } from "./adapterBase";
-import { LoadFollowOptions, RelateResult } from './model';
+import { FollowsSchema, IFollowsDoc, LoadFollowOptions, RelateResult } from './model';
+import { CommonConfig } from '../common/config';
 
 
 @Service()
 export class FollowsAdapter implements FollowsAdapterBase {
+    protected conn: mongoose.Connection;
+    protected connectOptions: mongoose.ConnectionOptions = {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    };
+    protected collectionName: string = 'follows';
+    protected followsModel: mongoose.Model<IFollowsDoc>;
+    protected projection: string = '_id userId follows followers';
 
-    constructor(protected logger: LoggerBase) {}
 
-    connectToCollection(): Promise<void> {
+    constructor(protected logger: LoggerBase, protected config: CommonConfig) {}
+
+    public async connectToCollection(): Promise<void> {
+        if(this.connected()) return;
+
+        this.conn = await mongoose.createConnection(
+            this.config.dbUrl, this.connectOptions);
+        this.followsModel = this.conn.model<IFollowsDoc, mongoose.Model<IFollowsDoc>>(
+            this.collectionName, FollowsSchema);
+    }
+
+    public connected(): boolean {
+        return this.conn?.readyState === mongoose.STATES.connected;
+    }
+
+    public async loadFollows(userId: string, options: LoadFollowOptions): 
+        Promise<Set<string> | null> {
+        const findResult: IFollowsDoc | null = await this.followsModel
+            .findOne({ userId: userId })
+            .slice('follows', [options.page, options.limit]);
+        if(findResult === null) return null;
+
+        return new Set((findResult as IFollowsDoc).follows);
+    }
+
+    public async loadFollowers(userId: string, options: LoadFollowOptions): 
+        Promise<Set<string> | null> {
+        const findResult: IFollowsDoc | null = await this.followsModel
+            .findOne({userId: userId})
+            .slice('followers', [options.page, options.limit]);
+        if(findResult === null) return null;
+
+        return new Set((findResult as IFollowsDoc).followers);
+    }
+    public async relate(followId: string, followerId: string): Promise<RelateResult> {
         throw new Error('Method not implemented.');
     }
-    connected(): boolean {
-        throw new Error('Method not implemented.');
-    }
-    loadFollows(userId: string, options: LoadFollowOptions): Promise<Set<string> | null> {
-        throw new Error('Method not implemented.');
-    }
-    loadFollowers(userId: string, options: LoadFollowOptions): Promise<Set<string> | null> {
-        throw new Error('Method not implemented.');
-    }
-    relate(followId: string, followerId: string): Promise<RelateResult> {
-        throw new Error('Method not implemented.');
-    }
-    clear(): Promise<void> {
+
+    public async clear(): Promise<void> {
         throw new Error('Method not implemented.');
     }
 }
