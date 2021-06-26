@@ -1,25 +1,53 @@
 import 'reflect-metadata';
 import { Service } from 'typedi';
 import { v4 } from 'uuid';
+import mongoose, { FilterQuery } from 'mongoose';
+//import mongoose from 'mongoose';
+
 import { IUserTimeline, IUserTimelineDoc, UserTimelineInput, 
     UserTimelineSchema, UserTimelinePaginateSchema, LoadTimelineOptions } from './model';
 import { TimelineAdapterBase } from './adapterBase';
+import { LoggerBase } from '../common/logger';
+import { CommonConfig } from '../common/config';
 
 
 @Service() 
 export class TimelineAdapter implements TimelineAdapterBase {
-    //constructor(protected )
+    protected conn: mongoose.Connection;
+    protected connectOptions: mongoose.ConnectionOptions = {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    };
+    protected collectionName: string = 'timeline';
+    protected timelineModel: mongoose.Model<IUserTimelineDoc>;
+    protected projection: string = '_id userId, authorId, text, textId, created';
+
+
+    constructor(protected logger: LoggerBase, protected conf: CommonConfig) {}
 
     public async connectToCollection(): Promise<void> {
-        throw new Error('Method not implemented.');
+        if(this.connected()) return;
+
+        this.conn = await mongoose.createConnection(
+            this.conf.dbUrl, this.connectOptions);
+        this.timelineModel = this.conn.model<IUserTimelineDoc>(
+            this.collectionName, UserTimelinePaginateSchema);
+            //this.conn.model('tmModel', UserTimelinePaginateSchema);
+            //this.conn.model<IUserTimelineDoc, mongoose.Model<IUserTimelineDoc>>(
+            //this.collectionName, UserTimelineSchema);
     }
 
     public connected(): boolean {
-        throw new Error('Method not implemented.');
+        return this.conn?.readyState === mongoose.STATES.connected;
     }
 
     public async loadUserTimeline(userId: string, options: LoadTimelineOptions): 
         Promise<IUserTimeline[]> {
+        const paginateQuery: FilterQuery<IUserTimeline> = {
+            userId: userId
+        };
+
+        //const findResult = await this.timelineModel
         throw new Error('Method not implemented.');
     }
 
