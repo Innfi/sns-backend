@@ -4,7 +4,7 @@ import { useContainer, JsonController, Req, Res, Body, Get, Post, UseBefore } fr
 import { Request, Response } from 'express';
 import { FollowsRepository } from './repository';
 import { LoggerBase } from '../common/logger';
-import { FollowsParams, LoadFollowOptions } from './model';
+import { FollowsParams, LoadFollowOptions, RelateResult } from './model';
 import { UserProfilePayload } from '../auth/model';
 import { AuthMiddleware } from '../auth/middleware';
 
@@ -67,9 +67,11 @@ export class FollowsController {
             const userId: string = req.params.userId;
             this.logger.info(`FollowsController.followUser] ${userId}`);
 
-            //FIXME: relate to followUser
+            const response: RelateResult | null = 
+                await this.followsRepo.relate(followParams.userIdToFollow, userId);
+            if(response === null) return res.status(500).send({ err: 'server error'}).end();
 
-
+            return res.status(200).send(response).end();
         } catch (err: any) {
             this.logger.error(`FollowsController.followUser] ${err}`);
             return res.status(500).end();

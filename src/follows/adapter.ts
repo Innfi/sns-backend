@@ -55,10 +55,18 @@ export class FollowsAdapter implements FollowsAdapterBase {
         return new Set((findResult as IFollowsDoc).followers);
     }
     public async relate(followId: string, followerId: string): Promise<RelateResult> {
-        throw new Error('Method not implemented.');
+        await this.followsModel.updateOne({ userId: followId }, 
+            { $push: { followers: followerId }} , { upsert: true });
+
+        await this.followsModel.updateOne({ userId: followerId }, 
+            { $push: { follows: followId } }, { upsert: true });
+
+        return {
+            err: 'ok'
+        };
     }
 
     public async clear(): Promise<void> {
-        throw new Error('Method not implemented.');
+        return;
     }
 }
