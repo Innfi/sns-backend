@@ -1,13 +1,13 @@
 import assert from 'assert';
 import { Container } from 'typedi';
 import { IUserAccount, UserAccountInput } from '../src/auth/model';
-import { MockAccountAdapter } from '../src/auth/adapterFake';
+import { AccountAdapterFake } from '../src/auth/adapterFake';
 import { AccountAdapterBase } from '../src/auth/adapterBase';
 import { AccountRepository } from '../src/auth/repository';
 
 
 describe('MockAccountAdapter', () => {
-    const adapter: AccountAdapterBase = Container.get(MockAccountAdapter);
+    const adapter: AccountAdapterBase = Container.get(AccountAdapterFake);
     const input: UserAccountInput = {
         userId: 'test', 
         nickname: 'innfi',

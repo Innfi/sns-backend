@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Service } from 'typedi';
 import { AccountAdapterBase } from './adapterBase';
-import { IUserAccount, UserAccountInput } from './model';
+import { IUserAccount, UserAccountInput, UserProfilePayload } from './model';
 
 
 interface AccountDict {
@@ -22,7 +22,7 @@ class DictSingle {
 }
 
 @Service()
-export class MockAccountAdapter implements AccountAdapterBase {
+export class AccountAdapterFake implements AccountAdapterBase {
     protected mockConnected:boolean = false;
 
     constructor() { }
@@ -63,19 +63,20 @@ export class MockAccountAdapter implements AccountAdapterBase {
         return 1;
     }
 
-    //async loadUserProfile(userId: string): Promise<UserProfilePayload> {
-    //    const accounts: IUserAccount[] = Object.values(this.accountDict);
+    async loadUserProfile(userId: string): Promise<UserProfilePayload|null> {
+       const accounts: IUserAccount[] = 
+        Object.values(DictSingle.getInstance().accountDict);
 
-    //    accounts.forEach((value: IUserAccount) => {
-    //        if(value.userId === userId) {
-    //            return {
-    //                userId: userId,
-    //                nickname: value.nickname,
-    //                headerUrl: value.headerUrl? value.headerUrl : ''
-    //            };
-    //        }
-    //    });
+       accounts.forEach((value: IUserAccount) => {
+           if(value.userId === userId) {
+               return {
+                   userId: userId,
+                   nickname: value.nickname,
+                   headerUrl: value.headerUrl? value.headerUrl : ''
+               };
+           }
+       });
 
-    //    throw new exception();
-    //}
+       return null;
+    }
 }

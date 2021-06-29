@@ -1,3 +1,18 @@
+import assert from 'assert';
+import { Container } from 'typedi';
+
+import { FollowsRepositoryFactory } from '../src/follows/repository';
+
+
+describe('follows repository', () => {
+    const factory = Container.get(FollowsRepositoryFactory);
+
+    it('initialize', () => {
+        const repo = factory.createFakeRepository();
+    });
+});
+
+
 //import assert from 'assert';
 //import { MockFollowsAdapter } from '../src/persistence/follows/mockAdapter';
 //import { UserProfilePayload } from '../src/persistence/account/model';

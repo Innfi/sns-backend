@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import { LoggerBase } from '../common/logger';
 import { AccountAdapterBase } from './adapterBase';
 import { AccountAdapter } from './adapter';
-import { MockAccountAdapter } from './adapterFake';
+import { AccountAdapterFake } from './adapterFake';
 import { IUserAccount, UserAccountInput, UserProfilePayload } from './model';
 
 
@@ -19,7 +19,7 @@ export class AccountRepositoryFactory {
 
     createMockRepository(): AccountRepository {
         return new AccountRepository(
-            Container.get(MockAccountAdapter),
+            Container.get(AccountAdapterFake),
             Container.get(LoggerBase));
     }
 }
@@ -52,14 +52,13 @@ export class AccountRepository {
         }
     }
 
-    //async loadUserProfile(userId: string): Promise<UserProfilePayload | null> {
-    //    try {
-    //        //TODO: caching
-
-    //        return await this.accountAdapter.loadUserProfile(userId);
-    //    } catch (err: any) {
-    //        logger.error(`${userId}] loadUserProfile: + ${err}`);
-    //        return null;
-    //    }
-    //}
+    async loadUserProfile(userId: string): Promise<UserProfilePayload | null> {
+       try {
+           //TODO: caching
+           return await this.accountAdapter.loadUserProfile(userId);
+       } catch (err: any) {
+           this.logger.error(`${userId}] loadUserProfile: + ${err}`);
+           return null;
+       }
+    }
 }

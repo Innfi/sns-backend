@@ -1,10 +1,12 @@
 import 'reflect-metadata';
 import { Service } from 'typedi';
 import mongoose from 'mongoose';
+
 import { CommonConfig } from '../common/config';
 import { LoggerBase } from '../common/logger';
 import { AccountAdapterBase } from './adapterBase';
-import { IUserAccount, UserAccountInput, IUserAccountDoc, UserAccountSchema } from './model';
+import { IUserAccount, UserAccountInput, IUserAccountDoc, UserAccountSchema, 
+    UserProfilePayload } from './model';
 
 
 @Service()
@@ -61,16 +63,16 @@ export class AccountAdapter implements AccountAdapterBase {
         return response.deletedCount ? response.deletedCount : 0;
     }
     
-    //async loadUserProfile(userId: string): Promise<UserProfilePayload> {
-    //    const accountData: IUserAccount = await this.accountModel.findOne(
-    //        {userId: userId}, 'userId nickname headerUrl').lean() as IUserAccount;
+    async loadUserProfile(userId: string): Promise<UserProfilePayload|null> {
+       const accountData: IUserAccount = await this.accountModel.findOne(
+           {userId: userId}, 'userId nickname headerUrl').lean() as IUserAccount;
 
-    //    return {
-    //        userId: accountData.userId,
-    //        nickname: accountData.nickname,
-    //        headerUrl: accountData.headerUrl? accountData.headerUrl : ''
-    //    };
-    //}
+       return {
+           userId: accountData.userId,
+           nickname: accountData.nickname,
+           headerUrl: accountData.headerUrl? accountData.headerUrl : ''
+       };
+    }
 }
 
 

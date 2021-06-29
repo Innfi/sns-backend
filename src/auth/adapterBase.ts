@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { IUserAccount, UserAccountInput } from './model';
+import { IUserAccount, UserAccountInput, UserProfilePayload } from './model';
 
 
 export interface AccountAdapterBase {
@@ -9,4 +9,6 @@ export interface AccountAdapterBase {
         Promise<IUserAccount | null>
     createUserAccount(input: UserAccountInput): Promise<IUserAccount>;
     deleteUserAccount(input: UserAccountInput): Promise<number>;
+
+    loadUserProfile(userId: string): Promise<UserProfilePayload|null>;
 }

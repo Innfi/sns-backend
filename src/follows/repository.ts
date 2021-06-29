@@ -6,6 +6,9 @@ import { FollowsAdapter } from './adapter';
 import { FollowsAdapterFake } from './adapterFake';
 import { LoadFollowOptions, RelateResult } from './model';
 import { UserProfilePayload } from '../auth/model';
+import { AccountAdapterBase } from '../auth/adapterBase';
+import { AccountAdapter } from '../auth/adapter';
+import { AccountAdapterFake } from '../auth/adapterFake';
 
 
 @Service()
@@ -13,6 +16,7 @@ export class FollowsRepositoryFactory {
     public createRepository(): FollowsRepository {
         return new FollowsRepository(
             Container.get(FollowsAdapter),
+            Container.get(AccountAdapter),
             Container.get(LoggerBase)
         );
     }
@@ -20,6 +24,7 @@ export class FollowsRepositoryFactory {
     public createFakeRepository(): FollowsRepository {
         return new FollowsRepository(
             Container.get(FollowsAdapterFake),
+            Container.get(AccountAdapterFake),
             Container.get(LoggerBase)
         );
     }
@@ -27,7 +32,9 @@ export class FollowsRepositoryFactory {
 
 @Service({ factory: [FollowsRepositoryFactory, 'createFakeRepository' ] })
 export class FollowsRepository {
-    constructor(protected followsAdapter: FollowsAdapterBase,
+    constructor(
+        protected followsAdapter: FollowsAdapterBase,
+        protected accontAdapter: AccountAdapterBase,
         protected logger: LoggerBase) {}
 
     public async loadFollowsData(userId: string, options: LoadFollowOptions): 
@@ -35,12 +42,17 @@ export class FollowsRepository {
         try {
             const follows: Set<string> | null = 
                 await this.followsAdapter.loadFollows(userId, options);
-            if(follows === undefined) return null;
+            if(follows === null) return null;
 
             let response: UserProfilePayload[] = [];
-            (follows as Set<string>).forEach(async (value: string) => {
-                //const profileResul
-            });
+            const keys: string[] = Object.keys((follows as Set<string>).keys);
+
+            for(let i=0;i<keys.length;i++) {
+                const profileResult = await this.accontAdapter.loadUserProfile(keys[i]);
+                if(profileResult === null) continue;
+
+                response.push(profileResult);
+            }
 
             return response;
         } catch(err: any) {
@@ -52,8 +64,21 @@ export class FollowsRepository {
     public async loadFollowersData(userId: string, options: LoadFollowOptions): 
         Promise<UserProfilePayload[] | null> {
         try {
-            //FIXME
-            return null;
+            const followers: Set<string> | null = 
+                await this.followsAdapter.loadFollowers(userId, options);
+            if(followers === null) return null;
+
+            let response: UserProfilePayload[] = [];
+            const keys: string[] = Object.keys((followers as Set<string>).keys);
+
+            for(let i=0;i<keys.length;i++) {
+                const profileResult = await this.accontAdapter.loadUserProfile(keys[i]);
+                if(profileResult === null) continue;
+
+                response.push(profileResult);
+            }
+
+            return response;
         } catch(err: any) {
             this.logger.error(`loadFollowersData] ${err}`);
             return null;
