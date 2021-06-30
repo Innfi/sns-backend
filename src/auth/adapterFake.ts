@@ -8,21 +8,22 @@ interface AccountDict {
     [id: string]: IUserAccount;
 };
 
-class DictSingle { 
-    private static instance: DictSingle;
-    private constructor() {}
+// class DictSingle { 
+//     private static instance: DictSingle;
+//     private constructor() {}
 
-    public accountDict: AccountDict = {};
+//     public accountDict: AccountDict = {};
 
-    public static getInstance(): DictSingle { 
-        if(!DictSingle.instance) DictSingle.instance = new DictSingle();
+//     public static getInstance(): DictSingle { 
+//         if(!DictSingle.instance) DictSingle.instance = new DictSingle();
 
-        return this.instance; 
-    }
-}
+//         return this.instance; 
+//     }
+// }
 
 @Service()
 export class AccountAdapterFake implements AccountAdapterBase {
+    protected accountDict: AccountDict = {};
     protected mockConnected:boolean = false;
 
     constructor() { }
@@ -34,7 +35,7 @@ export class AccountAdapterFake implements AccountAdapterBase {
     connected(): boolean { return this.mockConnected; }
 
     public async loadUserAccount(input: UserAccountInput): Promise<IUserAccount | null> {
-        const result = DictSingle.getInstance().accountDict[input.email];
+        const result = this.accountDict[input.email];
         if(result === undefined) return null; 
 
         return result;
@@ -44,7 +45,7 @@ export class AccountAdapterFake implements AccountAdapterBase {
         const acc = await this.loadUserAccount(input);
         if(acc !== null) return acc;
 
-        DictSingle.getInstance().accountDict[input.email] = {
+        this.accountDict[input.email] = {
             userId: input.userId as string,
             nickname: input.nickname as string,
             email: input.email,
@@ -59,24 +60,35 @@ export class AccountAdapterFake implements AccountAdapterBase {
         const acc = await this.loadUserAccount(input);
         if(acc === null) return 0;
 
-        delete(DictSingle.getInstance().accountDict[input.email]);
+        delete(this.accountDict[input.email]);
         return 1;
     }
 
     async loadUserProfile(userId: string): Promise<UserProfilePayload|null> {
-       const accounts: IUserAccount[] = 
-        Object.values(DictSingle.getInstance().accountDict);
+        const account: IUserAccount | undefined = this.accountDict[userId];
+        if(account === undefined) return null;
 
-       accounts.forEach((value: IUserAccount) => {
-           if(value.userId === userId) {
-               return {
-                   userId: userId,
-                   nickname: value.nickname,
-                   headerUrl: value.headerUrl? value.headerUrl : ''
-               };
-           }
-       });
+        return {
+            userId: account.userId,
+            nickname: account.nickname,
+            headerUrl: account.headerUrl? account.headerUrl : ''
+        };
 
-       return null;
+
+    //    const accounts: IUserAccount[] = Object.values(this.accountDict);
+
+        
+
+    //    accounts.forEach((value: IUserAccount) => {
+    //        if(value.userId === userId) {
+    //            return {
+    //                userId: userId,
+    //                nickname: value.nickname,
+    //                headerUrl: value.headerUrl? value.headerUrl : ''
+    //            };
+    //        }
+    //    });
+
+    //    return null;
     }
 }

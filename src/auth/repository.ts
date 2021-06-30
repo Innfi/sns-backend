@@ -17,14 +17,14 @@ export class AccountRepositoryFactory {
             Container.get(LoggerBase));
     }
 
-    createMockRepository(): AccountRepository {
+    createFakeRepository(): AccountRepository {
         return new AccountRepository(
             Container.get(AccountAdapterFake),
             Container.get(LoggerBase));
     }
 }
 
-@Service({ factory: [ AccountRepositoryFactory, 'createMockRepository']})
+@Service({ factory: [ AccountRepositoryFactory, 'createRepository']})
 export class AccountRepository {
     protected projection: string = 'email password';
 

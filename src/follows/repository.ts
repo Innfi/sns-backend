@@ -69,16 +69,36 @@ export class FollowsRepository {
             if(followers === null) return null;
 
             let response: UserProfilePayload[] = [];
-            const keys: string[] = Object.keys((followers as Set<string>).keys);
-
+            const keys = Array.from(followers);
             for(let i=0;i<keys.length;i++) {
                 const profileResult = await this.accontAdapter.loadUserProfile(keys[i]);
-                if(profileResult === null) continue;
+                if(profileResult === null) {
+                    console.log('profileResult null');
+                    continue;
+                }
 
                 response.push(profileResult);
             }
 
             return response;
+            // console.log(`loadFollowersData] ${followers!.size}`);;
+            // console.log(`loadFollowersData1] ${followers!.keys.length}`);;
+            // let response: UserProfilePayload[] = [];
+
+            
+            // const keys: string[] = Object.keys((followers as Set<string>).keys);
+            // console.log(`key len: ${keys.length}`);
+
+            // for(let i=0;i<keys.length;i++) {
+            //     console.log(`loadFollowersData] userId: ${keys[i]}`);
+            //     const profileResult = await this.accontAdapter.loadUserProfile(keys[i]);
+            //     if(profileResult === null) continue;
+
+            //     response.push(profileResult);
+            // }
+
+            // return response;
+            //return [];
         } catch(err: any) {
             this.logger.error(`loadFollowersData] ${err}`);
             return null;
