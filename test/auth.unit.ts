@@ -1,33 +1,86 @@
 import assert from 'assert';
 import { Container } from 'typedi';
-import { IUserAccount, UserAccountInput } from '../src/auth/model';
-import { AccountRepository, AccountRepositoryFactory } from '../src/auth/repository';
+
+import { AccountService } from '../src/auth/service';
+import { IUserAccount, CreateUserAccountInput } from '../src/auth/model';
 
 
-describe('AccountRepository', () => {
-    const factory = Container.get(AccountRepositoryFactory);
+describe('unit: account', () => {
+    it('initial status: empty result for loadUserAccount', async () => {
+        const accountService = Container.get(AccountService);
 
-    it('instantiate via Container', () => {
-        const repo: AccountRepository = factory.createFakeRepository();
+        const result = await accountService.loadUserAccount({ email: 'innfi@test.com'});
 
-        assert.strictEqual(repo !== null, true);
+        assert.strictEqual(result, undefined);
     });
 
-    it('calls adapter methods', async () => {
-        const repo: AccountRepository = factory.createFakeRepository();
+    it('create - load', async () => {
+        const accountService = Container.get(AccountService);
 
-        const input: UserAccountInput = {
+        const input: CreateUserAccountInput = {
             userId: 'innfi#1234', 
             nickname: 'innfi',
             email: 'innfi@test.com', 
             password: 'testPassword'
         };
 
-        const empty: IUserAccount | null = await repo.loadUserAccount(input);
-        assert.strictEqual(empty === null, true);
+        await accountService.createUserAccount(input);
 
-        const createResult: IUserAccount | null = await repo.createUserAccount(input);
-        assert.strictEqual(createResult !== null, true);
-        assert.strictEqual((createResult as IUserAccount).email, input.email);
+        const output: IUserAccount | undefined = 
+            await accountService.loadUserAccount(input);
+
+        assert.strictEqual(input.nickname, output!.nickname);
+    });
+
+    it('error: create duplicate', async () => {
+        const accountService = Container.get(AccountService);
+
+        const input: CreateUserAccountInput = {
+            userId: 'ennfi#22', 
+            nickname: 'ennfi',
+            email: 'ennfi@test.com',
+            password: 'pass'
+        };
+
+        await accountService.createUserAccount(input);
+
+        const createResult = await accountService.createUserAccount(input);
+
+        assert.strictEqual(createResult.err, 'duplicate account');
+    });
+
+    it('error: create without email', async () => {
+        const accountService = Container.get(AccountService);
+
+        const input: CreateUserAccountInput = {
+            userId: 'ennfi#22', 
+            nickname: 'ennfi',
+            email: '',
+            password: 'pass'
+        };
+
+        const result = await accountService.createUserAccount(input);
+
+        assert.strictEqual(result.err, 'required field empty');
+    });
+
+    it('error: create without password', async () => {
+        const accountService = Container.get(AccountService);
+
+        const input: CreateUserAccountInput = {
+            userId: 'ennfi#22', 
+            nickname: 'ennfi',
+            email: 'ennfi@test2.com',
+            password: ''
+        };
+
+        const result = await accountService.createUserAccount(input);
+
+        assert.strictEqual(result.err, 'required field empty');
+    });
+
+    it('create without userId', async () => {
+
     });
 });
+

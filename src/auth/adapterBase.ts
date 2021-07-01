@@ -1,14 +1,15 @@
-import 'reflect-metadata';
-import { IUserAccount, UserAccountInput, UserProfilePayload } from './model';
+//import 'reflect-metadata';
+import { IUserAccount, LoadUserAccountInput, CreateUserAccountInput, 
+    CreateUserAccountResult, UserProfilePayload } from './model';
 
 
 export interface AccountAdapterBase {
     connectToCollection(): Promise<void>;
     connected(): boolean;
-    loadUserAccount(input: UserAccountInput, projection?: string): 
-        Promise<IUserAccount | null>
-    createUserAccount(input: UserAccountInput): Promise<IUserAccount>;
-    deleteUserAccount(input: UserAccountInput): Promise<number>;
+    loadUserAccount(input: LoadUserAccountInput, projection?: string): 
+        Promise<IUserAccount | undefined>
+    createUserAccount(input: CreateUserAccountInput): Promise<CreateUserAccountResult>;
+    deleteUserAccount(input: CreateUserAccountInput): Promise<number>;
 
     loadUserProfile(userId: string): Promise<UserProfilePayload|null>;
 }

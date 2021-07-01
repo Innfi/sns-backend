@@ -7,7 +7,8 @@ import jwt from 'jsonwebtoken';
 import { LoggerBase } from '../common/logger';
 import { PassportInitializer } from './passportInitializer';
 import { AccountRepository } from './repository';
-import { IUserAccount, UserAccountInput } from './model';
+import { IUserAccount, LoadUserAccountInput, CreateUserAccountInput, 
+    CreateUserAccountResult } from './model';
 
 
 useContainer(Container);
@@ -22,11 +23,16 @@ export class AuthController {
     ) {}
 
     @Post('/signup') 
-    async signUp(@Req() req: Request, @Res() res: Response, @Body() userData: UserAccountInput) {
+    async signUp(
+        @Req() req: Request, 
+        @Res() res: Response, 
+        @Body() userData: CreateUserAccountInput) {
         try {
           this.logger.info('/signup: ' + JSON.stringify(userData));
 
-          const signupResp: IUserAccount | null = await this.accRepo.createUserAccount(userData);
+          const signupResp: CreateUserAccountResult | null = 
+            await this.accRepo.createUserAccount(userData);
+
           if(signupResp === null) { //FIXME
               return res.status(500).send('server error');
           } else {
@@ -39,25 +45,29 @@ export class AuthController {
     }
 
     @Post('/signin')  
-    async signIn(@Req() req: Request, @Res() res: Response, @Body() userData: UserAccountInput) {
+    async signIn(
+        @Req() req: Request, 
+        @Res() res: Response, 
+        @Body() userData: CreateUserAccountInput) {
         try {
             if(!userData) return res.status(400).end();
 
             this.logger.info('/signin: ' + JSON.stringify(userData));
 
-            const user = await this.accRepo.loadUserAccount(userData);
-            if(user === null) return res.status(404).end();
-            if(user.password !== userData.password) return res.status(404).end();
+            //FIXME
+            // const user = await this.accRepo.loadUserAccount(userData);
+            // if(user === null) return res.status(404).end();
+            // if(user.password !== userData.password) return res.status(404).end();
 
-            const token: string = jwt.sign({
-                email: user.email,
-                password: user.password
-            }, this.passportInitializer.secret());
+            // const token: string = jwt.sign({
+            //     email: user.email,
+            //     password: user.password
+            // }, this.passportInitializer.secret());
 
-            return res.status(200).send({
-                msg: 'success', 
-                jwtToken: token
-            }).end();
+            // return res.status(200).send({
+            //     msg: 'success', 
+            //     jwtToken: token
+            // }).end();
 
         } catch (err) {
             this.logger.error(`/signin error: ${err}`);

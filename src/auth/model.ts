@@ -22,11 +22,19 @@ export const UserAccountSchema = new Schema<IUserAccountDoc>({
     headerUrl: { type: String }
 });
 
-export interface UserAccountInput {
+export interface CreateUserAccountInput {
     userId?: string;
     nickname?: string;
     email: string;
-    password?: string;
+    password: string;
+};
+
+export interface CreateUserAccountResult {
+    err: string;
+};
+
+export interface LoadUserAccountInput {
+    email: string;
 };
 
 export interface UserProfilePayload {

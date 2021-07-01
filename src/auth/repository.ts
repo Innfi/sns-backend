@@ -2,63 +2,55 @@ import 'reflect-metadata';
 import { Container, Service } from 'typedi';
 import bcrypt from 'bcrypt';
 
-import { LoggerBase } from '../common/logger';
 import { AccountAdapterBase } from './adapterBase';
 import { AccountAdapter } from './adapter';
 import { AccountAdapterFake } from './adapterFake';
-import { IUserAccount, UserAccountInput, UserProfilePayload } from './model';
+import { IUserAccount, CreateUserAccountInput, CreateUserAccountResult, 
+    UserProfilePayload, LoadUserAccountInput } from './model';
 
 
 @Service()
 export class AccountRepositoryFactory {
     createRepository(): AccountRepository {
         return new AccountRepository(
-            Container.get(AccountAdapter),
-            Container.get(LoggerBase));
+            Container.get(AccountAdapter)
+        );
     }
 
     createFakeRepository(): AccountRepository {
         return new AccountRepository(
-            Container.get(AccountAdapterFake),
-            Container.get(LoggerBase));
+            Container.get(AccountAdapterFake)
+        );
     }
 }
 
-@Service({ factory: [ AccountRepositoryFactory, 'createRepository']})
+@Service({ factory: [ AccountRepositoryFactory, 'createFakeRepository']})
 export class AccountRepository {
     protected projection: string = 'email password';
 
-    constructor(protected accountAdapter: AccountAdapterBase, 
-        protected logger: LoggerBase) {}
+    constructor(protected accountAdapter: AccountAdapterBase) {}
 
-    public async loadUserAccount(input: UserAccountInput): Promise<IUserAccount | null> {
-        try {
-            return await this.accountAdapter.loadUserAccount(input, this.projection);
-        } catch (err: any) {
-            this.logger.error(input.email + '] loadUserAccount: ' +  err);
-            return null;
-        }
+    public async loadUserAccount(input: LoadUserAccountInput): Promise<IUserAccount | undefined> {
+        return await this.accountAdapter.loadUserAccount(input, this.projection);
     }
 
-    public async createUserAccount(input: UserAccountInput): Promise<IUserAccount | null> {
-        try {
-            return await this.accountAdapter.createUserAccount({
-                email: input.email,
-                password: await bcrypt.hash(input.password, 10)
-            });
-        } catch (err: any) {
-            this.logger.error(input.email + '] createUserAccount: ' +  err);
-            return null;
-        }
+    public async createUserAccount(input: CreateUserAccountInput): 
+        Promise<CreateUserAccountResult> {
+        if(!this.isValidCreateInput(input)) return { err: 'required field empty' };
+
+        input.password = await bcrypt.hash(input.password, 10);
+
+        return await this.accountAdapter.createUserAccount(input);
     }
 
-    async loadUserProfile(userId: string): Promise<UserProfilePayload | null> {
-       try {
-           //TODO: caching
-           return await this.accountAdapter.loadUserProfile(userId);
-       } catch (err: any) {
-           this.logger.error(`${userId}] loadUserProfile: + ${err}`);
-           return null;
-       }
+    protected isValidCreateInput(input: CreateUserAccountInput): boolean {
+        if(!input.email) return false;
+        if(!input.password) return false;
+
+        return true;
+    };
+
+    public async loadUserProfile(userId: string): Promise<UserProfilePayload | null> {
+        return await this.accountAdapter.loadUserProfile(userId);
     }
 }
