@@ -6,7 +6,7 @@ export interface IUserTimeline {
     authorId: string;
     text: string;
     date: Date;
-    textId: string;
+    tmId: string;
 }
 
 export interface IUserTimelineDoc extends IUserTimeline, Document {}
@@ -16,7 +16,7 @@ export const UserTimelineSchema = new Schema<IUserTimelineDoc>({
     authorId: { type: String, required: true },
     text: { type: String, required: true },
     date: { type: Date },
-    textId: { type: String, required: true },
+    tmId: { type: String, required: true },
 });
 
 export interface UserTimelineInput {

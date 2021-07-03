@@ -10,7 +10,7 @@ type FollowsDict = {
 };
 
 @Service()
-export class FollowsAdapterFake implements FollowsAdapterBase {
+export class FakeFollowsAdapter implements FollowsAdapterBase {
     protected isConnected: boolean = false;
     protected followsDict: FollowsDict = {};
     protected followersDict: FollowsDict = {};

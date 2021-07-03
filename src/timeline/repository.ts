@@ -25,38 +25,36 @@ export class TimelineRepositoryFactory {
     }
 }
 
-@Service({ factory: [TimelineRepositoryFactory, 'createFakeRepository' ]})
+@Service({ factory: [TimelineRepositoryFactory, 'createRepository' ]})
 export class TimelineRepository {
     constructor(protected timelineAdapter: TimelineAdapterBase, 
         protected logger: LoggerBase) {
-
     }
 
     public async loadUserTimeline(userId: string, options: LoadTimelineOptions): 
         Promise<IUserTimeline[]> {
-        try {
-            if(!this.timelineAdapter.connected()) {
-                await this.timelineAdapter.connectToCollection();
-            }
-
-            return await this.timelineAdapter.loadUserTimeline(userId, options);
-        } catch (err: any) {
-            this.logger.error(`TimelineRepository.loadUserTimeline] ${err}`)
-            return [];
+        if(!this.timelineAdapter.connected()) {
+            await this.timelineAdapter.connectToCollection();
         }
+
+        return await this.timelineAdapter.loadUserTimeline(userId, options);
     }
 
     public async writeUserTimeline(userId: string, input: UserTimelineInput): 
-        Promise<IUserTimeline | null> {
-        try {
-            if(!this.timelineAdapter.connected()) {
-                await this.timelineAdapter.connectToCollection();
-            }
+        Promise<IUserTimeline | undefined> {
+        if(!this.validInput(input)) return undefined;
 
-            return await this.timelineAdapter.writeUserTimeline(userId, input);
-        } catch (err: any) {
-            this.logger.error(`TimelineRepository.writeUserTimeline] ${err}`);
-            return null;
+        if(!this.timelineAdapter.connected()) {
+            await this.timelineAdapter.connectToCollection();
         }
-    }
+
+        return await this.timelineAdapter.writeUserTimeline(userId, input);
+    };
+
+    protected validInput(input: UserTimelineInput): boolean {
+        if(!input.authorId) return false;
+        if(!input.text) return false;
+
+        return true;
+    };
 }

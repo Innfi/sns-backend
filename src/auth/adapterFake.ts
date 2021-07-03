@@ -10,7 +10,7 @@ interface AccountDict {
 };
 
 @Service()
-export class AccountAdapterFake implements AccountAdapterBase {
+export class FakeAccountAdapter implements AccountAdapterBase {
     protected accountDict: AccountDict = {};
     protected mockConnected:boolean = false;
 

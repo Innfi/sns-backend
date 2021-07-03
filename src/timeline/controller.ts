@@ -4,10 +4,10 @@ import { useContainer, JsonController, Req, Res, Body, QueryParams, Get, Post,
     UseBefore } from 'routing-controllers';
 import { Request, Response } from 'express';
 
-import { IUserTimeline, LoadTimelineOptions, UserTimelineInput } from './model';
-import { TimelineRepository } from './repository';
 import { LoggerBase } from '../common/logger';
 import { AuthMiddleware } from '../auth/middleware';
+import { IUserTimeline, LoadTimelineOptions, UserTimelineInput } from './model';
+import { TimelineService } from './service';
 
 
 useContainer(Container);
@@ -16,7 +16,7 @@ useContainer(Container);
 @JsonController('/timeline')
 export class TimelineController {
     constructor(
-        protected tmRepo: TimelineRepository,
+        protected tmService: TimelineService,
         protected logger: LoggerBase
     ) {}
 
@@ -28,7 +28,7 @@ export class TimelineController {
             this.logger.info(`TimelineController.getUserTimeline] ${userId}`);
             
             const timelines: IUserTimeline[] = 
-                await this.tmRepo.loadUserTimeline(userId, options);
+                await this.tmService.loadUserTimeline(userId, options);
 
             return res.status(200).send({
                 err: 'ok',
@@ -48,7 +48,7 @@ export class TimelineController {
             const userId: string = req.params.userId;
             this.logger.info(`TimelineController.writeUserTimeline] ${userId}`);
 
-            const result = await this.tmRepo.writeUserTimeline(
+            const result = await this.tmService.writeUserTimeline(
                 userId, { authorId: userId, text: body.text});
             
             return res.status(200).send({

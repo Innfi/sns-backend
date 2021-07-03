@@ -3,12 +3,12 @@ import { Container, Service } from 'typedi';
 import { LoggerBase } from '../common/logger';
 import { FollowsAdapterBase } from './adapterBase';
 import { FollowsAdapter } from './adapter';
-import { FollowsAdapterFake } from './adapterFake';
+import { FakeFollowsAdapter } from './adapterFake';
 import { LoadFollowOptions, RelateResult } from './model';
 import { UserProfilePayload } from '../auth/model';
 import { AccountAdapterBase } from '../auth/adapterBase';
 import { AccountAdapter } from '../auth/adapter';
-import { AccountAdapterFake } from '../auth/adapterFake';
+import { FakeAccountAdapter } from '../auth/adapterFake';
 
 
 @Service()
@@ -23,8 +23,8 @@ export class FollowsRepositoryFactory {
 
     public createFakeRepository(): FollowsRepository {
         return new FollowsRepository(
-            Container.get(FollowsAdapterFake),
-            Container.get(AccountAdapterFake),
+            Container.get(FakeFollowsAdapter),
+            Container.get(FakeAccountAdapter),
             Container.get(LoggerBase)
         );
     }

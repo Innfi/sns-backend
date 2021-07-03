@@ -49,7 +49,7 @@ export class TimelineAdapter implements TimelineAdapterBase {
             authorId: input.authorId,
             text: input.text,
             date: new Date(),
-            textId: v4()
+            tmId: v4()
         };
 
         const result:IUserTimeline = await this.timelineModel.create(newTimeline);

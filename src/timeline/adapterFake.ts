@@ -42,8 +42,16 @@ export class FakeTimelineAdapter implements TimelineAdapterBase {
             DictSingle.getInstance().timelineDict[userId] = [];
         }
 
-        return DictSingle.getInstance().timelineDict[userId];
+        const timelines: IUserTimeline[] = DictSingle.getInstance().timelineDict[userId];
+
+        return this.paginateTimelines(timelines, options);
     }
+
+    protected paginateTimelines(timelines: IUserTimeline[], options: LoadTimelineOptions): 
+        IUserTimeline[] {
+        return timelines.slice((options.page - 1) * options.limit, 
+            options.page * options.limit);
+    };
 
     public async writeUserTimeline(userId: string, input: UserTimelineInput): 
         Promise<IUserTimeline> {
@@ -54,7 +62,7 @@ export class FakeTimelineAdapter implements TimelineAdapterBase {
             authorId: input.authorId,
             text: input.text,
             date: new Date(),
-            textId: v4()
+            tmId: v4()
         };
 
         if(DictSingle.getInstance().timelineDict[userId] === undefined) {

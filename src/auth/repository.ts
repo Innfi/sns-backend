@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 
 import { AccountAdapterBase } from './adapterBase';
 import { AccountAdapter } from './adapter';
-import { AccountAdapterFake } from './adapterFake';
+import { FakeAccountAdapter } from './adapterFake';
 import { IUserAccount, CreateUserAccountInput, CreateUserAccountResult, 
     UserProfilePayload, LoadUserAccountInput } from './model';
 
@@ -19,7 +19,7 @@ export class AccountRepositoryFactory {
 
     createFakeRepository(): AccountRepository {
         return new AccountRepository(
-            Container.get(AccountAdapterFake)
+            Container.get(FakeAccountAdapter)
         );
     }
 }

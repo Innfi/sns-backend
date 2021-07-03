@@ -2,6 +2,8 @@ import { Service } from 'typedi';
 import uniqid from 'uniqid';
 
 import { CreateUserAccountInput } from '../src/auth/model';
+import { IUserTimeline, UserTimelineInput } from '../src/timeline/model';
+import { TimelineRepository } from '../src/timeline/repository';
 
 
 
@@ -16,5 +18,55 @@ export class TestHelper {
             email: `${dummyId}@test.com`,
             password: uniqid()
         };
+    };
+
+    public isValidTimeline(
+        input: UserTimelineInput, 
+        timeline: IUserTimeline
+    ): boolean {
+        if(input.authorId !== timeline.authorId) return false;
+        if(input.text !== timeline.text) return false;
+
+        return true;
+    };
+
+    public createUserId(): string {
+        return uniqid();
+    };
+
+    public newTimelineInput(): UserTimelineInput {
+        return {
+            authorId: uniqid(),
+            text: 'test text'
+        };
+    };
+
+    public newTimelineInputArray(userId: string, len: number): UserTimelineInput[] {
+        const inputArray: UserTimelineInput[] = [];
+
+        for(let i=0;i<len;i++) inputArray.push({ authorId: userId, text: 'sample text' });
+
+        return inputArray;
+    };
+
+    public containsTimeline(timelines: IUserTimeline[], tmData: IUserTimeline): boolean {
+        const findResult = timelines.find((value: IUserTimeline) => {
+            if(value.tmId !== tmData.tmId) return false;
+            if(value.authorId !== tmData.authorId) return false;
+            if(value.text !== tmData.text) return false;
+            return true;
+        });
+
+        if(!findResult) return false;
+
+        return true;
+    };
+
+    public async writeTimelines(repo: TimelineRepository, inputArray: UserTimelineInput[]): 
+        Promise<void> {
+        for(let i=0;i<inputArray.length;i++) {
+            const input = inputArray[i];
+            await repo.writeUserTimeline(input.authorId, input);
+        }
     };
 };
