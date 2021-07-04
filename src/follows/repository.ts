@@ -4,11 +4,7 @@ import { LoggerBase } from '../common/logger';
 import { FollowsAdapterBase } from './adapterBase';
 import { FollowsAdapter } from './adapter';
 import { FakeFollowsAdapter } from './adapterFake';
-import { LoadFollowOptions, LoadFollowsResult, RelateResult } from './model';
-import { UserProfilePayload } from '../auth/model';
-import { AccountAdapterBase } from '../auth/adapterBase';
-import { AccountAdapter } from '../auth/adapter';
-import { FakeAccountAdapter } from '../auth/adapterFake';
+import { LoadFollowOptions, LoadRelationMembersResult, MemberTypeEnum, RelateResult } from './model';
 
 
 @Service()
@@ -36,100 +32,34 @@ export class FollowsRepository {
     ) {}
 
     public async relate(followId: string, followerId: string): Promise<RelateResult> {
-        return {
-            err: 'ok',
-            followId: followId,
-            followerId: followerId,
-        };
+        return this.followsAdapter.relate(followId, followerId);
     };
 
-    public async loadFollows(userId: string): Promise<LoadFollowsResult | undefined> {
-        return undefined;  
+    public async loadFollows(userId: string, options: LoadFollowOptions): 
+        Promise<LoadRelationMembersResult | undefined> {
+        const follows: Set<string> | null = 
+            await this.followsAdapter.loadFollows(userId, options);
+
+        if(!follows) return { err: 'other', type: MemberTypeEnum.Invalid, members: undefined };
+
+        return {
+            err: 'ok',
+            type: MemberTypeEnum.Follows,
+            members: follows!
+        };
     }
+
+    public async loadFollowers(userId: string, options: LoadFollowOptions): 
+        Promise<LoadRelationMembersResult | undefined> {
+        const followers: Set<string> | null = 
+            await this.followsAdapter.loadFollowers(userId, options);
+
+        if(!followers) return { err: 'other', type: MemberTypeEnum.Invalid, members: undefined };
+
+        return {
+            err: 'ok',
+            type: MemberTypeEnum.Followers,
+            members: followers!
+        };
+    };
 };
-
-
-// @Service({ factory: [FollowsRepositoryFactory, 'createFakeRepository' ] })
-// export class FollowsRepository {
-//     constructor(
-//         protected followsAdapter: FollowsAdapterBase,
-//         protected accontAdapter: AccountAdapterBase,
-//         protected logger: LoggerBase) {}
-
-//     public async loadFollowsData(userId: string, options: LoadFollowOptions): 
-//         Promise<UserProfilePayload[] | null> {
-//         try {
-//             const follows: Set<string> | null = 
-//                 await this.followsAdapter.loadFollows(userId, options);
-//             if(follows === null) return null;
-
-//             let response: UserProfilePayload[] = [];
-//             const keys: string[] = Object.keys((follows as Set<string>).keys);
-
-//             for(let i=0;i<keys.length;i++) {
-//                 const profileResult = await this.accontAdapter.loadUserProfile(keys[i]);
-//                 if(profileResult === null) continue;
-
-//                 response.push(profileResult);
-//             }
-
-//             return response;
-//         } catch(err: any) {
-//             this.logger.error(`loadFollowsData] ${err}`);
-//             return null;
-//         }     
-//     }
-
-//     public async loadFollowersData(userId: string, options: LoadFollowOptions): 
-//         Promise<UserProfilePayload[] | null> {
-//         try {
-//             const followers: Set<string> | null = 
-//                 await this.followsAdapter.loadFollowers(userId, options);
-//             if(followers === null) return null;
-
-//             let response: UserProfilePayload[] = [];
-//             const keys = Array.from(followers);
-//             for(let i=0;i<keys.length;i++) {
-//                 const profileResult = await this.accontAdapter.loadUserProfile(keys[i]);
-//                 if(profileResult === null) {
-//                     console.log('profileResult null');
-//                     continue;
-//                 }
-
-//                 response.push(profileResult);
-//             }
-
-//             return response;
-//             // console.log(`loadFollowersData] ${followers!.size}`);;
-//             // console.log(`loadFollowersData1] ${followers!.keys.length}`);;
-//             // let response: UserProfilePayload[] = [];
-
-            
-//             // const keys: string[] = Object.keys((followers as Set<string>).keys);
-//             // console.log(`key len: ${keys.length}`);
-
-//             // for(let i=0;i<keys.length;i++) {
-//             //     console.log(`loadFollowersData] userId: ${keys[i]}`);
-//             //     const profileResult = await this.accontAdapter.loadUserProfile(keys[i]);
-//             //     if(profileResult === null) continue;
-
-//             //     response.push(profileResult);
-//             // }
-
-//             // return response;
-//             //return [];
-//         } catch(err: any) {
-//             this.logger.error(`loadFollowersData] ${err}`);
-//             return null;
-//         }
-//     }
-
-//     public async relate(followId: string, followerId: string): Promise<RelateResult | null> {
-//         try {
-//             return this.followsAdapter.relate(followId, followerId);
-//         } catch(err: any) {
-//             this.logger.error(`relate] ${err}`);
-//             return null;
-//         }
-//     }
-// }

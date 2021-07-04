@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { Service } from 'typedi';
+import bcrypt from 'bcrypt';
 
 import { LoggerBase } from '../common/logger';
 import { LoadUserAccountInput, CreateUserAccountInput, CreateUserAccountResult, 
@@ -19,7 +20,7 @@ export class AccountService {
         try {
             return this.accRepo.loadUserAccount(input);    
         } catch (err: any) {
-            this.logger.error(input.email + '] loadUserAccount: ' +  err);
+            this.logger.error(`loadUserAccount] email: ${input.email}, err: ${err}`);
             return undefined;
         }
     }
@@ -27,9 +28,11 @@ export class AccountService {
     public async createUserAccount(input: CreateUserAccountInput): 
         Promise<CreateUserAccountResult> {
         try {
+            input.password = await bcrypt.hash(input.password, 10);
+
             return this.accRepo.createUserAccount(input);
         } catch (err: any) {
-            this.logger.error(input.email + '] createUserAccount: ' +  err);
+            this.logger.error(`createUserAccount] email: ${input.email}, err: ${err}`);
             return {
                 err: 'server error'
             };

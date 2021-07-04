@@ -32,9 +32,17 @@ export interface RelateResult {
     followerId?: string; 
 };
 
-export interface LoadFollowsResult {
+export enum MemberTypeEnum {
+    Initial,
+    Follows,
+    Followers,
+    Invalid
+};
+
+export interface LoadRelationMembersResult {
     err: string;
-    follows?: Set<string>;
+    type: MemberTypeEnum;
+    members?: Set<string> | undefined;
 };
 
 export interface FollowsParams {

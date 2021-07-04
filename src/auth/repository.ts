@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 import { Container, Service } from 'typedi';
-import bcrypt from 'bcrypt';
 
 import { AccountAdapterBase } from './adapterBase';
 import { AccountAdapter } from './adapter';
@@ -37,8 +36,6 @@ export class AccountRepository {
     public async createUserAccount(input: CreateUserAccountInput): 
         Promise<CreateUserAccountResult> {
         if(!this.isValidCreateInput(input)) return { err: 'required field empty' };
-
-        input.password = await bcrypt.hash(input.password, 10);
 
         return await this.accountAdapter.createUserAccount(input);
     }

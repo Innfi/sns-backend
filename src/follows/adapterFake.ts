@@ -44,8 +44,8 @@ export class FakeFollowsAdapter implements FollowsAdapterBase {
 
         return {
             err: 'ok',
-            followId: '',
-            followerId: '',
+            followId: followId,
+            followerId: followerId,
         };
     }
 

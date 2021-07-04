@@ -2,7 +2,7 @@ import { Service } from 'typedi';
 import uniqid from 'uniqid';
 
 import { CreateUserAccountInput } from '../src/auth/model';
-import { LoadFollowsResult, RelateResult } from '../src/follows/model';
+import { RelateResult, LoadRelationMembersResult } from '../src/follows/model';
 import { IUserTimeline, UserTimelineInput } from '../src/timeline/model';
 import { TimelineRepository } from '../src/timeline/repository';
 
@@ -80,15 +80,16 @@ export class TestHelper {
         return true;
     };
 
-    public isValidLoadResult(followsResult: LoadFollowsResult): boolean {
-        if(followsResult.err !== 'ok') return false;
-        if(!followsResult.follows) return false;
+    public isValidLoadRelationMembersResult(result: LoadRelationMembersResult): boolean {
+        if(result.err !== 'ok') return false;
+        if(!result.type) return false;
+        if(!result.members) return false;
 
         return true;
     };
 
-    public hasFollow(followsResult: LoadFollowsResult, followId: string): 
+    public hasMember(result: LoadRelationMembersResult, followerId: string):
         boolean {
-        return followsResult.follows!.has(followId);
+        return result.members!.has(followerId);
     };
 };
