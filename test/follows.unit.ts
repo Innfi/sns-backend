@@ -1,9 +1,48 @@
-// import assert from 'assert';
-// import { Container } from 'typedi';
-// import { UserProfilePayload } from '../src/auth/model';
+import assert from 'assert';
+import { Container } from 'typedi';
 
-// import { FollowsRepositoryFactory } from '../src/follows/repository';
+import { UserProfilePayload } from '../src/auth/model';
+import { LoadFollowsResult, RelateResult } from '../src/follows/model';
+import { FollowsRepository, FollowsRepositoryFactory } from '../src/follows/repository';
+import { TestHelper } from '../test.helper/helper';
 
+
+/**
+ * relate 
+ * loadFollows
+ * loadFollowers
+ */
+
+describe('follows: unit', () => {
+    const followsFactory = Container.get(FollowsRepositoryFactory);
+    const helper = Container.get(TestHelper);
+
+    it('relate', async () => {
+        const repo: FollowsRepository = followsFactory.createFakeRepository();
+        
+        const userId1 = 'innfi';
+        const userId2 = 'ennfi';
+
+        const relateResult: RelateResult = await repo.relate(userId1, userId2);
+        
+        assert.strictEqual(
+            helper.isValidRelateResult(relateResult, userId1, userId2), true);
+    });
+
+    it('loadFollows', async () => {
+        const repo: FollowsRepository = followsFactory.createFakeRepository();
+
+        const followId = helper.createUserId();
+        const followerId = helper.createUserId();
+        await repo.relate(followId, followerId);
+
+        const followsResult: LoadFollowsResult | undefined  = 
+            await repo.loadFollows(followerId);
+        
+        assert.strictEqual(helper.isValidLoadResult(followsResult!), true);
+        assert.strictEqual(helper.hasFollow(followsResult!, followId), true);
+    });
+});
 
 // describe('follows repository', () => {
 //     const followsFactory = Container.get(FollowsRepositoryFactory);

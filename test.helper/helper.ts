@@ -2,6 +2,7 @@ import { Service } from 'typedi';
 import uniqid from 'uniqid';
 
 import { CreateUserAccountInput } from '../src/auth/model';
+import { LoadFollowsResult, RelateResult } from '../src/follows/model';
 import { IUserTimeline, UserTimelineInput } from '../src/timeline/model';
 import { TimelineRepository } from '../src/timeline/repository';
 
@@ -68,5 +69,26 @@ export class TestHelper {
             const input = inputArray[i];
             await repo.writeUserTimeline(input.authorId, input);
         }
+    };
+
+    public isValidRelateResult(relateResult: RelateResult, 
+        followId: string, followerId: string): boolean {
+        if(relateResult.err !== 'ok') return false;
+        if(relateResult.followId !== followId) return false;
+        if(relateResult.followerId !== followerId) return false;
+
+        return true;
+    };
+
+    public isValidLoadResult(followsResult: LoadFollowsResult): boolean {
+        if(followsResult.err !== 'ok') return false;
+        if(!followsResult.follows) return false;
+
+        return true;
+    };
+
+    public hasFollow(followsResult: LoadFollowsResult, followId: string): 
+        boolean {
+        return followsResult.follows!.has(followId);
     };
 };

@@ -28,7 +28,13 @@ export interface LoadFollowOptions {
 
 export interface RelateResult {
     err: string;
-    reason?: string;
+    followId?: string;
+    followerId?: string; 
+};
+
+export interface LoadFollowsResult {
+    err: string;
+    follows?: Set<string>;
 };
 
 export interface FollowsParams {

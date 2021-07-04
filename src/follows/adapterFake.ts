@@ -43,7 +43,9 @@ export class FakeFollowsAdapter implements FollowsAdapterBase {
         this.followersDict[followerId].add(followId);
 
         return {
-            err: 'ok'
+            err: 'ok',
+            followId: '',
+            followerId: '',
         };
     }
 

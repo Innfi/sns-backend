@@ -62,7 +62,9 @@ export class FollowsAdapter implements FollowsAdapterBase {
             { $push: { follows: followId } }, { upsert: true });
 
         return {
-            err: 'ok'
+            err: 'ok',
+            followId: '',
+            followerId: ''
         };
     }
 
