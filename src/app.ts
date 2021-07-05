@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Container } from 'typedi';
+import { Container, Service } from 'typedi';
 import express from 'express';
 import passport from 'passport';
 import { useExpressServer } from 'routing-controllers';
@@ -7,10 +7,13 @@ import { useExpressServer } from 'routing-controllers';
 import { AuthController } from './auth/controller';
 import { CommonController } from './commonController';
 import { LoggerBase } from './common/logger';
+import { FollowsController } from './follows/controller';
+import { TimelineController } from './timeline/controller';
 
 
+@Service()
 export class SnsApp {
-    protected app: any;
+    public app: any;
     protected logger: LoggerBase;
 
     constructor() {
@@ -23,6 +26,8 @@ export class SnsApp {
             controllers: [ 
                 CommonController,
                 AuthController,
+                FollowsController,
+                TimelineController
             ],
         });
     }

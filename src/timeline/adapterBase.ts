@@ -1,5 +1,6 @@
 import { IUserTimeline, UserTimelineInput, LoadTimelineOptions } from './model';
 
+
 export interface TimelineAdapterBase {
     connectToCollection(): Promise<void>;
     connected(): boolean;
