@@ -35,6 +35,7 @@ export interface CreateUserAccountResult {
 
 export interface LoadUserAccountInput {
     email: string;
+    password: string;
 };
 
 export interface UserProfilePayload {

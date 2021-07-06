@@ -43,12 +43,16 @@ export class AccountAdapter implements AccountAdapterBase {
 
     async loadUserAccount(input: LoadUserAccountInput, projection?: string):
         Promise<IUserAccount | undefined> {
+        if(!this.connected()) this.connectToCollection();
+
         return await this.accountModel.findOne({
             email: input.email
         }, projection? projection : this.projection).lean();
     }
 
     async createUserAccount(input: CreateUserAccountInput): Promise<CreateUserAccountResult> {
+        if(!this.connected()) this.connectToCollection();
+
         const result = await this.accountModel.create({
             userId: input.userId as string,
             nickname: input.nickname as string,
@@ -68,14 +72,16 @@ export class AccountAdapter implements AccountAdapterBase {
     }
     
     async loadUserProfile(userId: string): Promise<UserProfilePayload|null> {
-       const accountData: IUserAccount = await this.accountModel.findOne(
-           {userId: userId}, 'userId nickname headerUrl').lean() as IUserAccount;
+        if(!this.connected()) this.connectToCollection();
+        
+        const accountData: IUserAccount = await this.accountModel.findOne(
+            {userId: userId}, 'userId nickname headerUrl').lean() as IUserAccount;
 
-       return {
-           userId: accountData.userId,
-           nickname: accountData.nickname,
-           headerUrl: accountData.headerUrl? accountData.headerUrl : ''
-       };
+        return {
+            userId: accountData.userId,
+            nickname: accountData.nickname,
+            headerUrl: accountData.headerUrl? accountData.headerUrl : ''
+        };
     }
 }
 

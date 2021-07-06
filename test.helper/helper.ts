@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import uniqid from 'uniqid';
 
-import { CreateUserAccountInput } from '../src/auth/model';
+import { CreateUserAccountInput, LoadUserAccountInput } from '../src/auth/model';
 import { RelateResult, LoadRelationMembersResult } from '../src/follows/model';
 import { IUserTimeline, UserTimelineInput } from '../src/timeline/model';
 import { TimelineRepository } from '../src/timeline/repository';
@@ -18,6 +18,13 @@ export class TestHelper {
             nickname: dummyId,
             email: `${dummyId}@test.com`,
             password: uniqid()
+        };
+    };
+
+    public toLoadUserAccountInput(createInput: CreateUserAccountInput): LoadUserAccountInput {
+        return {
+            email: createInput.email,
+            password: createInput.password
         };
     };
 
