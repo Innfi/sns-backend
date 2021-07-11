@@ -24,31 +24,33 @@ describe('integration test', () => {
         .expect(401);
     });
 
-    it('signup - signin', () => {
+    it('signup - signin', async () => {
         const input: CreateUserAccountInput = helper.newCreateUserAccountInput();
 
-        request(snsApp.app)
+        const signupRes = await request(snsApp.app)
         .post('/signup')
         .send(input)
-        .expect(200)
-        .end((err: any, res: Response) => {
-            const signupResp: CreateUserAccountResult = res.body;
-
-            assert.strictEqual(signupResp.err, 'ok');
-        });
-
+        .expect(200);
+        const signupResp: CreateUserAccountResult = signupRes.body;
+        assert.strictEqual(signupResp.err, 'ok');
+        
         const loadInput = helper.toLoadUserAccountInput(input);
-
-        request(snsApp.app)
+        const signinRes = await request(snsApp.app)
         .post('/signin')
         .send(loadInput)
-        .expect(200)
-        .end((err: any, res: Response) => {
-            const signinResp = res.body;
+        .expect(200);
+        
+        const signinBody = signinRes.body;
+        assert.strictEqual(signinBody.err, 'ok');
+        assert.strictEqual(signinBody.jwtToken !== undefined, true);
 
-            assert.strictEqual(signinResp.err, 'ok');
-            assert.strictEqual(signinResp.jwtToken !== undefined, true);
-        });
+        const privatePageResp = await request(snsApp.app)
+        .get('/hideout')
+        .set("Authorization", `bearer ${signinBody.jwtToken}`)
+        .expect(200);
+        
+        const msg: string = privatePageResp.body.msg;
+        assert.strictEqual(msg, 'test output for private page');
     });
 
     //relate peers
