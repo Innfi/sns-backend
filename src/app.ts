@@ -18,11 +18,11 @@ export class SnsApp {
 
     constructor() {
         this.init();
-
         this.app = express();
         this.app.use(passport.initialize());
 
         useExpressServer(this.app, {
+            cors: true,
             controllers: [ 
                 CommonController,
                 AuthController,
