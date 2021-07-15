@@ -40,7 +40,7 @@ export class FollowsAdapter implements FollowsAdapterBase {
         const findResult: IFollowsDoc | null = await this.followsModel
             .findOne({ userId: userId })
             .slice('follows', [options.page, options.limit]);
-        if(findResult === null) return null;
+        if(!findResult) return null;
 
         return new Set((findResult as IFollowsDoc).follows);
     }
@@ -50,7 +50,7 @@ export class FollowsAdapter implements FollowsAdapterBase {
         const findResult: IFollowsDoc | null = await this.followsModel
             .findOne({userId: userId})
             .slice('followers', [options.page, options.limit]);
-        if(findResult === null) return null;
+        if(!findResult) return null;
 
         return new Set((findResult as IFollowsDoc).followers);
     }

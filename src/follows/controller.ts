@@ -31,7 +31,7 @@ export class FollowsController {
 
             const response: RelateResult | null = 
                 await this.followsService.relate(followParams.userIdToFollow, userId);
-            if(response === null) return res.status(500).send({ err: 'server error'}).end();
+            if(!response) return res.status(500).send({ err: 'server error'}).end();
 
             return res.status(200).send(response).end();
         } catch (err: any) {
@@ -71,7 +71,7 @@ export class FollowsController {
 
             return res.status(200).send(response).end();
         } catch (err: any) {
-            this.logger.error(`FollowsContainer.followers] $[err]`);
+            this.logger.error(`FollowsContainer.followers] ${err}`);
             return res.status(500).end();
         }     
     }

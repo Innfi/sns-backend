@@ -24,7 +24,7 @@ export class FollowsRepositoryFactory {
     }
 }
 
-@Service()
+@Service({ factory: [ FollowsRepositoryFactory, 'createRepository']})
 export class FollowsRepository {
     constructor(
         protected followsAdapter: FollowsAdapterBase,
@@ -36,7 +36,7 @@ export class FollowsRepository {
     };
 
     public async loadFollows(userId: string, options: LoadFollowOptions): 
-        Promise<LoadRelationMembersResult | undefined> {
+        Promise<LoadRelationMembersResult> {
         const follows: Set<string> | null = 
             await this.followsAdapter.loadFollows(userId, options);
 
@@ -50,7 +50,7 @@ export class FollowsRepository {
     }
 
     public async loadFollowers(userId: string, options: LoadFollowOptions): 
-        Promise<LoadRelationMembersResult | undefined> {
+        Promise<LoadRelationMembersResult> {
         const followers: Set<string> | null = 
             await this.followsAdapter.loadFollowers(userId, options);
 

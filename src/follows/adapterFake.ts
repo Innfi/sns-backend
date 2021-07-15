@@ -29,7 +29,7 @@ export class FakeFollowsAdapter implements FollowsAdapterBase {
 
     public async loadFollowers(userId: string, options: LoadFollowOptions): 
         Promise<Set<string> | null> {
-            return this.followsDict[userId];
+        return this.followsDict[userId];
     }
 
     public async relate(followId: string, followerId: string): Promise<RelateResult> {

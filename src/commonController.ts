@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { Service } from 'typedi';
-import { Get, JsonController, Req, Res, UseBefore, Body } from 'routing-controllers';
+import { Get, JsonController, Req, Res, UseBefore, Body,
+     } from 'routing-controllers';
 import { Request, Response } from 'express';
 import { LoggerBase } from './common/logger';
 

@@ -23,7 +23,7 @@ export class AccountRepositoryFactory {
     }
 }
 
-@Service({ factory: [ AccountRepositoryFactory, 'createRepository']})
+@Service({ factory: [ AccountRepositoryFactory, 'createFakeRepository']})
 export class AccountRepository {
     protected projection: string = 'email password';
 
