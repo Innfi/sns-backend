@@ -5,6 +5,7 @@ import request from 'supertest';
 import { SnsApp } from '../src/app';
 import { TestHelper } from '../test.helper/helper';
 import { CreateUserAccountInput, CreateUserAccountResult, UserProfilePayload } from '../src/auth/model';
+import { UserTimelineInput } from '../src/timeline/model';
 
 
 describe('integration test', () => {
@@ -112,4 +113,29 @@ describe('integration test', () => {
     };
 
     //timeline
+    it('signup - signin - writeTimeline', async () => {
+        const input: CreateUserAccountInput = helper.newCreateUserAccountInput();
+        const token: string = await loadAuthToken(input);
+
+        const timelineData: UserTimelineInput = {
+            authorId: 'innfi',
+            text: 'Lorem ipsum dolor sit amet'
+        };
+
+        const result: object = await writeTimeline(input, token, timelineData);
+
+        assert.strictEqual(result['err'], 'ok'); //FIXME: check response
+    });
+
+    const writeTimeline = async (
+        input: CreateUserAccountInput, 
+        token: string,
+        data: UserTimelineInput
+    ): Promise<object> => {
+        return await request(snsApp.app)
+        .post(`/timeline/${input.userId}`)
+        .set('Authorization', `bearer ${token}`)
+        .send(data)
+        .expect(200);
+    };
 });
