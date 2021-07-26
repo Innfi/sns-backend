@@ -54,7 +54,9 @@ export class FakeAccountAdapter implements AccountAdapterBase {
     }
 
     async loadUserProfile(userId: string): Promise<UserProfilePayload|null> {
-        const account: IUserAccount | undefined = this.accountDict[userId];
+        const account: IUserAccount | undefined =  Object.values(this.accountDict)
+            .find((value: IUserAccount) => value.userId == userId);
+
         if(account === undefined) return null;
 
         return {

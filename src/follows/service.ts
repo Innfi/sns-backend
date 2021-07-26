@@ -36,7 +36,7 @@ export class FollowsService {
         if(!follows) return undefined;
         if(!follows.members) return [];
 
-        const keys: string[] = Object.keys(follows.members!.keys);
+        const keys: string[] = Array.from(follows.members);
         return this.toUserProfilePayloads(keys);
     };
 
@@ -47,14 +47,14 @@ export class FollowsService {
         if(!followers) return undefined;
         if(!followers.members) return [];
 
-        const keys: string[] = Object.keys(followers.members!.keys);
+        const keys: string[] = Array.from(followers.members);
         return this.toUserProfilePayloads(keys);
     };
 
     protected async toUserProfilePayloads(keys: string[]): Promise<UserProfilePayload[]> {
         let response: UserProfilePayload[] = [];
 
-        for(let key of keys) {
+        for(const key of keys) {
             const profileResult = await this.accountRepo.loadUserProfile(key);
             if(!profileResult) continue;
 

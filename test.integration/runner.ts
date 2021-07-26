@@ -62,17 +62,18 @@ describe('integration test', () => {
         const token1: string = await loadAuthToken(input1);
         const token2: string = await loadAuthToken(input2);
 
-        await relate(input1.userId!, token1, input2.userId!);
-        //await relate(input2.userId!, token2, input1.userId!);
+        await assertRelate(input1, token1, input2);
+        await assertRelate(input2, token2, input1);
+    });
 
+    const assertRelate = async (input1: CreateUserAccountInput, token: string, 
+        input2: CreateUserAccountInput) => {
+        await relate(input1.userId!, token, input2.userId!);
         const result1: boolean = 
-            await userIdExistInFollowers(input1.userId!, token1, input2.userId!);
-        // const result2: boolean = 
-        //     await userIdExistInFollowers(input2.userId!, token2, input1.userId!);
+            await userIdExistInFollowers(input1.userId!, token, input2.userId!);
 
         assert.strictEqual(result1, true);
-        //assert.strictEqual(result2, true);
-    });
+    };
 
     const loadAuthToken = async (input: CreateUserAccountInput): Promise<string> => {
         await request(snsApp.app).post('/signup').send(input).expect(200);
@@ -105,6 +106,7 @@ describe('integration test', () => {
     ): Promise<boolean> => {
         const response = await request(snsApp.app)
         .get(`/followers/${userId}`)
+        .send({ page: 0, limit: 10 })
         .expect(200);
         
         const followers: UserProfilePayload[] = response.body;

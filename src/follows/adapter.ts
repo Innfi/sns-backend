@@ -37,24 +37,30 @@ export class FollowsAdapter implements FollowsAdapterBase {
 
     public async loadFollows(userId: string, options: LoadFollowOptions): 
         Promise<Set<string> | null> {
+        if(!this.connected()) await this.connectToCollection();
+
         const findResult: IFollowsDoc | null = await this.followsModel
             .findOne({ userId: userId })
-            .slice('follows', [options.page, options.limit]);
-        if(!findResult) return null;
-
-        return new Set((findResult as IFollowsDoc).follows);
-    }
-
-    public async loadFollowers(userId: string, options: LoadFollowOptions): 
-        Promise<Set<string> | null> {
-        const findResult: IFollowsDoc | null = await this.followsModel
-            .findOne({userId: userId})
             .slice('followers', [options.page, options.limit]);
         if(!findResult) return null;
 
         return new Set((findResult as IFollowsDoc).followers);
     }
+
+    public async loadFollowers(userId: string, options: LoadFollowOptions): 
+        Promise<Set<string> | null> {
+        if(!this.connected()) await this.connectToCollection();
+
+        const findResult: IFollowsDoc | null = await this.followsModel
+            .findOne({userId: userId})
+            .slice('follows', [options.page, options.limit]);
+        if(!findResult) return null;
+
+        return new Set((findResult as IFollowsDoc).follows);
+    }
     public async relate(followId: string, followerId: string): Promise<RelateResult> {
+        if(!this.connected()) await this.connectToCollection();
+
         await this.followsModel.updateOne({ userId: followId }, 
             { $push: { followers: followerId }} , { upsert: true });
 
@@ -63,8 +69,8 @@ export class FollowsAdapter implements FollowsAdapterBase {
 
         return {
             err: 'ok',
-            followId: '',
-            followerId: ''
+            followId: followId,
+            followerId: followerId
         };
     }
 
