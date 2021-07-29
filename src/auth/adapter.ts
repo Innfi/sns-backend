@@ -43,7 +43,7 @@ export class AccountAdapter implements AccountAdapterBase {
 
     async loadUserAccount(input: LoadUserAccountInput, projection?: string):
         Promise<IUserAccount | undefined> {
-        if(!this.connected()) this.connectToCollection();
+        if(!this.connected()) await this.connectToCollection();
 
         return await this.accountModel.findOne({
             email: input.email
@@ -51,7 +51,7 @@ export class AccountAdapter implements AccountAdapterBase {
     }
 
     async createUserAccount(input: CreateUserAccountInput): Promise<CreateUserAccountResult> {
-        if(!this.connected()) this.connectToCollection();
+        if(!this.connected()) await this.connectToCollection();
 
         const result = await this.accountModel.create({
             userId: input.userId as string,

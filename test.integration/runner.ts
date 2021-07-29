@@ -5,8 +5,13 @@ import request from 'supertest';
 import { SnsApp } from '../src/app';
 import { TestHelper } from '../test.helper/helper';
 import { CreateUserAccountInput, CreateUserAccountResult, UserProfilePayload } from '../src/auth/model';
-import { UserTimelineInput } from '../src/timeline/model';
+import { IUserTimeline, UserTimelineInput } from '../src/timeline/model';
 
+
+interface UserAccountInfo {
+    email: string;
+    token: string;
+};
 
 describe('integration test', () => {
     const snsApp = Container.get(SnsApp);
@@ -124,20 +129,71 @@ describe('integration test', () => {
             text: 'Lorem ipsum dolor sit amet'
         };
 
-        const result: object = await writeTimeline(input, token, timelineData);
+        const result: any = await writeTimeline(input, token, timelineData);
 
-        assert.strictEqual(result['err'], 'ok'); //FIXME: check response
+        assert.strictEqual(result.body['err'], 'ok'); //FIXME: check response
     });
 
     const writeTimeline = async (
         input: CreateUserAccountInput, 
         token: string,
         data: UserTimelineInput
-    ): Promise<object> => {
+    ): Promise<any> => {
         return await request(snsApp.app)
         .post(`/timeline/${input.userId}`)
         .set('Authorization', `bearer ${token}`)
         .send(data)
         .expect(200);
     };
+
+    it('loadTimeline: users timeline visible to their followers', async () => {
+        const inputs: CreateUserAccountInput[] = createUserPool();
+
+        const accountInfos: UserAccountInfo[] = await proceedToSigninStatus(inputs);
+    });
+
+    const createUserPool = (): CreateUserAccountInput[] => {
+        return [
+            {
+                userId: 'innfi',
+                email: 'innfi@test.com',
+                nickname: 'innfi',
+                password: 'default'
+            },
+            {
+                userId: 'ennfi',
+                email: 'ennfi@test.com',
+                nickname: 'ennfi',
+                password: 'default'
+            },
+            {
+                userId: 'milli',
+                email: 'milli@test.com',
+                nickname: 'milli',
+                password: 'default'
+            },
+            {
+                userId: 'elise',
+                email: 'elise@test.com',
+                nickname: 'elise',
+                password: 'default'
+            },
+        ];
+    };
+
+    const proceedToSigninStatus = async (inputs: CreateUserAccountInput[]): 
+        Promise<UserAccountInfo[]> => {
+
+        const output: UserAccountInfo[] = [];
+
+        for(const input of inputs) {
+            const token = await loadAuthToken(input);
+            output.push({
+                email: input.email,
+                token: token
+            });
+        }
+
+        return output;
+    }
 });
