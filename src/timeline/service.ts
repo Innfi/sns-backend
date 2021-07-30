@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { Service } from 'typedi';
 
 import { LoggerBase } from '../common/logger';
+import { FollowsRepository } from '../follows/repository';
 import { IUserTimeline, LoadTimelineOptions, UserTimelineInput } from './model';
 import { TimelineRepository } from './repository';
 
@@ -10,6 +11,7 @@ import { TimelineRepository } from './repository';
 export class TimelineService {
     constructor(
         protected tmRepo: TimelineRepository,
+        protected followsRepo: FollowsRepository,
         protected logger: LoggerBase
     ) {}
 
@@ -30,7 +32,17 @@ export class TimelineService {
         input: UserTimelineInput
     ): Promise<IUserTimeline | undefined> {
         try {
-            return await this.tmRepo.writeUserTimeline(userId, input);
+            const result = await this.tmRepo.writeUserTimeline(userId, input);
+
+            const followers = await 
+                this.followsRepo.loadFollowers(userId, { page: 0, limit: 100}); //FIXME
+            if(!followers.members) return result;
+
+            for(const follower of Array.from(followers.members)) {
+                await this.tmRepo.writeUserTimeline(follower, input);
+            }
+
+            return result;
         } catch (err: any) {
             this.logger.error(`TimelineRepository.writeUserTimeline] ${err}`);
             return undefined;

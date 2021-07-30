@@ -25,7 +25,7 @@ export class TimelineRepositoryFactory {
     }
 }
 
-@Service({ factory: [TimelineRepositoryFactory, 'createRepository' ]})
+@Service({ factory: [TimelineRepositoryFactory, 'createFakeRepository' ]})
 export class TimelineRepository {
     constructor(protected timelineAdapter: TimelineAdapterBase, 
         protected logger: LoggerBase) {

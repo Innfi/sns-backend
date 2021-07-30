@@ -24,7 +24,7 @@ export class FollowsRepositoryFactory {
     }
 }
 
-@Service({ factory: [ FollowsRepositoryFactory, 'createRepository']})
+@Service({ factory: [ FollowsRepositoryFactory, 'createFakeRepository']})
 export class FollowsRepository {
     constructor(
         protected followsAdapter: FollowsAdapterBase,
