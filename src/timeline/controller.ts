@@ -22,7 +22,7 @@ export class TimelineController {
 
     @Get('/:userId')
     public async getUserTimeline(@Req() req: Request, @Res() res: Response, 
-        @QueryParams() options: LoadTimelineOptions) {
+        @Body() options: LoadTimelineOptions) {
         try {
             const userId: string = req.params.userId;
             this.logger.info(`TimelineController.getUserTimeline] ${userId}`);

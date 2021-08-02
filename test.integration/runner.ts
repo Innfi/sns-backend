@@ -10,6 +10,7 @@ import { IUserTimeline, UserTimelineInput } from '../src/timeline/model';
 
 interface UserAccountInfo {
     email: string;
+    userId: string;
     token: string;
 };
 
@@ -148,8 +149,24 @@ describe('integration test', () => {
 
     it('loadTimeline: users timeline visible to their followers', async () => {
         const inputs: CreateUserAccountInput[] = createUserPool();
-
         const accountInfos: UserAccountInfo[] = await proceedToSigninStatus(inputs);
+        const celeb: CreateUserAccountInput = {
+            userId: 'celeb',
+            email: 'celeb@celeb.com',
+            nickname: 'who',
+            password: 'celebdefault'
+        };
+
+        const celebToken = await loadAuthToken(celeb);
+        await followCeleb(accountInfos, celeb.userId!);
+        const celebTimeline: UserTimelineInput = {
+            authorId: celeb.userId!,
+            text: 'Lorem ipsum'
+        };
+
+        await writeTimeline(celeb, celebToken,celebTimeline);
+
+        await assertFollowersTimeline(accountInfos, celebTimeline);
     });
 
     const createUserPool = (): CreateUserAccountInput[] => {
@@ -190,10 +207,31 @@ describe('integration test', () => {
             const token = await loadAuthToken(input);
             output.push({
                 email: input.email,
+                userId: input.userId as string,
                 token: token
             });
         }
 
         return output;
+    }
+
+    const followCeleb = async (accountInfos: UserAccountInfo[], celebId: String) => {
+        for(const accountInfo of accountInfos) {
+            await request(snsApp.app).post(`/followuser/${accountInfo.userId}`)
+                .set("Authorization", `bearer ${accountInfo.token}`)
+                .send({ userIdToFollow: celebId })
+                .expect(200);
+        }
+    };
+
+    const assertFollowersTimeline = async (accountInfos: UserAccountInfo[], 
+        celebTimeline: UserTimelineInput) => {
+        for(const accountInfo of accountInfos) {
+            const result = await request(snsApp.app).get(`/timeline/${accountInfo.userId}`)
+                .send({ page: 0, limit: 10 })
+                .expect(200);
+
+            //check result body
+        }
     }
 });
