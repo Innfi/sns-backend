@@ -232,6 +232,17 @@ describe('integration test', () => {
                 .expect(200);
 
             //check result body
+            assert.strictEqual(result.body.err, 'ok');
+
+            const timelines: IUserTimeline[] = result.body.timelines;
+            assert.strictEqual(
+                timelines.findIndex((value: IUserTimeline) => {
+                if(value.authorId != celebTimeline.authorId) return false;
+                if(value.text != celebTimeline.text) return false;
+
+                return true;
+                }
+            ) > 0, true);
         }
     }
 });
