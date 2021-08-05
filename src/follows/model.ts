@@ -42,7 +42,7 @@ export enum MemberTypeEnum {
 export interface LoadRelationMembersResult {
     err: string;
     type: MemberTypeEnum;
-    members?: Set<string> | undefined;
+    members?: string[] | undefined;
 };
 
 export interface FollowsParams {

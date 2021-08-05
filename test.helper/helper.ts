@@ -97,7 +97,7 @@ export class TestHelper {
 
     public hasMember(result: LoadRelationMembersResult, followerId: string):
         boolean {
-        return result.members!.has(followerId);
+        return result.members!.findIndex((value: string) => value == followerId) >= 0;
     };
 
     

@@ -24,7 +24,7 @@ export class FollowsRepositoryFactory {
     }
 }
 
-@Service({ factory: [ FollowsRepositoryFactory, 'createFakeRepository']})
+@Service({ factory: [ FollowsRepositoryFactory, 'createRepository']})
 export class FollowsRepository {
     constructor(
         protected followsAdapter: FollowsAdapterBase,
@@ -45,7 +45,7 @@ export class FollowsRepository {
         return {
             err: 'ok',
             type: MemberTypeEnum.Follows,
-            members: follows!
+            members: Array.from(follows!)
         };
     }
 
@@ -56,10 +56,12 @@ export class FollowsRepository {
 
         if(!followers) return { err: 'other', type: MemberTypeEnum.Invalid, members: undefined };
 
-        return {
+        const result: LoadRelationMembersResult = {
             err: 'ok',
             type: MemberTypeEnum.Followers,
-            members: followers!
+            members: Array.from(followers) 
         };
+
+        return result;
     };
 };

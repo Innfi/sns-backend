@@ -36,9 +36,11 @@ export class TimelineService {
 
             const followers = await 
                 this.followsRepo.loadFollowers(userId, { page: 0, limit: 100}); //FIXME
+
             if(!followers.members) return result;
 
-            for(const follower of Array.from(followers.members)) {
+            for(const follower of followers.members) {
+                console.log(`writeUserTimeline] followerId: ${follower}`);
                 await this.tmRepo.writeUserTimeline(follower, input);
             }
 

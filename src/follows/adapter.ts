@@ -41,10 +41,10 @@ export class FollowsAdapter implements FollowsAdapterBase {
 
         const findResult: IFollowsDoc | null = await this.followsModel
             .findOne({ userId: userId })
-            .slice('followers', [options.page, options.limit]);
+            .slice('follows', [options.page, options.limit]);
         if(!findResult) return null;
 
-        return new Set((findResult as IFollowsDoc).followers);
+        return new Set((findResult as IFollowsDoc).follows);
     }
 
     public async loadFollowers(userId: string, options: LoadFollowOptions): 
@@ -53,10 +53,11 @@ export class FollowsAdapter implements FollowsAdapterBase {
 
         const findResult: IFollowsDoc | null = await this.followsModel
             .findOne({userId: userId})
-            .slice('follows', [options.page, options.limit]);
+            .slice('followers', [options.page, options.limit]);
+
         if(!findResult) return null;
 
-        return new Set((findResult as IFollowsDoc).follows);
+        return new Set((findResult as IFollowsDoc).followers);
     }
     public async relate(followId: string, followerId: string): Promise<RelateResult> {
         if(!this.connected()) await this.connectToCollection();
