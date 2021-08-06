@@ -38,12 +38,14 @@ export class TimelineAdapter implements TimelineAdapterBase {
 
     public async loadUserTimeline(userId: string, options: LoadTimelineOptions): 
         Promise<IUserTimeline[]> {
+        if(!this.connected()) await this.connectToCollection();
         //FIXME: pagination
         return await this.timelineModel.find({ userId: userId }).lean();
     }
 
     public async writeUserTimeline(userId: string, input: UserTimelineInput): 
         Promise<IUserTimeline> {
+        if(!this.connected()) await this.connectToCollection();
         const newTimeline: IUserTimeline = {
             userId: userId,
             authorId: input.authorId,
@@ -58,7 +60,9 @@ export class TimelineAdapter implements TimelineAdapterBase {
         return newTimeline;
     }
 
-    public async clear(userId: string): Promise<void> {
-        await this.timelineModel.deleteMany({userId: userId});
+    public async cleanupData(): Promise<void> {
+        if(!this.connected()) await this.connectToCollection();
+
+        await this.timelineModel.deleteMany({});
     }
 }

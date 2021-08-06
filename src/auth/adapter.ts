@@ -29,7 +29,7 @@ export class AccountAdapter implements AccountAdapterBase {
         this.logger.info('AccountAdapter: ' + this.address);
     }
 
-    async connectToCollection(): Promise<void> {
+    public async connectToCollection(): Promise<void> {
         this.conn = await mongoose.createConnection(
             this.address, this.connectOptions);
 
@@ -37,11 +37,11 @@ export class AccountAdapter implements AccountAdapterBase {
             this.collectionName, UserAccountSchema);
     }
 
-    connected(): boolean {
+    public connected(): boolean {
         return this.conn?.readyState === mongoose.STATES.connected;
     }
 
-    async loadUserAccount(input: LoadUserAccountInput, projection?: string):
+    public async loadUserAccount(input: LoadUserAccountInput, projection?: string):
         Promise<IUserAccount | undefined> {
         if(!this.connected()) await this.connectToCollection();
 
@@ -50,7 +50,8 @@ export class AccountAdapter implements AccountAdapterBase {
         }, projection? projection : this.projection).lean();
     }
 
-    async createUserAccount(input: CreateUserAccountInput): Promise<CreateUserAccountResult> {
+    public async createUserAccount(input: CreateUserAccountInput): 
+        Promise<CreateUserAccountResult> {
         if(!this.connected()) await this.connectToCollection();
 
         const result = await this.accountModel.create({
@@ -66,12 +67,12 @@ export class AccountAdapter implements AccountAdapterBase {
         };
     }
 
-    async deleteUserAccount(input: LoadUserAccountInput): Promise<number> {
+    public async deleteUserAccount(input: LoadUserAccountInput): Promise<number> {
         const response = await this.accountModel.deleteOne({email: input.email});
         return response.deletedCount ? response.deletedCount : 0;
     }
     
-    async loadUserProfile(userId: string): Promise<UserProfilePayload|null> {
+    public async loadUserProfile(userId: string): Promise<UserProfilePayload | null> {
         if(!this.connected()) this.connectToCollection();
         
         const accountData: IUserAccount = await this.accountModel.findOne(
@@ -82,6 +83,12 @@ export class AccountAdapter implements AccountAdapterBase {
             nickname: accountData.nickname,
             headerUrl: accountData.headerUrl? accountData.headerUrl : ''
         };
+    }
+
+    public async cleanupData(): Promise<void> { 
+        if(!this.connected()) await this.connectToCollection();
+        
+        await this.accountModel.deleteMany({});
     }
 }
 

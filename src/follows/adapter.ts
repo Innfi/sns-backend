@@ -75,7 +75,9 @@ export class FollowsAdapter implements FollowsAdapterBase {
         };
     }
 
-    public async clear(): Promise<void> {
-        return;
+    public async cleanupData(): Promise<void> {
+        if(!this.connected()) await this.connectToCollection();
+
+        await this.followsModel.deleteMany({});
     }
 }

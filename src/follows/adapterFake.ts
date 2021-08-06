@@ -49,7 +49,7 @@ export class FakeFollowsAdapter implements FollowsAdapterBase {
         };
     }
 
-    public async clear(): Promise<void> {
+    public async cleanupData(): Promise<void> {
         this.followsDict = {};
         this.followersDict = {};
     }

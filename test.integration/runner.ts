@@ -18,6 +18,11 @@ describe('integration test', () => {
     const snsApp = Container.get(SnsApp);
     const helper = Container.get(TestHelper);
 
+    after(async () => {
+        console.log('---------------------teardown-----------------------');
+        await helper.cleanupDatabase();
+    });
+
     it('init supertest', () => {
         request(snsApp.app)
         .get('/')
@@ -68,18 +73,18 @@ describe('integration test', () => {
         const token1: string = await loadAuthToken(input1);
         const token2: string = await loadAuthToken(input2);
 
-        // await assertRelate(input1, token1, input2);
-        // await assertRelate(input2, token2, input1);
+        await assertRelate(input1, token1, input2);
+        await assertRelate(input2, token2, input1);
     });
 
-    // const assertRelate = async (input1: CreateUserAccountInput, token: string, 
-    //     input2: CreateUserAccountInput) => {
-    //     await relate(input1.userId!, token, input2.userId!);
-    //     const result1: boolean = 
-    //         await userIdExistInFollowers(input1.userId!, token, input2.userId!);
+    const assertRelate = async (input1: CreateUserAccountInput, token: string, 
+        input2: CreateUserAccountInput) => {
+        await relate(input1.userId!, token, input2.userId!);
+        const result1: boolean = 
+            await userIdExistInFollows(input1.userId!, token, input2.userId!);
 
-    //     assert.strictEqual(result1, true);
-    // };
+        assert.strictEqual(result1, true);
+    };
 
     const loadAuthToken = async (input: CreateUserAccountInput): Promise<string> => {
         await request(snsApp.app).post('/signup').send(input).expect(200);
@@ -105,18 +110,21 @@ describe('integration test', () => {
         .expect(200);
     };
 
-    const userIdExistInFollowers = async (
+    const userIdExistInFollows = async (
         userId: string, 
         userToken: string, 
         followerId: string
     ): Promise<boolean> => {
         const response = await request(snsApp.app)
-        .get(`/followers/${userId}`)
+        .get(`/follows/${userId}`)
         .send({ page: 0, limit: 10 })
         .expect(200);
         
-        const followers: UserProfilePayload[] = response.body;
-        return followers.findIndex(
+        const follows: UserProfilePayload[] = response.body;
+        console.log(`=== userId: ${userId}`);
+        console.log(`=== follows: ${follows.length}`);
+
+        return follows.findIndex(
             (value: UserProfilePayload) => value.userId == followerId) >= 0;
     };
 

@@ -10,4 +10,5 @@ export interface AccountAdapterBase {
     createUserAccount(input: CreateUserAccountInput): Promise<CreateUserAccountResult>;
     deleteUserAccount(input: CreateUserAccountInput): Promise<number>;
     loadUserProfile(userId: string): Promise<UserProfilePayload|null>;
+    cleanupData(): Promise<void>;
 }

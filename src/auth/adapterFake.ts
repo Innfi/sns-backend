@@ -45,7 +45,7 @@ export class FakeAccountAdapter implements AccountAdapterBase {
         };
     }
 
-    async deleteUserAccount(input: LoadUserAccountInput): Promise<number> {
+    public async deleteUserAccount(input: LoadUserAccountInput): Promise<number> {
         const acc = await this.loadUserAccount(input);
         if(acc === undefined) return 0;
 
@@ -53,7 +53,7 @@ export class FakeAccountAdapter implements AccountAdapterBase {
         return 1;
     }
 
-    async loadUserProfile(userId: string): Promise<UserProfilePayload|null> {
+    public async loadUserProfile(userId: string): Promise<UserProfilePayload | null> {
         const account: IUserAccount | undefined =  Object.values(this.accountDict)
             .find((value: IUserAccount) => value.userId == userId);
 
@@ -64,5 +64,9 @@ export class FakeAccountAdapter implements AccountAdapterBase {
             nickname: account.nickname,
             headerUrl: account.headerUrl? account.headerUrl : ''
         };
+    }
+
+    public async cleanupData(): Promise<void> {
+        this.accountDict = {};
     }
 }

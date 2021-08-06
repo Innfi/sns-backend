@@ -1,8 +1,10 @@
-import { Service } from 'typedi';
+import Container, { Service } from 'typedi';
 import uniqid from 'uniqid';
 
 import { CreateUserAccountInput, LoadUserAccountInput } from '../src/auth/model';
+import { AccountRepository } from '../src/auth/repository';
 import { RelateResult, LoadRelationMembersResult } from '../src/follows/model';
+import { FollowsRepository } from '../src/follows/repository';
 import { IUserTimeline, UserTimelineInput } from '../src/timeline/model';
 import { TimelineRepository } from '../src/timeline/repository';
 
@@ -100,5 +102,14 @@ export class TestHelper {
         return result.members!.findIndex((value: string) => value == followerId) >= 0;
     };
 
-    
+    public async cleanupDatabase(): Promise<void> {
+        const accRepo = Container.get(AccountRepository);
+        await accRepo.cleaupData();
+
+        const followsRepo = Container.get(FollowsRepository);
+        await followsRepo.cleanupData();
+
+        const timelineRepo = Container.get(TimelineRepository);
+        await timelineRepo.cleanupData();
+    }
 };

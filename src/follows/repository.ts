@@ -64,4 +64,8 @@ export class FollowsRepository {
 
         return result;
     };
+
+    public async cleanupData(): Promise<void> {
+        await this.followsAdapter.cleanupData();
+    }
 };

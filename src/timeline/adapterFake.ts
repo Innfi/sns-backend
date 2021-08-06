@@ -74,7 +74,7 @@ export class FakeTimelineAdapter implements TimelineAdapterBase {
         return response;
     }
 
-    public async clear(userId: string): Promise<void> {
-        DictSingle.getInstance().timelineDict[userId] = [];
+    public async cleanupData(): Promise<void> {
+        DictSingle.getInstance().timelineDict = {};
     }
 }

@@ -7,5 +7,5 @@ export interface FollowsAdapterBase {
     loadFollows(userId: string, options: LoadFollowOptions): Promise<Set<string>|null>;
     loadFollowers(userId: string, options: LoadFollowOptions): Promise<Set<string>|null>;
     relate(followId: string, followerId: string): Promise<RelateResult>;
-    clear(): Promise<void>
+    cleanupData(): Promise<void>
 }

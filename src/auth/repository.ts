@@ -50,4 +50,8 @@ export class AccountRepository {
     public async loadUserProfile(userId: string): Promise<UserProfilePayload | null> {
         return await this.accountAdapter.loadUserProfile(userId);
     }
+
+    public async cleaupData(): Promise<void> {
+        await this.accountAdapter.cleanupData();
+    }
 }

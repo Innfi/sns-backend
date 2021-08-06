@@ -57,4 +57,8 @@ export class TimelineRepository {
 
         return true;
     };
+
+    public async cleanupData(): Promise<void> {
+        await this.timelineAdapter.cleanupData();
+    }
 }
