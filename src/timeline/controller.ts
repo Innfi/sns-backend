@@ -1,10 +1,11 @@
 import 'reflect-metadata';
 import { Container, Service } from 'typedi';
-import { useContainer, JsonController, Req, Res, Body, QueryParams, Get, Post, 
-    UseBefore } from 'routing-controllers';
+import { useContainer, JsonController, Req, Res, Body, Get, Post, 
+    UseBefore, Interceptor } from 'routing-controllers';
 import { Request, Response } from 'express';
 
 import { LoggerBase } from '../common/logger';
+import { S3UploadService } from '../common/s3UploadService';
 import { AuthMiddleware } from '../auth/middleware';
 import { IUserTimeline, LoadTimelineOptions, UserTimelineInput } from './model';
 import { TimelineService } from './service';
@@ -17,6 +18,7 @@ useContainer(Container);
 export class TimelineController {
     constructor(
         protected tmService: TimelineService,
+        protected s3Upload: S3UploadService,
         protected logger: LoggerBase
     ) {}
 
@@ -57,6 +59,22 @@ export class TimelineController {
             }).end();
         } catch (err: any) {
             this.logger.error(`TimelineController.writeUserTimeline] ${err}`);
+            return res.status(500).end();
+        }
+    }
+
+    @Post('/media/:userId')
+    @UseBefore(AuthMiddleware)
+    public async writeUserTimelineMedia(@Req() req: Request, @Res() res: Response, 
+        @Body() body: any) {
+
+        try {
+            //this.s3Upload.getMulter().single("file")
+
+            //TODO: upload images from  body to s3
+            //bucket name, file name 
+        } catch (err: any) {
+            this.logger.error(`TimelineController.writeUserTimelineMedia] ${err}`);
             return res.status(500).end();
         }
     }
