@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Container, Service } from 'typedi';
 import { useContainer, JsonController, Req, Res, Body, Get, Post, 
-    UseBefore, Interceptor } from 'routing-controllers';
+    UseBefore, Interceptor, UploadedFiles } from 'routing-controllers';
 import { Request, Response } from 'express';
 
 import { LoggerBase } from '../common/logger';
@@ -13,12 +13,14 @@ import { TimelineService } from './service';
 
 useContainer(Container);
 
+const s3Upload = Container.get(S3UploadService);
+
 @Service()
 @JsonController('/timeline')
 export class TimelineController {
     constructor(
         protected tmService: TimelineService,
-        protected s3Upload: S3UploadService,
+        //protected s3Upload: S3UploadService,
         protected logger: LoggerBase
     ) {}
 
@@ -65,14 +67,13 @@ export class TimelineController {
 
     @Post('/media/:userId')
     @UseBefore(AuthMiddleware)
-    public async writeUserTimelineMedia(@Req() req: Request, @Res() res: Response, 
-        @Body() body: any) {
-
+    public async writeUserTimelineMedia(
+        @Req() req: Request, 
+        @Res() res: Response, 
+        @UploadedFiles("fileName", { options: s3Upload.getMulter }) files: File[]
+    ) {
         try {
-            //this.s3Upload.getMulter().single("file")
-
-            //TODO: upload images from  body to s3
-            //bucket name, file name 
+            return res.status(200).send({ err: 'ok' }).end();
         } catch (err: any) {
             this.logger.error(`TimelineController.writeUserTimelineMedia] ${err}`);
             return res.status(500).end();

@@ -1,9 +1,11 @@
 import { Service } from 'typedi';
+import { Request } from 'express';
+import AWS from 'aws-sdk';
 import multer from 'multer';
 import multerS3 from 'multer-s3';
-import AWS from 'aws-sdk';
-import { Request } from 'express';
 import dotenv from 'dotenv';
+
+import { LoggerBase } from './logger';
 
 
 dotenv.config();
@@ -17,12 +19,13 @@ export class S3UploadService {
     protected storageEngine: multer.StorageEngine;
     protected multer: multer.Multer;
 
-    public constructor() {
+    public constructor(protected logger: LoggerBase) {
         this.initAws();
         this.initMulter();
     }
 
     protected initAws(): void {
+        this.logger.info('S3UploadService.initAws] ');
         AWS.config.update({
             region: 'ap-northeast-2',
             credentials: new AWS.Credentials({
@@ -33,6 +36,7 @@ export class S3UploadService {
     }
 
     protected initMulter(): void {
+        this.logger.info('S3UploadService.initMulter] ');
         this.storageEngine = multerS3({
             s3: new AWS.S3({
                 apiVersion: '2006-03-01',
@@ -42,6 +46,14 @@ export class S3UploadService {
             contentType: multerS3.AUTO_CONTENT_TYPE,
             acl: 'public-read-write',
             key: this.keyFunction
+        });
+
+        this.multer = multer({
+            storage: this.storageEngine,
+            limits: { 
+                fieldNameSize: 255,
+                fileSize: 1024*1024*5 
+            }
         });
     }
 
