@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Container, Service } from 'typedi';
 import { useContainer, JsonController, Req, Res, Body, Get, Post, 
-    UseBefore, Interceptor, UploadedFiles } from 'routing-controllers';
+    UseBefore, Interceptor, UploadedFiles, UploadedFile, UploadOptions } from 'routing-controllers';
 import { Request, Response } from 'express';
 
 import { LoggerBase } from '../common/logger';
@@ -9,11 +9,19 @@ import { S3UploadService } from '../common/s3UploadService';
 import { AuthMiddleware } from '../auth/middleware';
 import { IUserTimeline, LoadTimelineOptions, UserTimelineInput } from './model';
 import { TimelineService } from './service';
+import multer from 'multer';
 
 
 useContainer(Container);
 
 const s3Upload = Container.get(S3UploadService);
+
+const dummyUpload = () => ({
+    storage: multer.memoryStorage(),
+    limits: {  fieldNameSize: 255,
+        fileSize: 1024 * 1024 * 2 }
+});
+
 
 @Service()
 @JsonController('/timeline')
@@ -70,7 +78,11 @@ export class TimelineController {
     public async writeUserTimelineMedia(
         @Req() req: Request, 
         @Res() res: Response, 
-        @UploadedFiles("fileName", { options: s3Upload.getMulter }) files: File[]
+        @UploadedFiles("fileName", { options: s3Upload.getMulter }) files: any[]
+        // @UploadedFile("filename", { options: {
+        //     storage: multer.memoryStorage(),
+        //     limits: { fieldNameSize: 255, fileSize: 1024*1024*2 }
+        // } })  file: any
     ) {
         try {
             return res.status(200).send({ err: 'ok' }).end();
