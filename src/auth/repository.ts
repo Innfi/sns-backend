@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { Container, Service } from 'typedi';
+import dotenv from 'dotenv';
 
 import { AccountAdapterBase } from './adapterBase';
 import { AccountAdapter } from './adapter';
@@ -7,6 +8,8 @@ import { FakeAccountAdapter } from './adapterFake';
 import { IUserAccount, CreateUserAccountInput, CreateUserAccountResult, 
     UserProfilePayload, LoadUserAccountInput } from './model';
 
+
+dotenv.config();
 
 @Service()
 export class AccountRepositoryFactory {
@@ -23,7 +26,10 @@ export class AccountRepositoryFactory {
     }
 }
 
-@Service({ factory: [ AccountRepositoryFactory, 'createRepository']})
+const persistenceMode = process.env.PERSISTENCE === 'memory' ? 
+    'createFakeRepository' : 'createRepository';
+
+@Service({ factory: [ AccountRepositoryFactory, persistenceMode ]})
 export class AccountRepository {
     protected projection: string = 'email password';
 

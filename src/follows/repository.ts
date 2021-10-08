@@ -1,4 +1,6 @@
 import { Container, Service } from 'typedi';
+import dotenv from 'dotenv';
+
 
 import { LoggerBase } from '../common/logger';
 import { FollowsAdapterBase } from './adapterBase';
@@ -6,6 +8,8 @@ import { FollowsAdapter } from './adapter';
 import { FakeFollowsAdapter } from './adapterFake';
 import { LoadFollowOptions, LoadRelationMembersResult, MemberTypeEnum, RelateResult } from './model';
 
+
+dotenv.config();
 
 @Service()
 export class FollowsRepositoryFactory {
@@ -23,8 +27,10 @@ export class FollowsRepositoryFactory {
         );
     }
 }
+const persistenceMode = process.env.PERSISTENCE === 'memory' ? 
+    'createFakeRepository' : 'createRepository';
 
-@Service({ factory: [ FollowsRepositoryFactory, 'createRepository']})
+@Service({ factory: [ FollowsRepositoryFactory, persistenceMode ]})
 export class FollowsRepository {
     constructor(
         protected followsAdapter: FollowsAdapterBase,

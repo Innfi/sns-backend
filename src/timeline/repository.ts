@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { Container, Service } from 'typedi';
+import dotenv from 'dotenv';
 
 import { LoggerBase } from '../common/logger';
 import { TimelineAdapterBase } from "./adapterBase";
@@ -7,6 +8,8 @@ import { FakeTimelineAdapter } from './adapterFake';
 import { TimelineAdapter } from './adapter';
 import { IUserTimeline, UserTimelineInput, LoadTimelineOptions } from './model';
 
+
+dotenv.config();
 
 @Service()
 export class TimelineRepositoryFactory {
@@ -25,7 +28,10 @@ export class TimelineRepositoryFactory {
     }
 }
 
-@Service({ factory: [TimelineRepositoryFactory, 'createRepository' ]})
+const persistenceMode = process.env.PERSISTENCE === 'memory' ? 
+    'createFakeRepository' : 'createRepository';
+
+@Service({ factory: [TimelineRepositoryFactory, persistenceMode ]})
 export class TimelineRepository {
     constructor(protected timelineAdapter: TimelineAdapterBase, 
         protected logger: LoggerBase) {
