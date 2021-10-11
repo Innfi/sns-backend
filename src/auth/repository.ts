@@ -26,10 +26,10 @@ export class AccountRepositoryFactory {
     }
 }
 
-const persistenceMode = process.env.PERSISTENCE === 'memory' ? 
+const initializer = process.env.PERSISTENCE === 'memory' ? 
     'createFakeRepository' : 'createRepository';
 
-@Service({ factory: [ AccountRepositoryFactory, persistenceMode ]})
+@Service({ factory: [ AccountRepositoryFactory, initializer ]})
 export class AccountRepository {
     protected projection: string = 'email password';
 

@@ -28,10 +28,10 @@ export class TimelineRepositoryFactory {
     }
 }
 
-const persistenceMode = process.env.PERSISTENCE === 'memory' ? 
+const initializer = process.env.PERSISTENCE === 'memory' ? 
     'createFakeRepository' : 'createRepository';
 
-@Service({ factory: [TimelineRepositoryFactory, persistenceMode ]})
+@Service({ factory: [TimelineRepositoryFactory, initializer ]})
 export class TimelineRepository {
     constructor(protected timelineAdapter: TimelineAdapterBase, 
         protected logger: LoggerBase) {

@@ -27,10 +27,10 @@ export class FollowsRepositoryFactory {
         );
     }
 }
-const persistenceMode = process.env.PERSISTENCE === 'memory' ? 
+const initializer = process.env.PERSISTENCE === 'memory' ? 
     'createFakeRepository' : 'createRepository';
 
-@Service({ factory: [ FollowsRepositoryFactory, persistenceMode ]})
+@Service({ factory: [ FollowsRepositoryFactory, initializer ]})
 export class FollowsRepository {
     constructor(
         protected followsAdapter: FollowsAdapterBase,

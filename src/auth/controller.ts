@@ -30,14 +30,12 @@ export class AuthController {
         try {
             this.logger.info('/signup: ' + JSON.stringify(userData));
 
-            const signupResp: CreateUserAccountResult | null = 
-            await this.accRepo.createUserAccount(userData);
+            const signupResp: CreateUserAccountResult = 
+                await this.accRepo.createUserAccount(userData);
 
-            if(signupResp === null) { //FIXME
-                return res.status(500).send('server error');
-            } else {
-                return res.status(200).send(signupResp);
-            }
+            if(signupResp.err !== 'ok') return res.status(500).send('server error');
+
+            return res.status(200).send(signupResp);
         } catch(err) {
             this.logger.error(`/signup error: ${err}`);
             return res.status(500).send('server error');
@@ -63,6 +61,7 @@ export class AuthController {
 
             return res.status(200).send({
                 err: 'ok', 
+                userId: account.userId, 
                 email: account.email,
                 jwtToken: token
             }).end();
