@@ -23,7 +23,6 @@ export const UserAccountSchema = new Schema<IUserAccountDoc>({
 });
 
 export interface CreateUserAccountInput {
-    userId?: string;
     nickname?: string;
     email: string;
     password: string;
@@ -31,6 +30,8 @@ export interface CreateUserAccountInput {
 
 export interface CreateUserAccountResult {
     err: string;
+    userId?: string;
+    email?: string;
 };
 
 export interface LoadUserAccountInput {

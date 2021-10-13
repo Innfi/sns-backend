@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { Service } from 'typedi';
 import mongoose from 'mongoose';
+import { v4 } from 'uuid';
 
 import { CommonConfig } from '../common/config';
 import { LoggerBase } from '../common/logger';
@@ -54,16 +55,19 @@ export class AccountAdapter implements AccountAdapterBase {
         Promise<CreateUserAccountResult> {
         if(!this.connected()) await this.connectToCollection();
 
-        const result = await this.accountModel.create({
-            userId: input.userId as string,
+        const result: IUserAccountDoc = await this.accountModel.create({
+            userId: v4(),
             nickname: input.nickname as string,
             email: input.email,
             password: input.password as string,
             created: new Date()
         });
 
+
         return {
-            err: 'ok'
+            err: 'ok',
+            userId: result.userId,
+            email: input.email
         };
     }
 

@@ -38,7 +38,7 @@ export class FakeTimelineAdapter implements TimelineAdapterBase {
     public async loadUserTimeline(userId: string, options: LoadTimelineOptions): 
         Promise<IUserTimeline[]> {
         
-        if(DictSingle.getInstance().timelineDict[userId] === undefined) {
+        if(!DictSingle.getInstance().timelineDict[userId]) {
             DictSingle.getInstance().timelineDict[userId] = [];
         }
 

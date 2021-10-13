@@ -33,7 +33,10 @@ export class AuthController {
             const signupResp: CreateUserAccountResult = 
                 await this.accRepo.createUserAccount(userData);
 
-            if(signupResp.err !== 'ok') return res.status(500).send('server error');
+            if(signupResp.err !== 'ok') {
+                this.logger.error(`signup error: ${JSON.stringify(signupResp)}`);
+                return res.status(500).send('server error');
+            }
 
             return res.status(200).send(signupResp);
         } catch(err) {

@@ -47,6 +47,7 @@ export class AccountRepository {
     }
 
     protected isValidCreateInput(input: CreateUserAccountInput): boolean {
+        if(!input.nickname) return false;
         if(!input.email) return false;
         if(!input.password) return false;
 

@@ -1,5 +1,7 @@
 import 'reflect-metadata';
 import { Service } from 'typedi';
+import { v4 } from 'uuid';
+
 import { AccountAdapterBase } from './adapterBase';
 import { IUserAccount, LoadUserAccountInput, CreateUserAccountInput, 
     CreateUserAccountResult, UserProfilePayload } from './model';
@@ -32,8 +34,9 @@ export class FakeAccountAdapter implements AccountAdapterBase {
         const acc = await this.loadUserAccount(input);
         if(acc !== undefined) return { err: 'duplicate account' };
 
+        const newUserId: string = v4();
         this.accountDict[input.email] = {
-            userId: input.userId as string,
+            userId: newUserId,
             nickname: input.nickname as string,
             email: input.email,
             password: input.password as string,
@@ -41,7 +44,9 @@ export class FakeAccountAdapter implements AccountAdapterBase {
         };
 
         return {
-            err: 'ok'
+            err: 'ok',
+            userId: newUserId,
+            email: input.email
         };
     }
 
