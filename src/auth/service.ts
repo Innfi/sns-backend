@@ -56,6 +56,7 @@ export class AccountService {
                 err: 'ok', 
                 email: input.email, 
                 userId: userAccount.userId, 
+                nickname: userAccount.nickname, 
                 jwtToken: this.toJwtToken(input)
             };
         } catch (err: any) {

@@ -33,12 +33,16 @@ const initializer = process.env.PERSISTENCE === 'memory' ?
 
 @Service({ factory: [TimelineRepositoryFactory, initializer ]})
 export class TimelineRepository {
-    constructor(protected timelineAdapter: TimelineAdapterBase, 
-        protected logger: LoggerBase) {
-    }
+    constructor(
+        protected timelineAdapter: TimelineAdapterBase, 
+        protected logger: LoggerBase
+    ) { }
 
-    public async loadUserTimeline(userId: string, options: LoadTimelineOptions): 
-        Promise<IUserTimeline[]> {
+    //loadUserTimeline
+    public async loadUserTimeline(
+        userId: string, 
+        options: LoadTimelineOptions
+    ): Promise<IUserTimeline[]> {
         if(!this.timelineAdapter.connected()) {
             await this.timelineAdapter.connectToCollection();
         }
@@ -46,22 +50,16 @@ export class TimelineRepository {
         return await this.timelineAdapter.loadUserTimeline(userId, options);
     }
 
-    public async writeUserTimeline(userId: string, input: UserTimelineInput): 
-        Promise<IUserTimeline | undefined> {
-        if(!this.validInput(input)) return undefined;
-
+    //writeUserTimeline
+    public async writeUserTimeline(
+        userId: string, 
+        input: UserTimelineInput
+    ): Promise<IUserTimeline> {
         if(!this.timelineAdapter.connected()) {
             await this.timelineAdapter.connectToCollection();
         }
 
         return await this.timelineAdapter.writeUserTimeline(userId, input);
-    };
-
-    protected validInput(input: UserTimelineInput): boolean {
-        if(!input.authorId) return false;
-        if(!input.text) return false;
-
-        return true;
     };
 
     public async cleanupData(): Promise<void> {

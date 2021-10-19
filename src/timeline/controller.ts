@@ -33,8 +33,11 @@ export class TimelineController {
     ) {}
 
     @Get('/:userId')
-    public async getUserTimeline(@Req() req: Request, @Res() res: Response, 
-        @Body() options: LoadTimelineOptions) {
+    public async getUserTimeline(
+        @Req() req: Request, 
+        @Res() res: Response, 
+        @Body() options: LoadTimelineOptions
+    ): Promise<Response> {
         try {
             const userId: string = req.params.userId;
             this.logger.info(`TimelineController.getUserTimeline] ${userId}`);
@@ -45,31 +48,35 @@ export class TimelineController {
             return res.status(200).send({
                 err: 'ok',
                 timelines: timelines
-            }).end();
+            });
         } catch (err: any) {
             this.logger.error(`TimelineController.getUserTimeline] ${err}`);
-            return res.status(500).end();
+            return res.status(500);
         }
     }
 
     @Post('/:userId')
     @UseBefore(AuthMiddleware)
-    public async writeUserTimeline(@Req() req: Request, @Res() res: Response,
-        @Body() body: UserTimelineInput) { //FIXME: UserTimelineInput
+    public async writeUserTimeline(
+        @Req() req: Request, 
+        @Res() res: Response,
+        @Body() body: UserTimelineInput
+    ): Promise<Response> { //FIXME: UserTimelineInput
         try {
             const userId: string = req.params.userId;
-            this.logger.info(`TimelineController.writeUserTimeline] ${userId}`);
 
-            const result = await this.tmService.writeUserTimeline(
-                userId, { authorId: userId, text: body.text});
+            const result = await this.tmService.writeUserTimeline(userId, body);
+            if(!result) {
+                return res.status(500).send({ err: 'write error', });
+            }
             
             return res.status(200).send({
                 err: 'ok', 
                 newTimeline: result
-            }).end();
+            });
         } catch (err: any) {
             this.logger.error(`TimelineController.writeUserTimeline] ${err}`);
-            return res.status(500).end();
+            return res.status(500);
         }
     }
 
@@ -78,19 +85,21 @@ export class TimelineController {
     public async writeUserTimelineMedia(
         @Req() req: Request, 
         @Res() res: Response, 
-        @UploadedFile("filename", { options: {
-            storage: multer.memoryStorage(),
-            limits: { fieldNameSize: 255, fileSize: 1024*1024*2 }
-        } }) file: any
-    ) {
+        @UploadedFile("filename", { 
+            options: {
+                storage: multer.memoryStorage(),
+                limits: { fieldNameSize: 255, fileSize: 1024*1024*2 }
+            } 
+        }) file: any
+    ): Promise<Response> {
         //@UploadedFiles("fileName", { options: s3Upload.getMulter }) files: any[]
         try {
             this.logger.info(`writeUserTimelineMedia] file req received`);
 
-            return res.status(200).send({ err: 'ok' }).end();
+            return res.status(200).send({ err: 'ok' });
         } catch (err: any) {
             this.logger.error(`TimelineController.writeUserTimelineMedia] ${err}`);
-            return res.status(500).end();
+            return res.status(500);
         }
     }
 }

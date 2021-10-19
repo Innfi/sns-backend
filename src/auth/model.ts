@@ -49,5 +49,6 @@ export interface AuthenticateResponse {
     err: string;
     email: string;
     userId?: string;
+    nickname?: string;
     jwtToken?: string;
 };

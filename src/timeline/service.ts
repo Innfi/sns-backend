@@ -15,6 +15,7 @@ export class TimelineService {
         protected logger: LoggerBase
     ) {}
 
+    //loadUserTimeline
     public async loadUserTimeline(
         userId: string, 
         options: LoadTimelineOptions
@@ -25,18 +26,20 @@ export class TimelineService {
             this.logger.error(`TimelineRepository.loadUserTimeline] ${err}`)
             return [];
         }
-    };
+    }
 
+    //writeUserTimeline
     public async writeUserTimeline(
         userId: string,
         input: UserTimelineInput
     ): Promise<IUserTimeline | undefined> {
         try {
+            if(this.validInput(input)) return undefined;
+
             const result = await this.tmRepo.writeUserTimeline(userId, input);
 
             const followers = await 
-                this.followsRepo.loadFollowers(userId, { page: 0, limit: 100}); //FIXME
-
+                this.followsRepo.loadFollowers(userId, { page: 0, limit: 100 }); //FIXME
             if(!followers.members) return result;
 
             for(const follower of followers.members) {
@@ -49,5 +52,13 @@ export class TimelineService {
             this.logger.error(`TimelineRepository.writeUserTimeline] ${err}`);
             return undefined;
         }
-    };
+    }
+
+    protected validInput(input: UserTimelineInput): boolean {
+        if(!input) return false;
+        if(!input.authorId) return false;
+        if(!input.text) return false;
+
+        return true;
+    }
 };
