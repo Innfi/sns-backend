@@ -44,3 +44,10 @@ export interface UserProfilePayload {
     nickname: string;
     headerUrl: string;
 };
+
+export interface AuthenticateResponse {
+    err: string;
+    email: string;
+    userId?: string;
+    jwtToken?: string;
+};

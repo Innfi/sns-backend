@@ -2,13 +2,11 @@ import 'reflect-metadata';
 import { Container, Service } from 'typedi';
 import { useContainer, JsonController, Req, Res, Body, Post } from 'routing-controllers';
 import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
 
 import { LoggerBase } from '../common/logger';
-import { PassportInitializer } from './passportInitializer';
-import { AccountRepository } from './repository';
-import { IUserAccount, LoadUserAccountInput, CreateUserAccountInput, 
-    CreateUserAccountResult } from './model';
+import { LoadUserAccountInput, CreateUserAccountInput, CreateUserAccountResult, 
+    AuthenticateResponse} from './model';
+import { AccountService } from './service';
 
 
 useContainer(Container);
@@ -17,8 +15,7 @@ useContainer(Container);
 @JsonController() 
 export class AuthController {
     constructor(
-        protected accRepo: AccountRepository, 
-        protected passportInitializer: PassportInitializer,
+        protected accService: AccountService, 
         protected logger: LoggerBase
     ) {}
 
@@ -31,7 +28,7 @@ export class AuthController {
             this.logger.info('/signup: ' + JSON.stringify(userData));
 
             const signupResp: CreateUserAccountResult = 
-                await this.accRepo.createUserAccount(userData);
+                await this.accService.createUserAccount(userData);
 
             if(signupResp.err !== 'ok') {
                 this.logger.error(`signup error: ${JSON.stringify(signupResp)}`);
@@ -55,30 +52,14 @@ export class AuthController {
 
             this.logger.info('/signin: ' + JSON.stringify(userData));
 
-            const account: IUserAccount | undefined = await this.accRepo.loadUserAccount(userData);
-            if(!account) return res.status(404).end();
-            if(account.password && 
-                account.password !== userData.password) return res.status(404).end();
+            const resp: AuthenticateResponse = 
+                await this.accService.authenticate(userData);
+            if(resp.err !== 'ok') return res.status(404).end();
 
-            const token: string = this.toJwtToken(userData);
-
-            return res.status(200).send({
-                err: 'ok', 
-                userId: account.userId, 
-                email: account.email,
-                jwtToken: token
-            }).end();
-
+            return res.status(200).send(resp).end();
         } catch (err) {
             this.logger.error(`/signin error: ${err}`);
             return res.status(500).send('server error');
         }
     }
-
-    protected toJwtToken(userData: LoadUserAccountInput): string {
-        return jwt.sign({
-            email: userData.email,
-            password: userData.password
-        }, this.passportInitializer.secret());
-    };
 }

@@ -2,8 +2,8 @@ import 'reflect-metadata';
 import { Container, Service } from 'typedi';
 import passport from 'passport';
 import passportJwt from 'passport-jwt';
+import bcrypt from 'bcrypt';
 
-import { IUserAccount } from './model';
 import { AccountRepository } from './repository';
 
 
@@ -32,14 +32,16 @@ export class PassportInitializer {
     }
 
     public async verifyJwt(jwtData: JwtData, done: Function): Promise<void> {
-        if(jwtData === null) return done(null, false, { msg: 'empty auth data'});
-        if(jwtData === undefined) return done(null, false, { msg: 'empty auth data'});
+        if(!jwtData) return done(null, false, { msg: 'empty auth data'});
 
         const accRepo = Container.get(AccountRepository);
         const userAccount = await accRepo.loadUserAccount({ email: jwtData.email });
         if(!userAccount) done(null, false, { msg: 'invalid token'})
 
-        if((userAccount as IUserAccount).password !== jwtData.password) done(null, false);
+        const password: string = userAccount?.password as string;
+
+        const pass: boolean = await bcrypt.compare(jwtData.password, password);
+        if(!pass) done(null, false);
 
         done(null, userAccount, jwtData);
     }
