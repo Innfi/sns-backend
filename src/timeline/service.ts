@@ -34,7 +34,7 @@ export class TimelineService {
         input: UserTimelineInput
     ): Promise<IUserTimeline | undefined> {
         try {
-            if(this.validInput(input)) return undefined;
+            if(!this.validInput(input)) return undefined;
 
             const result = await this.tmRepo.writeUserTimeline(userId, input);
 

@@ -66,9 +66,7 @@ export class TimelineController {
             const userId: string = req.params.userId;
 
             const result = await this.tmService.writeUserTimeline(userId, body);
-            if(!result) {
-                return res.status(500).send({ err: 'write error', });
-            }
+            if(!result) return res.status(500).send({ err: 'write error', });
             
             return res.status(200).send({
                 err: 'ok', 
