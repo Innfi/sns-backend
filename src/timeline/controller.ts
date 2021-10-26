@@ -88,7 +88,7 @@ export class TimelineController {
                 storage: multer.memoryStorage(),
                 limits: { fieldNameSize: 255, fileSize: 1024*1024*2 }
             } 
-        }) file: any
+        }) file: File[]
     ): Promise<Response> {
         //@UploadedFiles("fileName", { options: s3Upload.getMulter }) files: any[]
         try {

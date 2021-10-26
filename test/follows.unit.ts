@@ -1,8 +1,8 @@
 import assert from 'assert';
 import { Container } from 'typedi';
 
-import { RelateResult, LoadRelationMembersResult } from '../src/follows/model';
-import { FollowsRepository, FollowsRepositoryFactory } from '../src/follows/repository';
+import { RelateResult, LoadRelationMembersResult, FollowsRepository, FollowsRepositoryFactory 
+    } from '../src/follows';
 import { TestHelper } from '../test.helper/helper';
 
 

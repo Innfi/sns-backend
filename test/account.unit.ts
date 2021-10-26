@@ -1,8 +1,8 @@
 import assert from 'assert';
 import { Container } from 'typedi';
 
-import { IUserAccount, CreateUserAccountInput } from '../src/auth/model';
-import { AccountRepository, AccountRepositoryFactory } from '../src/auth/repository';
+import { IUserAccount, CreateUserAccountInput, AccountRepository, AccountRepositoryFactory 
+    } from '../src/auth';
 import { TestHelper } from '../test.helper/helper';
 
 
@@ -54,15 +54,6 @@ describe('unit: account', () => {
         const result = await accountRepo.createUserAccount(input);
 
         assert.strictEqual(result.err, 'required field empty');
-    });
-
-    it('create without userId is ok', async () => {
-        const input: CreateUserAccountInput = helper.newCreateUserAccountInput();
-        input.userId = '';
-        
-        const result = await accountRepo.createUserAccount(input);
-
-        assert.strictEqual(result.err, 'ok');
     });
 });
 

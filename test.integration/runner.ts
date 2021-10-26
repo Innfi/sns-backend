@@ -4,8 +4,9 @@ import request from 'supertest';
 
 import { SnsApp } from '../src/app';
 import { TestHelper } from '../test.helper/helper';
-import { CreateUserAccountInput, CreateUserAccountResult, UserProfilePayload } from '../src/auth/model';
-import { IUserTimeline, UserTimelineInput } from '../src/timeline/model';
+import { CreateUserAccountInput, CreateUserAccountResult, UserProfilePayload 
+    } from '../src/auth';
+import { IUserTimeline, UserTimelineInput } from '../src/timeline';
 
 
 interface UserAccountInfo {

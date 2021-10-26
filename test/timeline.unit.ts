@@ -1,8 +1,8 @@
 import assert from 'assert';
 import { Container } from 'typedi';
 
-import { IUserTimeline, UserTimelineInput } from '../src/timeline/model';
-import { TimelineRepository, TimelineRepositoryFactory } from '../src/timeline/repository';
+import { IUserTimeline, UserTimelineInput, TimelineRepository, TimelineRepositoryFactory 
+    } from '../src/timeline';
 import { TestHelper } from '../test.helper/helper';
 
 
