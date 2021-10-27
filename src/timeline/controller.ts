@@ -83,16 +83,17 @@ export class TimelineController {
     public async writeUserTimelineMedia(
         @Req() req: Request, 
         @Res() res: Response, 
-        @UploadedFile("filename", { 
+        @UploadedFiles("filename", { 
             options: {
                 storage: multer.memoryStorage(),
                 limits: { fieldNameSize: 255, fileSize: 1024*1024*2 }
             } 
         }) file: File[]
     ): Promise<Response> {
-        //@UploadedFiles("fileName", { options: s3Upload.getMulter }) files: any[]
         try {
             this.logger.info(`writeUserTimelineMedia] file req received`);
+            if(!file) console.log('here');
+            else console.log(`file len: ${file.length}`);
 
             return res.status(200).send({ err: 'ok' });
         } catch (err: any) {
