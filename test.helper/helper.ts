@@ -12,25 +12,24 @@ import { TimelineRepository } from '../src/timeline/repository';
 
 @Service()
 export class TestHelper {
-    public newCreateUserAccountInput(): CreateUserAccountInput {
+    newCreateUserAccountInput(): CreateUserAccountInput {
         const dummyId: string = uniqid();
 
         return {
-            userId: dummyId, 
             nickname: dummyId,
             email: `${dummyId}@test.com`,
             password: uniqid()
         };
     };
 
-    public toLoadUserAccountInput(createInput: CreateUserAccountInput): LoadUserAccountInput {
+    toLoadUserAccountInput(createInput: CreateUserAccountInput): LoadUserAccountInput {
         return {
             email: createInput.email,
             password: createInput.password
         };
     };
 
-    public isValidTimeline(
+    isValidTimeline(
         input: UserTimelineInput, 
         timeline: IUserTimeline
     ): boolean {
@@ -40,18 +39,18 @@ export class TestHelper {
         return true;
     };
 
-    public createUserId(): string {
+    createUserId(): string {
         return uniqid();
     };
 
-    public newTimelineInput(): UserTimelineInput {
+    newTimelineInput(): UserTimelineInput {
         return {
             authorId: uniqid(),
             text: 'test text'
         };
     };
 
-    public newTimelineInputArray(userId: string, len: number): UserTimelineInput[] {
+    newTimelineInputArray(userId: string, len: number): UserTimelineInput[] {
         const inputArray: UserTimelineInput[] = [];
 
         for(let i=0;i<len;i++) inputArray.push({ authorId: userId, text: 'sample text' });
@@ -59,7 +58,7 @@ export class TestHelper {
         return inputArray;
     };
 
-    public containsTimeline(timelines: IUserTimeline[], tmData: IUserTimeline): boolean {
+    containsTimeline(timelines: IUserTimeline[], tmData: IUserTimeline): boolean {
         const findResult = timelines.find((value: IUserTimeline) => {
             if(value.tmId !== tmData.tmId) return false;
             if(value.authorId !== tmData.authorId) return false;
@@ -72,7 +71,7 @@ export class TestHelper {
         return true;
     };
 
-    public async writeTimelines(repo: TimelineRepository, inputArray: UserTimelineInput[]): 
+    async writeTimelines(repo: TimelineRepository, inputArray: UserTimelineInput[]): 
         Promise<void> {
         for(let i=0;i<inputArray.length;i++) {
             const input = inputArray[i];
@@ -80,7 +79,7 @@ export class TestHelper {
         }
     };
 
-    public isValidRelateResult(relateResult: RelateResult, 
+    isValidRelateResult(relateResult: RelateResult, 
         followId: string, followerId: string): boolean {
         if(relateResult.err !== 'ok') return false;
         if(relateResult.followId !== followId) return false;
@@ -89,7 +88,7 @@ export class TestHelper {
         return true;
     };
 
-    public isValidLoadRelationMembersResult(result: LoadRelationMembersResult): boolean {
+    isValidLoadRelationMembersResult(result: LoadRelationMembersResult): boolean {
         if(result.err !== 'ok') return false;
         if(!result.type) return false;
         if(!result.members) return false;
@@ -97,12 +96,12 @@ export class TestHelper {
         return true;
     };
 
-    public hasMember(result: LoadRelationMembersResult, followerId: string):
+    hasMember(result: LoadRelationMembersResult, followerId: string):
         boolean {
         return result.members!.findIndex((value: string) => value == followerId) >= 0;
     };
 
-    public async cleanupDatabase(): Promise<void> {
+    async cleanupDatabase(): Promise<void> {
         const accRepo = Container.get(AccountRepository);
         await accRepo.cleaupData();
 

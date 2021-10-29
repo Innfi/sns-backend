@@ -4,6 +4,7 @@ import { useContainer, JsonController, Req, Res, Body, Get, Post,
     UseBefore, Interceptor, UploadedFiles, UploadedFile, UploadOptions } from 'routing-controllers';
 import { Request, Response } from 'express';
 import multer from 'multer';
+import {  } from 'fs';
 
 import { LoggerBase } from '../common/logger';
 import { S3UploadService } from '../common/s3UploadService';
@@ -83,17 +84,18 @@ export class TimelineController {
     public async writeUserTimelineMedia(
         @Req() req: Request, 
         @Res() res: Response, 
-        @UploadedFiles("filename", { 
-            options: {
-                storage: multer.memoryStorage(),
-                limits: { fieldNameSize: 255, fileSize: 1024*1024*2 }
-            } 
-        }) file: File[]
+        @Body() body: UserTimelineInput, 
+        @UploadedFiles("file", {
+            options: { storage: multer.memoryStorage() }
+        }) files: Express.Multer.File[],
     ): Promise<Response> {
         try {
             this.logger.info(`writeUserTimelineMedia] file req received`);
-            if(!file) console.log('here');
-            else console.log(`file len: ${file.length}`);
+            files.forEach((file: Express.Multer.File) => {
+                console.log(`name: ${file.originalname}`);
+                console.log(`size: ${file.size}`);
+            });
+            console.log(`body: ${JSON.stringify(body)}`);
 
             return res.status(200).send({ err: 'ok' });
         } catch (err: any) {
