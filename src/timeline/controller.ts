@@ -90,12 +90,9 @@ export class TimelineController {
         }) files: Express.Multer.File[],
     ): Promise<Response> {
         try {
-            this.logger.info(`writeUserTimelineMedia] file req received`);
-            files.forEach((file: Express.Multer.File) => {
-                console.log(`name: ${file.originalname}`);
-                console.log(`size: ${file.size}`);
-            });
-            console.log(`body: ${JSON.stringify(body)}`);
+            this.logger.info(`writeUserTimelineMedia] `);
+
+            //TODO
 
             return res.status(200).send({ err: 'ok' });
         } catch (err: any) {
