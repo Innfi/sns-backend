@@ -1,68 +1,67 @@
-import 'reflect-metadata';
 import { Container, Service } from 'typedi';
 import dotenv from 'dotenv';
 
 import { LoggerBase } from '../common/logger';
-import { TimelineAdapterBase } from "./adapterBase";
-import { FakeTimelineAdapter } from './adapterFake';
-import { TimelineAdapter } from './adapter';
-import { IUserTimeline, UserTimelineInput, LoadTimelineOptions } from './model';
-
+import {
+  FakeTimelineAdapter,
+  IUserTimeline,
+  LoadTimelineOptions,
+  TimelineAdapter,
+  TimelineAdapterBase,
+  UserTimelineInput,
+} from '.';
 
 dotenv.config();
 
-@Service()
-export class TimelineRepositoryFactory {
-    createRepository(): TimelineRepository {
-        return new TimelineRepository(
-            Container.get(TimelineAdapter),
-            Container.get(LoggerBase)
-        );
-    }
+const createRepository = () =>
+  new TimelineRepository(
+    Container.get(TimelineAdapter),
+    Container.get(LoggerBase),
+  );
 
-    createFakeRepository(): TimelineRepository {
-        return new TimelineRepository(
-            Container.get(FakeTimelineAdapter),
-            Container.get(LoggerBase)
-        );
-    }
-}
+const createFakeRepository = () =>
+  new TimelineRepository(
+    Container.get(FakeTimelineAdapter),
+    Container.get(LoggerBase),
+  );
 
-const initializer = process.env.PERSISTENCE === 'memory' ? 
-    'createFakeRepository' : 'createRepository';
+const initializer: CallableFunction =
+  process.env.PERSISTENCE === 'memory'
+    ? createFakeRepository
+    : createRepository;
 
-@Service({ factory: [TimelineRepositoryFactory, initializer ]})
+@Service({ factory: initializer })
 export class TimelineRepository {
-    constructor(
-        protected timelineAdapter: TimelineAdapterBase, 
-        protected logger: LoggerBase
-    ) { }
+  constructor(
+    protected timelineAdapter: TimelineAdapterBase,
+    protected logger: LoggerBase,
+  ) {}
 
-    //loadUserTimeline
-    public async loadUserTimeline(
-        userId: string, 
-        options: LoadTimelineOptions
-    ): Promise<IUserTimeline[]> {
-        if(!this.timelineAdapter.connected()) {
-            await this.timelineAdapter.connectToCollection();
-        }
-
-        return await this.timelineAdapter.loadUserTimeline(userId, options);
+  // loadUserTimeline
+  async loadUserTimeline(
+    userId: string,
+    options: LoadTimelineOptions,
+  ): Promise<IUserTimeline[]> {
+    if (!this.timelineAdapter.connected()) {
+      await this.timelineAdapter.connectToCollection();
     }
 
-    //writeUserTimeline
-    public async writeUserTimeline(
-        userId: string, 
-        input: UserTimelineInput
-    ): Promise<IUserTimeline> {
-        if(!this.timelineAdapter.connected()) {
-            await this.timelineAdapter.connectToCollection();
-        }
+    return this.timelineAdapter.loadUserTimeline(userId, options);
+  }
 
-        return await this.timelineAdapter.writeUserTimeline(userId, input);
-    };
-
-    public async cleanupData(): Promise<void> {
-        await this.timelineAdapter.cleanupData();
+  // writeUserTimeline
+  async writeUserTimeline(
+    userId: string,
+    input: UserTimelineInput,
+  ): Promise<IUserTimeline> {
+    if (!this.timelineAdapter.connected()) {
+      await this.timelineAdapter.connectToCollection();
     }
+
+    return this.timelineAdapter.writeUserTimeline(userId, input);
+  }
+
+  async cleanupData(): Promise<void> {
+    await this.timelineAdapter.cleanupData();
+  }
 }

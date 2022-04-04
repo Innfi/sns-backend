@@ -4,42 +4,43 @@ import express from 'express';
 import passport from 'passport';
 import { useExpressServer } from 'routing-controllers';
 
-import { AuthController } from './auth/controller';
+import { AuthController } from './auth';
 import { CommonController } from './commonController';
 import { LoggerBase } from './common/logger';
 import { FollowsController } from './follows/controller';
 import { TimelineController } from './timeline/controller';
 
-
 @Service()
-export class SnsApp {
-    public app: any;
-    protected logger: LoggerBase;
+class SnsApp {
+  public app: any;
 
-    constructor() {
-        this.init();
-        this.app = express();
-        this.app.use(passport.initialize());
+  protected logger: LoggerBase;
 
-        useExpressServer(this.app, {
-            cors: true,
-            controllers: [ 
-                CommonController,
-                AuthController,
-                FollowsController,
-                TimelineController
-            ],
-        });
-    }
+  constructor() {
+    this.init();
+    this.app = express();
+    this.app.use(passport.initialize());
 
-    protected init() {
-        this.logger = Container.get(LoggerBase);
-    }
+    useExpressServer(this.app, {
+      cors: true,
+      controllers: [
+        CommonController,
+        AuthController,
+        FollowsController,
+        TimelineController,
+      ],
+    });
+  }
 
-    public start() {
-        this.app
-            .listen(process.env.npm_package_config_port, () => {
-            console.log(`listening ${process.env.npm_package_config_port}`);
-        });
-    }
+  protected init() {
+    this.logger = Container.get(LoggerBase);
+  }
+
+  public start() {
+    this.app.listen(process.env.npm_package_config_port, () => {
+      console.log(`listening ${process.env.npm_package_config_port}`);
+    });
+  }
 }
+
+export default SnsApp;

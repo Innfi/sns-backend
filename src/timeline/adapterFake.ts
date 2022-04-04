@@ -1,80 +1,95 @@
-import 'reflect-metadata';
 import { Service } from 'typedi';
 import { v4 } from 'uuid';
-import { LoggerBase } from '../common/logger';
-import { IUserTimeline, UserTimelineInput, LoadTimelineOptions } from './model';
-import { TimelineAdapterBase } from './adapterBase';
 
+import { LoggerBase } from '../common/logger';
+import {
+  IUserTimeline,
+  LoadTimelineOptions,
+  TimelineAdapterBase,
+  UserTimelineInput,
+} from '.';
 
 interface TimelineDict {
-    [id: string]: IUserTimeline[]
+  [id: string]: IUserTimeline[];
 }
 
-class DictSingle { //FIXME: move helper class to src/common
-    private static instance: DictSingle;
-    private constructor() {}
+class DictSingle {
+  // FIXME: move helper class to src/common
+  private static instance: DictSingle;
 
-    public timelineDict: TimelineDict = {};
+  private constructor() {}
 
-    public static getInstance(): DictSingle {
-        if(!DictSingle.instance) DictSingle.instance = new DictSingle();
+  public timelineDict: TimelineDict = {};
 
-        return DictSingle.instance;
-    }
+  public static getInstance(): DictSingle {
+    if (!DictSingle.instance) DictSingle.instance = new DictSingle();
+
+    return DictSingle.instance;
+  }
 }
 
 @Service()
 export class FakeTimelineAdapter implements TimelineAdapterBase {
-    protected isConnected: boolean = false;
+  protected isConnected: boolean = false;
 
-    constructor(protected logger: LoggerBase) {}
+  constructor(protected logger: LoggerBase) {}
 
-    public async connectToCollection(): Promise<void> {
-        this.isConnected = true;
+  async connectToCollection() {
+    this.isConnected = true;
+  }
+
+  connected(): boolean {
+    return this.isConnected;
+  }
+
+  async loadUserTimeline(
+    userId: string,
+    options: LoadTimelineOptions,
+  ): Promise<IUserTimeline[]> {
+    if (!DictSingle.getInstance().timelineDict[userId]) {
+      DictSingle.getInstance().timelineDict[userId] = [];
     }
 
-    public connected(): boolean { return this.isConnected; }
+    const timelines: IUserTimeline[] =
+      DictSingle.getInstance().timelineDict[userId];
 
-    public async loadUserTimeline(userId: string, options: LoadTimelineOptions): 
-        Promise<IUserTimeline[]> {
-        
-        if(!DictSingle.getInstance().timelineDict[userId]) {
-            DictSingle.getInstance().timelineDict[userId] = [];
-        }
+    return this.paginateTimelines(timelines, options);
+  }
 
-        const timelines: IUserTimeline[] = DictSingle.getInstance().timelineDict[userId];
+  protected paginateTimelines(
+    timelines: IUserTimeline[],
+    options: LoadTimelineOptions,
+  ): IUserTimeline[] {
+    return timelines.slice(
+      (options.page - 1) * options.limit,
+      options.page * options.limit,
+    );
+  }
 
-        return this.paginateTimelines(timelines, options);
-    }
+  async writeUserTimeline(
+    userId: string,
+    input: UserTimelineInput,
+  ): Promise<IUserTimeline> {
+    // TODO: send user timeline to their followers
 
-    protected paginateTimelines(timelines: IUserTimeline[], options: LoadTimelineOptions): 
-        IUserTimeline[] {
-        return timelines.slice((options.page - 1) * options.limit, 
-            options.page * options.limit);
+    const response: IUserTimeline = {
+      userId,
+      authorId: input.authorId,
+      text: input.text,
+      date: new Date(),
+      tmId: v4(),
     };
 
-    public async writeUserTimeline(userId: string, input: UserTimelineInput): 
-        Promise<IUserTimeline> {
-        //TODO: send user timeline to their followers
-        
-        const response: IUserTimeline = {
-            userId: userId,
-            authorId: input.authorId,
-            text: input.text,
-            date: new Date(),
-            tmId: v4()
-        };
-
-        if(DictSingle.getInstance().timelineDict[userId] === undefined) {
-            DictSingle.getInstance().timelineDict[userId] = [];
-        }
-
-        DictSingle.getInstance().timelineDict[userId].push(response);
-
-        return response;
+    if (!DictSingle.getInstance().timelineDict[userId]) {
+      DictSingle.getInstance().timelineDict[userId] = [];
     }
 
-    public async cleanupData(): Promise<void> {
-        DictSingle.getInstance().timelineDict = {};
-    }
+    DictSingle.getInstance().timelineDict[userId].push(response);
+
+    return response;
+  }
+
+  async cleanupData() {
+    DictSingle.getInstance().timelineDict = {};
+  }
 }

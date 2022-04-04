@@ -1,56 +1,67 @@
-import 'reflect-metadata';
 import { Service } from 'typedi';
+
 import { LoggerBase } from '../common/logger';
-import { FollowsAdapterBase } from './adapterBase';
-import { LoadFollowOptions, RelateResult } from './model';
+import { FollowsAdapterBase, LoadFollowOptions, RelateResult } from '.';
 
-
-type FollowsDict = { 
-    [id: string]: Set<string>;
+type FollowsDict = {
+  [id: string]: Set<string>;
 };
 
 @Service()
 export class FakeFollowsAdapter implements FollowsAdapterBase {
-    protected isConnected: boolean = false;
-    protected followsDict: FollowsDict = {};
-    protected followersDict: FollowsDict = {};
+  protected isConnected: boolean = false;
 
+  protected followsDict: FollowsDict = {};
 
-    constructor(protected logger: LoggerBase) {}
+  protected followersDict: FollowsDict = {};
 
-    public async connectToCollection(): Promise<void> { this.isConnected = true; }
+  constructor(protected logger: LoggerBase) {}
 
-    public connected(): boolean { return this.isConnected; } 
+  async connectToCollection() {
+    this.isConnected = true;
+  }
 
-    public async loadFollows(userId: string, options: LoadFollowOptions): 
-        Promise<Set<string> | null> {
-        return this.followersDict[userId];
-    }
+  public connected(): boolean {
+    return this.isConnected;
+  }
 
-    public async loadFollowers(userId: string, options: LoadFollowOptions): 
-        Promise<Set<string> | null> {
-        return this.followsDict[userId];
-    }
+  async loadFollows(
+    userId: string,
+    options: LoadFollowOptions,
+  ): Promise<Set<string> | null> {
+    return this.followersDict[userId];
+  }
 
-    public async relate(followId: string, followerId: string): Promise<RelateResult> {
-        if(this.followsDict[followId] === undefined) this.followsDict[followId] = new Set<string>();
-        if(this.followsDict[followId].has(followerId)) return { err: 'duplicate follower' };
+  async loadFollowers(
+    userId: string,
+    options: LoadFollowOptions,
+  ): Promise<Set<string> | null> {
+    return this.followsDict[userId];
+  }
 
-        if(this.followersDict[followerId] === undefined) this.followersDict[followerId] = new Set<string>();
-        if(this.followersDict[followerId].has(followId)) return { err: 'duplicate follower' };
+  async relate(followId: string, followerId: string): Promise<RelateResult> {
+    if (this.followsDict[followId] === undefined)
+      this.followsDict[followId] = new Set<string>();
+    if (this.followsDict[followId].has(followerId))
+      return { err: 'duplicate follower' };
 
-        this.followsDict[followId].add(followerId);
-        this.followersDict[followerId].add(followId);
+    if (this.followersDict[followerId] === undefined)
+      this.followersDict[followerId] = new Set<string>();
+    if (this.followersDict[followerId].has(followId))
+      return { err: 'duplicate follower' };
 
-        return {
-            err: 'ok',
-            followId: followId,
-            followerId: followerId,
-        };
-    }
+    this.followsDict[followId].add(followerId);
+    this.followersDict[followerId].add(followId);
 
-    public async cleanupData(): Promise<void> {
-        this.followsDict = {};
-        this.followersDict = {};
-    }
+    return {
+      err: 'ok',
+      followId,
+      followerId,
+    };
+  }
+
+  async cleanupData() {
+    this.followsDict = {};
+    this.followersDict = {};
+  }
 }

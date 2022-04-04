@@ -1,10 +1,15 @@
-import { IUserTimeline, UserTimelineInput, LoadTimelineOptions } from './model';
-
+import { IUserTimeline, UserTimelineInput, LoadTimelineOptions } from '.';
 
 export interface TimelineAdapterBase {
-    connectToCollection(): Promise<void>;
-    connected(): boolean;
-    loadUserTimeline(userId: string, options: LoadTimelineOptions): Promise<IUserTimeline[]>;
-    writeUserTimeline(userId: string, input: UserTimelineInput): Promise<IUserTimeline>;
-    cleanupData(): Promise<void>;
+  connectToCollection();
+  connected(): boolean;
+  loadUserTimeline(
+    userId: string,
+    options: LoadTimelineOptions,
+  ): Promise<IUserTimeline[]>;
+  writeUserTimeline(
+    userId: string,
+    input: UserTimelineInput,
+  ): Promise<IUserTimeline>;
+  cleanupData();
 }

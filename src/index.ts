@@ -1,4 +1,4 @@
-import { SnsApp } from './app';
+import SnsApp from './app';
 
 const app = new SnsApp();
 

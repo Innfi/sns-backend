@@ -1,42 +1,42 @@
-import { ExpressMiddlewareInterface } from "routing-controllers";
+import { ExpressMiddlewareInterface } from 'routing-controllers';
 import { Request, Response } from 'express';
 import { Service } from 'typedi';
 import { EventEmitter } from 'events';
 
-import { LoggerBase } from "./logger";
+import { LoggerBase } from './logger';
 
 export const userStatEvent = 'userStat';
 
 @Service()
 export class UserStatMiddleware implements ExpressMiddlewareInterface {
-    protected emitter: EventEmitter;
+  protected emitter: EventEmitter;
 
-    constructor(protected logger: LoggerBase) {
-        this.emitter = new EventEmitter();
-    }
+  constructor(protected logger: LoggerBase) {
+    this.emitter = new EventEmitter();
+  }
 
-    public use(req: Request, res: Response, next: (err?: any) => any): any {
-        this.logger.info(`UserStatMiddleware] `);
+  use(req: Request, res: Response, next: (err?: any) => any): any {
+    this.logger.info(`UserStatMiddleware] `);
 
-        if(!req.user) return next();
+    if (!req.user) return next();
 
-        this.emitter.emit(userStatEvent, req.user);
+    this.emitter.emit(userStatEvent, req.user);
 
-        next();
-    };
-};
+    next();
+  }
+}
 
 @Service()
 export class UserStatHandler {
-    protected emitter: EventEmitter;
+  protected emitter: EventEmitter;
 
-    constructor(protected logger: LoggerBase) {
-        this.emitter = new EventEmitter();
-    }
+  constructor(protected logger: LoggerBase) {
+    this.emitter = new EventEmitter();
+  }
 
-    protected registerHandler(): void {
-        this.emitter.on(userStatEvent, function(...args: any) {
-            //TODO: handler
-        });
-    };
-};
+  protected registerHandler(): void {
+    this.emitter.on(userStatEvent, (...args: any) => {
+      // TODO: handler
+    });
+  }
+}

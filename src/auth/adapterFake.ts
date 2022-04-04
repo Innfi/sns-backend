@@ -1,77 +1,88 @@
-import 'reflect-metadata';
 import { Service } from 'typedi';
 import { v4 } from 'uuid';
 
-import { AccountAdapterBase } from './adapterBase';
-import { IUserAccount, LoadUserAccountInput, CreateUserAccountInput, 
-    CreateUserAccountResult, UserProfilePayload } from './model';
-
+import {
+  AccountAdapterBase,
+  CreateUserAccountInput,
+  CreateUserAccountResult,
+  IUserAccount,
+  LoadUserAccountInput,
+  UserProfilePayload,
+} from '.';
 
 interface AccountDict {
-    [id: string]: IUserAccount;
-};
+  [id: string]: IUserAccount;
+}
 
 @Service()
-export class FakeAccountAdapter implements AccountAdapterBase {
-    protected accountDict: AccountDict = {};
-    protected mockConnected:boolean = false;
+class FakeAccountAdapter implements AccountAdapterBase {
+  protected accountDict: AccountDict = {};
 
-    constructor() { }
+  protected mockConnected: boolean = false;
 
-    async connectToCollection(): Promise<void> {
-        this.mockConnected = true;
-    }
+  constructor() {}
 
-    connected(): boolean { return this.mockConnected; }
+  async connectToCollection() {
+    this.mockConnected = true;
+  }
 
-    public async loadUserAccount(input: LoadUserAccountInput): 
-        Promise<IUserAccount | undefined> {
-        return this.accountDict[input.email];
-    }
+  connected(): boolean {
+    return this.mockConnected;
+  }
 
-    public async createUserAccount(input: CreateUserAccountInput): 
-        Promise<CreateUserAccountResult> {
-        const acc = await this.loadUserAccount(input);
-        if(acc !== undefined) return { err: 'duplicate account' };
+  async loadUserAccount(input: LoadUserAccountInput): Promise<IUserAccount> {
+    return this.accountDict[input.email];
+  }
 
-        const newUserId: string = v4();
-        this.accountDict[input.email] = {
-            userId: newUserId,
-            nickname: input.nickname as string,
-            email: input.email,
-            password: input.password as string,
-            created: new Date()
-        };
+  async createUserAccount(
+    input: CreateUserAccountInput,
+  ): Promise<CreateUserAccountResult> {
+    const acc = await this.loadUserAccount(input);
+    if (acc !== undefined) return { err: 'duplicate account' };
 
-        return {
-            err: 'ok',
-            userId: newUserId,
-            email: input.email
-        };
-    }
+    const newUserId: string = v4();
+    this.accountDict[input.email] = {
+      userId: newUserId,
+      nickname: input.nickname as string,
+      email: input.email,
+      password: input.password as string,
+      created: new Date(),
+    };
 
-    public async deleteUserAccount(input: LoadUserAccountInput): Promise<number> {
-        const acc = await this.loadUserAccount(input);
-        if(acc === undefined) return 0;
+    return {
+      err: 'ok',
+      userId: newUserId,
+      email: input.email,
+    };
+  }
 
-        delete(this.accountDict[input.email]);
-        return 1;
-    }
+  async deleteUserAccount(input: LoadUserAccountInput): Promise<number> {
+    const acc = await this.loadUserAccount(input);
+    if (!acc) return 0;
 
-    public async loadUserProfile(userId: string): Promise<UserProfilePayload | null> {
-        const account: IUserAccount | undefined =  Object.values(this.accountDict)
-            .find((value: IUserAccount) => value.userId == userId);
+    delete this.accountDict[input.email];
+    return 1;
+  }
 
-        if(account === undefined) return null;
+  async loadUserProfile(
+    userId: string,
+  ): Promise<UserProfilePayload | undefined> {
+    const account = Object.values(this.accountDict).find(
+      (value: IUserAccount) => value.userId == userId,
+    );
 
-        return {
-            userId: account.userId,
-            nickname: account.nickname,
-            headerUrl: account.headerUrl? account.headerUrl : ''
-        };
-    }
+    if (!account) return undefined;
 
-    public async cleanupData(): Promise<void> {
-        this.accountDict = {};
-    }
+    return {
+      userId: account.userId,
+      nickname: account.nickname,
+      headerUrl: account.headerUrl ? account.headerUrl : '',
+    };
+  }
+
+  async cleanupData() {
+    this.accountDict = {};
+  }
 }
+
+export default FakeAccountAdapter;
