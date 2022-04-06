@@ -1,6 +1,5 @@
-import { Container, Service } from 'typedi';
+import { Service } from 'typedi';
 import {
-  useContainer,
   JsonController,
   Req,
   Res,
@@ -14,17 +13,12 @@ import { Request, Response } from 'express';
 import multer from 'multer';
 import {} from 'fs';
 
-import { LoggerBase } from '../common/logger';
+import LoggerBase from '../common/logger';
 // import { S3UploadService } from '../common/s3UploadService';
-import { AuthMiddleware } from '../auth';
-import {
-  IUserTimeline,
-  LoadTimelineOptions,
-  TimelineService,
-  UserTimelineInput,
-} from '.';
 
-useContainer(Container);
+import AuthMiddleware from '../auth/middleware';
+import { IUserTimeline, LoadTimelineOptions, UserTimelineInput } from './model';
+import TimelineService from './service';
 
 // const s3Upload = Container.get(S3UploadService);
 
@@ -36,7 +30,7 @@ useContainer(Container);
 
 @Service()
 @JsonController('/timeline')
-export class TimelineController {
+class TimelineController {
   constructor(
     protected tmService: TimelineService,
     // protected s3Upload: S3UploadService,
@@ -95,9 +89,9 @@ export class TimelineController {
   @Post('/media/:userId')
   @UseBefore(AuthMiddleware)
   async writeUserTimelineMedia(
-    @Req() req: Request,
+    @Req() _req: Request,
     @Res() res: Response,
-    @Body() body: UserTimelineInput,
+    @Body() _body: UserTimelineInput,
     @UploadedFiles('file', {
       options: { storage: multer.memoryStorage() },
     })
@@ -115,3 +109,5 @@ export class TimelineController {
     }
   }
 }
+
+export default TimelineController;

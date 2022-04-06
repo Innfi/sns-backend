@@ -1,14 +1,15 @@
 import { Service } from 'typedi';
 
-import { LoggerBase } from '../common/logger';
-import { FollowsAdapterBase, LoadFollowOptions, RelateResult } from '.';
+import LoggerBase from '../common/logger';
+import { LoadFollowOptions, RelateResult } from './model';
+import { FollowsAdapterBase } from './adapterBase';
 
 type FollowsDict = {
   [id: string]: Set<string>;
 };
 
 @Service()
-export class FakeFollowsAdapter implements FollowsAdapterBase {
+class FakeFollowsAdapter implements FollowsAdapterBase {
   protected isConnected: boolean = false;
 
   protected followsDict: FollowsDict = {};
@@ -21,7 +22,7 @@ export class FakeFollowsAdapter implements FollowsAdapterBase {
     this.isConnected = true;
   }
 
-  public connected(): boolean {
+  connected(): boolean {
     return this.isConnected;
   }
 
@@ -40,12 +41,12 @@ export class FakeFollowsAdapter implements FollowsAdapterBase {
   }
 
   async relate(followId: string, followerId: string): Promise<RelateResult> {
-    if (this.followsDict[followId] === undefined)
+    if (!this.followsDict[followId])
       this.followsDict[followId] = new Set<string>();
     if (this.followsDict[followId].has(followerId))
       return { err: 'duplicate follower' };
 
-    if (this.followersDict[followerId] === undefined)
+    if (!this.followersDict[followerId])
       this.followersDict[followerId] = new Set<string>();
     if (this.followersDict[followerId].has(followId))
       return { err: 'duplicate follower' };
@@ -65,3 +66,5 @@ export class FakeFollowsAdapter implements FollowsAdapterBase {
     this.followersDict = {};
   }
 }
+
+export default FakeFollowsAdapter;

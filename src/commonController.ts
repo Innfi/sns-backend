@@ -9,13 +9,14 @@ import {
 } from 'routing-controllers';
 import { Request, Response } from 'express';
 
-import { LoggerBase } from './common/logger';
-import { AuthMiddleware, IUserAccount } from './auth';
+import LoggerBase from './common/logger';
+import { IUserAccount } from './auth/model';
+import AuthMiddleware from './auth/middleware';
 
 // dummy service until whole routing is fixed
 @Service()
 @JsonController()
-export class CommonController {
+class CommonController {
   constructor(protected logger: LoggerBase) {}
 
   @Get('/')
@@ -36,7 +37,7 @@ export class CommonController {
   getHideout(
     @Req() req: Request,
     @Res() res: Response,
-    @Body() body: IUserAccount,
+    @Body() _body: IUserAccount,
   ): any {
     this.logger.info(`user: ${JSON.stringify(req.user)}`);
 
@@ -48,3 +49,5 @@ export class CommonController {
       .end();
   }
 }
+
+export default CommonController;

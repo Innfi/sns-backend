@@ -1,9 +1,3 @@
-import { Service } from 'typedi';
+export const dbUrl: string = 'mongodb://192.168.1.134:27017/sns';
 
-@Service()
-export class CommonConfig {
-  // FIXME: read configurations from persistence layer
-  dbUrl: string = 'mongodb://192.168.1.134:27017/sns';
-
-  fileLogPath: string = './log/backend.log';
-}
+export const fileLogPath: string = './log/backend.log';

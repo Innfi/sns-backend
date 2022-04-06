@@ -2,9 +2,6 @@ import 'reflect-metadata';
 import { Container, Service } from 'typedi';
 import dotenv from 'dotenv';
 
-import { AccountAdapterBase } from './adapterBase';
-import { AccountAdapter } from './adapter';
-import { FakeAccountAdapter } from './adapterFake';
 import {
   IUserAccount,
   CreateUserAccountInput,
@@ -12,27 +9,24 @@ import {
   UserProfilePayload,
   LoadUserAccountInput,
 } from './model';
+import { AccountAdapterBase } from './adapterBase';
+import AccountAdapter from './adapter';
+import FakeAccountAdapter from './adapterFake';
 
 dotenv.config();
 
-@Service()
-export class AccountRepositoryFactory {
-  createRepository(): AccountRepository {
-    return new AccountRepository(Container.get(AccountAdapter));
-  }
+const createRepository = (): AccountRepository =>
+  new AccountRepository(Container.get(AccountAdapter));
+const createFakeRepository = (): AccountRepository =>
+  new AccountRepository(Container.get(FakeAccountAdapter));
 
-  createFakeRepository(): AccountRepository {
-    return new AccountRepository(Container.get(FakeAccountAdapter));
-  }
-}
-
-const initializer =
+const initializer: CallableFunction =
   process.env.PERSISTENCE === 'memory'
-    ? 'createFakeRepository'
-    : 'createRepository';
+    ? createFakeRepository
+    : createRepository;
 
-@Service({ factory: [AccountRepositoryFactory, initializer] })
-export class AccountRepository {
+@Service({ factory: initializer })
+class AccountRepository {
   protected projection: string = 'email password';
 
   constructor(protected accountAdapter: AccountAdapterBase) {}
@@ -67,3 +61,5 @@ export class AccountRepository {
     await this.accountAdapter.cleanupData();
   }
 }
+
+export default AccountRepository;

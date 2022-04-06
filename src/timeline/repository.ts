@@ -1,15 +1,11 @@
 import { Container, Service } from 'typedi';
 import dotenv from 'dotenv';
 
-import { LoggerBase } from '../common/logger';
-import {
-  FakeTimelineAdapter,
-  IUserTimeline,
-  LoadTimelineOptions,
-  TimelineAdapter,
-  TimelineAdapterBase,
-  UserTimelineInput,
-} from '.';
+import LoggerBase from '../common/logger';
+import { IUserTimeline, LoadTimelineOptions, UserTimelineInput } from './model';
+import { TimelineAdapterBase } from './adapterBase';
+import TimelineAdapter from './adapter';
+import FakeTimelineAdapter from './adapterFake';
 
 dotenv.config();
 
@@ -31,7 +27,7 @@ const initializer: CallableFunction =
     : createRepository;
 
 @Service({ factory: initializer })
-export class TimelineRepository {
+class TimelineRepository {
   constructor(
     protected timelineAdapter: TimelineAdapterBase,
     protected logger: LoggerBase,
@@ -61,7 +57,9 @@ export class TimelineRepository {
     return this.timelineAdapter.writeUserTimeline(userId, input);
   }
 
-  async cleanupData(): Promise<void> {
+  async cleanupData() {
     await this.timelineAdapter.cleanupData();
   }
 }
+
+export default TimelineRepository;

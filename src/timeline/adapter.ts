@@ -2,19 +2,19 @@ import { Service } from 'typedi';
 import { v4 } from 'uuid';
 import mongoose from 'mongoose';
 
-import { LoggerBase } from '../common/logger';
-import { CommonConfig } from '../common/config';
+import LoggerBase from '../common/logger';
+import { dbUrl } from '../common/config';
 import {
   IUserTimeline,
   IUserTimelineDoc,
   LoadTimelineOptions,
-  TimelineAdapterBase,
   UserTimelineInput,
   UserTimelineSchema,
-} from '.';
+} from './model';
+import { TimelineAdapterBase } from './adapterBase';
 
 @Service()
-export class TimelineAdapter implements TimelineAdapterBase {
+class TimelineAdapter implements TimelineAdapterBase {
   protected conn: mongoose.Connection;
 
   protected connectOptions: mongoose.ConnectionOptions = {
@@ -28,28 +28,25 @@ export class TimelineAdapter implements TimelineAdapterBase {
 
   protected projection: string = '_id userId, authorId, text, textId, created';
 
-  constructor(protected logger: LoggerBase, protected conf: CommonConfig) {}
+  constructor(protected logger: LoggerBase) {}
 
   async connectToCollection() {
     if (this.connected()) return;
 
-    this.conn = await mongoose.createConnection(
-      this.conf.dbUrl,
-      this.connectOptions,
-    );
+    this.conn = await mongoose.createConnection(dbUrl, this.connectOptions);
     this.timelineModel = this.conn.model(
       this.collectionName,
       UserTimelineSchema,
     );
   }
 
-  public connected(): boolean {
+  connected(): boolean {
     return this.conn?.readyState === mongoose.STATES.connected;
   }
 
   async loadUserTimeline(
     userId: string,
-    options: LoadTimelineOptions,
+    _options: LoadTimelineOptions,
   ): Promise<IUserTimeline[]> {
     if (!this.connected()) await this.connectToCollection();
     // FIXME: pagination
@@ -81,3 +78,5 @@ export class TimelineAdapter implements TimelineAdapterBase {
     await this.timelineModel.deleteMany({});
   }
 }
+
+export default TimelineAdapter;

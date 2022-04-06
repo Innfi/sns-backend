@@ -2,18 +2,18 @@ import 'reflect-metadata';
 import { Service } from 'typedi';
 import mongoose from 'mongoose';
 
-import { LoggerBase } from '../common/logger';
-import { FollowsAdapterBase } from './adapterBase';
+import LoggerBase from '../common/logger';
+import { dbUrl } from '../common/config';
 import {
   FollowsSchema,
   IFollowsDoc,
   LoadFollowOptions,
   RelateResult,
 } from './model';
-import { CommonConfig } from '../common/config';
+import { FollowsAdapterBase } from './adapterBase';
 
 @Service()
-export class FollowsAdapter implements FollowsAdapterBase {
+class FollowsAdapter implements FollowsAdapterBase {
   protected conn: mongoose.Connection;
 
   protected connectOptions: mongoose.ConnectionOptions = {
@@ -27,15 +27,12 @@ export class FollowsAdapter implements FollowsAdapterBase {
 
   protected projection: string = '_id userId follows followers';
 
-  constructor(protected logger: LoggerBase, protected config: CommonConfig) {}
+  constructor(protected logger: LoggerBase) {}
 
   async connectToCollection() {
     if (this.connected()) return;
 
-    this.conn = await mongoose.createConnection(
-      this.config.dbUrl,
-      this.connectOptions,
-    );
+    this.conn = await mongoose.createConnection(dbUrl, this.connectOptions);
     this.followsModel = this.conn.model<
       IFollowsDoc,
       mongoose.Model<IFollowsDoc>
@@ -103,3 +100,5 @@ export class FollowsAdapter implements FollowsAdapterBase {
     await this.followsModel.deleteMany({});
   }
 }
+
+export default FollowsAdapter;

@@ -1,15 +1,18 @@
 import assert from 'assert';
 import { Container } from 'typedi';
 
-import { IUserTimeline, UserTimelineInput, TimelineRepository, TimelineRepositoryFactory 
-} from '../src/timeline';
-import { TestHelper } from '../test.helper/helper';
-
+import TestHelper from '../test.helper/helper';
+import LoggerBase from '../src/common/logger';
+import { IUserTimeline, UserTimelineInput } from '../src/timeline/model';
+import FakeTimelineAdapter from '../src/timeline/adapterFake';
+import TimelineRepository from '../src/timeline/repository';
 
 describe('unit: timeline', () => {
   const helper = Container.get(TestHelper);
-  const factory = Container.get(TimelineRepositoryFactory);
-  const repo: TimelineRepository = factory.createFakeRepository();
+  const repo: TimelineRepository = new TimelineRepository(
+    Container.get(FakeTimelineAdapter),
+    Container.get(LoggerBase),
+  );
 
   it('write a timeline', async () => {
     const input: UserTimelineInput = helper.newTimelineInput();
@@ -22,8 +25,10 @@ describe('unit: timeline', () => {
   it('write result has timeline id', async () => {
     const input: UserTimelineInput = helper.newTimelineInput();
 
-    const writeResult: IUserTimeline | undefined = 
-            await repo.writeUserTimeline(input.authorId, input);
+    const writeResult: IUserTimeline | undefined = await repo.writeUserTimeline(
+      input.authorId,
+      input,
+    );
 
     assert.strictEqual(writeResult!.tmId.length > 0, true);
   });
@@ -33,8 +38,10 @@ describe('unit: timeline', () => {
     const userId = input.authorId;
     input.authorId = '';
 
-    const writeResult: IUserTimeline | undefined = 
-            await repo.writeUserTimeline(userId, input);
+    const writeResult: IUserTimeline | undefined = await repo.writeUserTimeline(
+      userId,
+      input,
+    );
 
     assert.strictEqual(writeResult, undefined);
   });
@@ -43,26 +50,34 @@ describe('unit: timeline', () => {
     const input: UserTimelineInput = helper.newTimelineInput();
     input.text = '';
 
-    const writeResult: IUserTimeline | undefined = 
-            await repo.writeUserTimeline(input.authorId, input);
+    const writeResult: IUserTimeline | undefined = await repo.writeUserTimeline(
+      input.authorId,
+      input,
+    );
 
     assert.strictEqual(writeResult, undefined);
   });
 
   it('loadTimeline', async () => {
     const input: UserTimelineInput = helper.newTimelineInput();
-    const writeResult: IUserTimeline | undefined = 
-            await repo.writeUserTimeline(input.authorId, input);
+    const writeResult: IUserTimeline | undefined = await repo.writeUserTimeline(
+      input.authorId,
+      input,
+    );
 
-    const loadResult: IUserTimeline[] = 
-            await repo.loadUserTimeline(input.authorId, { page:1, limit: 10 });
+    const loadResult: IUserTimeline[] = await repo.loadUserTimeline(
+      input.authorId,
+      { page: 1, limit: 10 },
+    );
 
     assert.strictEqual(helper.containsTimeline(loadResult, writeResult!), true);
   });
 
   it('loadTimeline returns empty array for invalid userId', async () => {
-    const loadResult: IUserTimeline[] = 
-            await repo.loadUserTimeline('', { page:1, limit: 10 });
+    const loadResult: IUserTimeline[] = await repo.loadUserTimeline('', {
+      page: 1,
+      limit: 10,
+    });
 
     assert.deepStrictEqual(loadResult, []);
   });
@@ -70,17 +85,25 @@ describe('unit: timeline', () => {
   it('loadTimeline paging', async () => {
     const userId: string = helper.createUserId();
     const inputLength = 3;
-    const inputArray: UserTimelineInput[] = helper.newTimelineInputArray(userId, inputLength);
+    const inputArray: UserTimelineInput[] = helper.newTimelineInputArray(
+      userId,
+      inputLength,
+    );
 
     await helper.writeTimelines(repo, inputArray);
 
     const targetText = 'here';
-    await repo.writeUserTimeline(userId, { authorId: userId, text: targetText});
+    await repo.writeUserTimeline(userId, {
+      authorId: userId,
+      text: targetText,
+    });
 
     await helper.writeTimelines(repo, inputArray);
 
-    const loadResult: IUserTimeline[] = 
-            await repo.loadUserTimeline(userId, {page: inputLength+1, limit: 1});
+    const loadResult: IUserTimeline[] = await repo.loadUserTimeline(userId, {
+      page: inputLength + 1,
+      limit: 1,
+    });
 
     assert.strictEqual(loadResult[0].text, targetText);
   });

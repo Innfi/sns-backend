@@ -1,4 +1,4 @@
-import { IUserTimeline, UserTimelineInput, LoadTimelineOptions } from '.';
+import { IUserTimeline, LoadTimelineOptions, UserTimelineInput } from './model';
 
 export interface TimelineAdapterBase {
   connectToCollection();

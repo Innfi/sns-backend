@@ -2,13 +2,13 @@ import { Service } from 'typedi';
 import { v4 } from 'uuid';
 
 import {
-  AccountAdapterBase,
   CreateUserAccountInput,
   CreateUserAccountResult,
   IUserAccount,
   LoadUserAccountInput,
   UserProfilePayload,
-} from '.';
+} from './model';
+import { AccountAdapterBase } from './adapterBase';
 
 interface AccountDict {
   [id: string]: IUserAccount;
@@ -19,8 +19,6 @@ class FakeAccountAdapter implements AccountAdapterBase {
   protected accountDict: AccountDict = {};
 
   protected mockConnected: boolean = false;
-
-  constructor() {}
 
   async connectToCollection() {
     this.mockConnected = true;
@@ -68,7 +66,7 @@ class FakeAccountAdapter implements AccountAdapterBase {
     userId: string,
   ): Promise<UserProfilePayload | undefined> {
     const account = Object.values(this.accountDict).find(
-      (value: IUserAccount) => value.userId == userId,
+      (value: IUserAccount) => value.userId === userId,
     );
 
     if (!account) return undefined;

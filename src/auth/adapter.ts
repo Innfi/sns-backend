@@ -3,8 +3,8 @@ import { Service } from 'typedi';
 import mongoose from 'mongoose';
 import { v4 } from 'uuid';
 
-import { CommonConfig } from '../common/config';
-import { LoggerBase } from '../common/logger';
+import LoggerBase from '../common/logger';
+import { dbUrl } from '../common/config';
 import { AccountAdapterBase } from './adapterBase';
 import {
   IUserAccount,
@@ -35,8 +35,8 @@ class AccountAdapter implements AccountAdapterBase {
     '_id userId nickname password email created loggedIn';
   // protected projection: string = 'email password';
 
-  constructor(protected config: CommonConfig, protected logger: LoggerBase) {
-    this.address = config.dbUrl;
+  constructor(protected logger: LoggerBase) {
+    this.address = dbUrl;
     this.logger.info(`AccountAdapter: ${this.address}`);
   }
 

@@ -6,17 +6,17 @@ import {
 } from 'routing-controllers';
 import { Service } from 'typedi';
 
-@Service()
-export class AuthMiddleware implements ExpressMiddlewareInterface {
-  authenticate = (callback: ((...args: any[]) => any) | undefined) =>
-    passport.authenticate('jwt', { session: false }, callback);
+const authenticate = (callback: ((...args: any[]) => any) | undefined) =>
+  passport.authenticate('jwt', { session: false }, callback);
 
+@Service()
+class AuthMiddleware implements ExpressMiddlewareInterface {
   use(
     req: express.Request,
     res: express.Response,
     next: express.NextFunction,
   ): Promise<passport.Authenticator> {
-    return this.authenticate((err, user, info) => {
+    return authenticate((err, user, info) => {
       if (err || !user) return next(new UnauthorizedError(info));
 
       req.user = user;
@@ -24,3 +24,5 @@ export class AuthMiddleware implements ExpressMiddlewareInterface {
     })(req, res, next);
   }
 }
+
+export default AuthMiddleware;

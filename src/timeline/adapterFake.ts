@@ -1,35 +1,13 @@
 import { Service } from 'typedi';
 import { v4 } from 'uuid';
 
-import { LoggerBase } from '../common/logger';
-import {
-  IUserTimeline,
-  LoadTimelineOptions,
-  TimelineAdapterBase,
-  UserTimelineInput,
-} from '.';
-
-interface TimelineDict {
-  [id: string]: IUserTimeline[];
-}
-
-class DictSingle {
-  // FIXME: move helper class to src/common
-  private static instance: DictSingle;
-
-  private constructor() {}
-
-  public timelineDict: TimelineDict = {};
-
-  public static getInstance(): DictSingle {
-    if (!DictSingle.instance) DictSingle.instance = new DictSingle();
-
-    return DictSingle.instance;
-  }
-}
+import LoggerBase from '../common/logger';
+import { IUserTimeline, LoadTimelineOptions, UserTimelineInput } from './model';
+import { TimelineAdapterBase } from './adapterBase';
+import DictSingle from './dictSingle';
 
 @Service()
-export class FakeTimelineAdapter implements TimelineAdapterBase {
+class FakeTimelineAdapter implements TimelineAdapterBase {
   protected isConnected: boolean = false;
 
   constructor(protected logger: LoggerBase) {}
@@ -93,3 +71,5 @@ export class FakeTimelineAdapter implements TimelineAdapterBase {
     DictSingle.getInstance().timelineDict = {};
   }
 }
+
+export default FakeTimelineAdapter;

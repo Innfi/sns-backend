@@ -1,13 +1,13 @@
 import 'reflect-metadata';
 import { Service } from 'typedi';
 
-import { LoggerBase } from '../common/logger';
-import { FollowsRepository } from '../follows/repository';
+import LoggerBase from '../common/logger';
+import FollowsRepository from '../follows/repository';
 import { IUserTimeline, LoadTimelineOptions, UserTimelineInput } from './model';
-import { TimelineRepository } from './repository';
+import TimelineRepository from './repository';
 
 @Service()
-export class TimelineService {
+class TimelineService {
   constructor(
     protected tmRepo: TimelineRepository,
     protected followsRepo: FollowsRepository,
@@ -15,7 +15,7 @@ export class TimelineService {
   ) {}
 
   // loadUserTimeline
-  public async loadUserTimeline(
+  async loadUserTimeline(
     userId: string,
     options: LoadTimelineOptions,
   ): Promise<IUserTimeline[]> {
@@ -28,7 +28,7 @@ export class TimelineService {
   }
 
   // writeUserTimeline
-  public async writeUserTimeline(
+  async writeUserTimeline(
     userId: string,
     input: UserTimelineInput,
   ): Promise<IUserTimeline | undefined> {
@@ -63,3 +63,5 @@ export class TimelineService {
     return true;
   }
 }
+
+export default TimelineService;

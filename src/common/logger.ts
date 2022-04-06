@@ -1,12 +1,12 @@
 import winston from 'winston';
 import { Service } from 'typedi';
-import { CommonConfig } from './config';
+import { fileLogPath } from './config';
 
 @Service()
-export class LoggerBase {
+class LoggerBase {
   protected logger: winston.Logger;
 
-  constructor(protected config: CommonConfig) {
+  constructor() {
     this.init();
   }
 
@@ -24,7 +24,7 @@ export class LoggerBase {
           level: 'info',
         }),
         new winston.transports.File({
-          filename: this.config.fileLogPath,
+          filename: fileLogPath,
           format: winston.format.combine(
             winston.format.timestamp(),
             winston.format.printf(
@@ -49,3 +49,5 @@ export class LoggerBase {
     this.logger.error(msg);
   }
 }
+
+export default LoggerBase;

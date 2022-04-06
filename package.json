@@ -10,7 +10,7 @@
     "test:int": "mocha -r ts-node/register test.integration/runner.ts --exit",
     "build": "tsc --build",
     "clean": "rm -rf ./dist",
-    "pre": "npx prettier --write src",
+    "pre": "npx prettier --write src test test.helper",
     "lint": "eslint --fix src/**/*.ts test/**/*.ts test.integration/**/*.ts"
   },
   "config": {

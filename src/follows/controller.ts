@@ -1,6 +1,5 @@
-import { Container, Service } from 'typedi';
+import { Service } from 'typedi';
 import {
-  useContainer,
   JsonController,
   Req,
   Res,
@@ -11,21 +10,15 @@ import {
 } from 'routing-controllers';
 import { Request, Response } from 'express';
 
-import { LoggerBase } from '../common/logger';
+import LoggerBase from '../common/logger';
 import { UserProfilePayload } from '../auth/model';
-import { AuthMiddleware } from '../auth/middleware';
-import {
-  FollowsParams,
-  FollowsService,
-  LoadFollowOptions,
-  RelateResult,
-} from '.';
-
-useContainer(Container);
+import AuthMiddleware from '../auth/middleware';
+import { FollowsParams, LoadFollowOptions, RelateResult } from './model';
+import FollowsService from './service';
 
 @Service()
 @JsonController()
-export class FollowsController {
+class FollowsController {
   constructor(
     protected followsService: FollowsService,
     protected logger: LoggerBase,
@@ -97,3 +90,5 @@ export class FollowsController {
     }
   }
 }
+
+export default FollowsController;

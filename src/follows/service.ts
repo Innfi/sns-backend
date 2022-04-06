@@ -1,18 +1,17 @@
 import { Service } from 'typedi';
 
-import { LoggerBase } from '../common/logger';
+import LoggerBase from '../common/logger';
 import { UserProfilePayload } from '../auth/model';
-import { AccountRepository } from '../auth/repository';
-
+import AccountRepository from '../auth/repository';
 import {
-  FollowsRepository,
   LoadFollowOptions,
   LoadRelationMembersResult,
   RelateResult,
-} from '.';
+} from './model';
+import FollowsRepository from './repository';
 
 @Service()
-export class FollowsService {
+class FollowsService {
   constructor(
     protected followsRepo: FollowsRepository,
     protected accountRepo: AccountRepository,
@@ -73,3 +72,5 @@ export class FollowsService {
     return response;
   }
 }
+
+export default FollowsService;

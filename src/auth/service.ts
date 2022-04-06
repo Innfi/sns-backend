@@ -2,19 +2,19 @@ import { Service } from 'typedi';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import { LoggerBase } from '../common/logger';
+import LoggerBase from '../common/logger';
 import {
-  AccountRepository,
   AuthenticateResponse,
   CreateUserAccountInput,
   CreateUserAccountResult,
   IUserAccount,
   LoadUserAccountInput,
-  PassportInitializer,
-} from '.';
+} from './model';
+import AccountRepository from './repository';
+import PassportInitializer from './passportInitializer';
 
 @Service()
-export class AccountService {
+class AccountService {
   constructor(
     protected accRepo: AccountRepository,
     protected passportInitializer: PassportInitializer,
@@ -26,7 +26,7 @@ export class AccountService {
     input: CreateUserAccountInput,
   ): Promise<CreateUserAccountResult> {
     try {
-      input.password = await bcrypt.hash(input.password, 10);
+      input.password = (await bcrypt.hash(input.password, 10)) as string;
 
       return await this.accRepo.createUserAccount(input);
     } catch (err: any) {
@@ -104,3 +104,5 @@ export class AccountService {
   //     }
   // }
 }
+
+export default AccountService;

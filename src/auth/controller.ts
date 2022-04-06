@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { Container, Service } from 'typedi';
 import {
   useContainer,
@@ -10,20 +9,20 @@ import {
 } from 'routing-controllers';
 import { Request, Response } from 'express';
 
-import { LoggerBase } from '../common/logger';
+import LoggerBase from '../common/logger';
 import {
   LoadUserAccountInput,
   CreateUserAccountInput,
   CreateUserAccountResult,
   AuthenticateResponse,
 } from './model';
-import { AccountService } from './service';
+import AccountService from './service';
 
 useContainer(Container);
 
 @Service()
 @JsonController()
-export class AuthController {
+class AuthController {
   constructor(
     protected accService: AccountService,
     protected logger: LoggerBase,
@@ -36,7 +35,7 @@ export class AuthController {
     @Body() userData: CreateUserAccountInput,
   ) {
     try {
-      this.logger.info(`/signup: ${  JSON.stringify(userData)}`);
+      this.logger.info(`/signup: ${JSON.stringify(userData)}`);
 
       const signupResp: CreateUserAccountResult =
         await this.accService.createUserAccount(userData);
@@ -62,7 +61,7 @@ export class AuthController {
     try {
       if (!userData) return res.status(400).end();
 
-      this.logger.info(`/signin: ${  JSON.stringify(userData)}`);
+      this.logger.info(`/signin: ${JSON.stringify(userData)}`);
 
       const resp: AuthenticateResponse = await this.accService.authenticate(
         userData,
@@ -76,3 +75,5 @@ export class AuthController {
     }
   }
 }
+
+export default AuthController;

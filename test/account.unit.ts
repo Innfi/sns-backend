@@ -1,18 +1,21 @@
 import assert from 'assert';
 import { Container } from 'typedi';
 
-import { IUserAccount, CreateUserAccountInput, AccountRepository, AccountRepositoryFactory 
-} from '../src/auth';
-import { TestHelper } from '../test.helper/helper';
-
+import TestHelper from '../test.helper/helper';
+import AccountRepository from '../src/auth/repository';
+import FakeAccountAdapter from '../src/auth/adapterFake';
+import { CreateUserAccountInput, IUserAccount } from '../src/auth/model';
 
 describe('unit: account', () => {
   const helper = Container.get(TestHelper);
-  const factory = Container.get(AccountRepositoryFactory);
-  const accountRepo: AccountRepository = factory.createFakeRepository();
+  const accountRepo: AccountRepository = new AccountRepository(
+    Container.get(FakeAccountAdapter),
+  );
 
   it('initial status: empty result for loadUserAccount', async () => {
-    const result = await accountRepo.loadUserAccount({ email: 'innfi@test.com'});
+    const result = await accountRepo.loadUserAccount({
+      email: 'innfi@test.com',
+    });
 
     assert.strictEqual(result, undefined);
   });
@@ -22,8 +25,9 @@ describe('unit: account', () => {
 
     await accountRepo.createUserAccount(input);
 
-    const output: IUserAccount | undefined = 
-            await accountRepo.loadUserAccount(input);
+    const output: IUserAccount | undefined = await accountRepo.loadUserAccount(
+      input,
+    );
 
     assert.strictEqual(input.nickname, output!.nickname);
   });
@@ -56,4 +60,3 @@ describe('unit: account', () => {
     assert.strictEqual(result.err, 'required field empty');
   });
 });
-

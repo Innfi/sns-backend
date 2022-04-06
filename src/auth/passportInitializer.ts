@@ -3,7 +3,7 @@ import passport from 'passport';
 import passportJwt from 'passport-jwt';
 import bcrypt from 'bcrypt';
 
-import { AccountRepository } from '.';
+import AccountRepository from './repository';
 
 interface JwtData {
   email: string;
@@ -12,7 +12,7 @@ interface JwtData {
 }
 
 @Service()
-export class PassportInitializer {
+class PassportInitializer {
   protected seedKey: string = 'changeme'; // FIXME: get secret from other source
 
   constructor() {
@@ -47,3 +47,5 @@ export class PassportInitializer {
     return this.seedKey;
   }
 }
+
+export default PassportInitializer;

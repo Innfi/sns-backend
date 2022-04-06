@@ -5,12 +5,12 @@ import multer from 'multer';
 import multerS3 from 'multer-s3';
 import dotenv from 'dotenv';
 
-import { LoggerBase } from './logger';
+import LoggerBase from './logger';
 
 dotenv.config();
 
 @Service()
-export class S3UploadService {
+class S3UploadService {
   akid: string;
 
   secretKey: string;
@@ -69,7 +69,7 @@ export class S3UploadService {
     req: Request,
     file: Express.Multer.File,
     callback: (err: any, key?: string | undefined) => void,
-  ): void {
+  ) {
     callback(null, `${this.folder}/${file.filename}`);
   }
 
@@ -84,3 +84,5 @@ export class S3UploadService {
     });
   }
 }
+
+export default S3UploadService;

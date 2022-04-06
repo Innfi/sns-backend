@@ -1,16 +1,16 @@
 import { Container, Service } from 'typedi';
 import dotenv from 'dotenv';
 
-import { LoggerBase } from '../common/logger';
-import { FollowsAdapterBase } from './adapterBase';
-import { FollowsAdapter } from './adapter';
-import { FakeFollowsAdapter } from './adapterFake';
+import LoggerBase from '../common/logger';
 import {
   LoadFollowOptions,
   LoadRelationMembersResult,
   MemberTypeEnum,
   RelateResult,
 } from './model';
+import { FollowsAdapterBase } from './adapterBase';
+import FollowsAdapter from './adapter';
+import FakeFollowsAdapter from './adapterFake';
 
 dotenv.config();
 
@@ -32,7 +32,7 @@ const initializer: CallableFunction =
     : createRepository;
 
 @Service({ factory: initializer })
-export class FollowsRepository {
+class FollowsRepository {
   constructor(
     protected followsAdapter: FollowsAdapterBase,
     protected logger: LoggerBase,
@@ -80,7 +80,9 @@ export class FollowsRepository {
     return result;
   }
 
-  async cleanupData(): Promise<void> {
+  async cleanupData() {
     await this.followsAdapter.cleanupData();
   }
 }
+
+export default FollowsRepository;

@@ -2,22 +2,21 @@ import 'reflect-metadata';
 import { Container, Service } from 'typedi';
 import express from 'express';
 import passport from 'passport';
-import { useExpressServer } from 'routing-controllers';
+import { useContainer, useExpressServer } from 'routing-controllers';
 
-import { AuthController } from './auth';
-import { CommonController } from './commonController';
-import { LoggerBase } from './common/logger';
-import { FollowsController } from './follows/controller';
-import { TimelineController } from './timeline/controller';
+import LoggerBase from './common/logger';
+import AuthController from './auth/controller';
+import FollowsController from './follows/controller';
+import TimelineController from './timeline/controller';
+import CommonController from './commonController';
+
+useContainer(Container);
 
 @Service()
 class SnsApp {
-  public app: any;
+  app: any;
 
-  protected logger: LoggerBase;
-
-  constructor() {
-    this.init();
+  constructor(private logger: LoggerBase) {
     this.app = express();
     this.app.use(passport.initialize());
 
@@ -32,11 +31,7 @@ class SnsApp {
     });
   }
 
-  protected init() {
-    this.logger = Container.get(LoggerBase);
-  }
-
-  public start() {
+  start() {
     this.app.listen(process.env.npm_package_config_port, () => {
       console.log(`listening ${process.env.npm_package_config_port}`);
     });
